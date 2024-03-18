@@ -8,8 +8,9 @@ class CertificateController extends Controller
 {
     //
 
-    public function test()
-    {
-        return "hi";
+ 
+
+    public function test(){
+        return "hi ameer";
     }
 }
