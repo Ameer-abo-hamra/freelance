@@ -13,4 +13,5 @@ class Certificate extends Model
     {
         return $this->belongsTo(Job_seeker::class, "job_seeker_id");
     }
+    // new comment from hadeel
 }
