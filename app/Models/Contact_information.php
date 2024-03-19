@@ -18,4 +18,7 @@ class Contact_information extends Model
     {
         return $this->belongsTo(Job_seeker::class, "job_seeker_id");
     }
+    public function customers(){
+        return $this->belongsTo(Customer::class,"customer_id");
+    }
 }
