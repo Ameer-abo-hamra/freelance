@@ -16,3 +16,5 @@ use Illuminate\Support\Facades\Route;
 route::get("hi", function () {
     return "job-seeker";
 });
+
+// Route::post("register",[])

@@ -76,17 +76,17 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Customer::class,
+        ],
         'companies' => [
             'driver' => 'eloquent',
             'model' => App\Models\Company::class,
         ],
         'job_seekers' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Job_seeker::class,
-        ],
-        'customers' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Customer::class,
+            'model' => App\Models\Job_seeker::class
         ],
 
 
@@ -136,5 +136,6 @@ return [
     */
 
     'password_timeout' => 10800,
+
 
 ];
