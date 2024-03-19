@@ -52,18 +52,6 @@ return [
             'driver' => 'session',
             'provider' => 'job_seekers',
         ],
-        'web-customer' => [
-            'driver' => 'session',
-            'provider' => 'customers',
-        ],
-        'web-company' => [
-            'driver' => 'session',
-            'provider' => 'companies',
-        ],
-        'web-job_seeker' => [
-            'driver' => 'session',
-            'provider' => 'job_seekers',
-        ],
     ],
 
     /*
@@ -99,12 +87,6 @@ return [
         'job_seekers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Job_seeker::class
-        ],
-            'model' => App\Models\Job_seeker::class,
-        ],
-        'customers' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Customer::class,
         ],
 
 
@@ -156,3 +138,4 @@ return [
     'password_timeout' => 10800,
 
 
+];
