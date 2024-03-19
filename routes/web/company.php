@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CompanyController;
+use App\Models\Company;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::post("register",[CompanyController::class,"register"]);
+route::get("csrf", function () {
+    return csrf_token();
+});
+route::post("register", [CompanyController::class, "register"]);
 

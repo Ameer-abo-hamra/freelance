@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+route::get("hi", function () {
+    return "job-seeker";
 });
 
 // Route::post("register",[])
