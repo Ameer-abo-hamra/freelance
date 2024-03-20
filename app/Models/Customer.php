@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Contact_information;
 
 class Customer extends Model
 {
@@ -18,6 +19,6 @@ class Customer extends Model
     }
 
     public function coantactInformation(){
-        return $this->hasMany(Contact_information::class,"contact_information_id");
+        return $this->hasMany(Contact_information::class,"customer_id");
     }
 }
