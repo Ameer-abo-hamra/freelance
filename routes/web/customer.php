@@ -25,3 +25,4 @@ Route::get("csrf",function(){
     ]);
 });
 Route::post("register",[CustomerController::class,"register"]);
+route::post("login",[CustomerController::class,"login"]);

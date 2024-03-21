@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\JobSeekerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,8 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-route::get("hi", function () {
-    return "job-seeker";
+route::get("csrf", function () {
+    return csrf_token();
 });
 
-// Route::post("register",[])
+Route::post("register",[JobSeekerController::class,"register"]);
+Route::post("login",[JobSeekerController::class,"login"]);
