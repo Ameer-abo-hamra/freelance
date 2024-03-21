@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
+use App\Traits\Response;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,8 +15,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get("csrf", function () {
+    return response()->json([
+        "status" => true,
+        "csrf" => csrf_token()
+    ]);
+});
+Route::post("register", [CustomerController::class, "register"]);
 
-Route::post("register",[CustomerController::class,"register"]);
+
+Route::post('login', [CustomerController::class, "login"]);
