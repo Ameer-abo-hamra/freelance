@@ -40,10 +40,9 @@ class CompanyController extends Controller
             return $this->returnError($validator->errors()->first());
         }
         $credential=$request->only("name");
-        $token=Auth::guard("web-company")->attempt($credential);
-        if($token){
+
+        if(Auth::guard("web-company")->attempt($credential)){
             $company=Auth::guard("web-company")->user();
-            $company->api=$token;
             return $this->returnData("U R logged-in successfully","company data",$company);
         }
         return $this->returnError("your data is invalid .. enter it again");

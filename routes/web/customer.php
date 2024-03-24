@@ -3,6 +3,7 @@
 use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 use App\Traits\Response;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +26,10 @@ Route::get("csrf", function () {
         "csrf" => csrf_token()
     ]);
 });
+
 Route::post("register", [CustomerController::class, "register"]);
 
-
-Route::post('login', [CustomerController::class, "login"]);
+route::get("login", function () {
+    return view("login");
+});
+route::post("login", [CustomerController::class, "login"])->name("login");

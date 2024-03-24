@@ -3,20 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 use App\Models\Contact_information;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Customer extends Model
+class Customer extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
     protected $fillable = ["first-name", "last-name", "email", "password", "wallet"];
-
-
 
 
     public function services()
     {
-        return $this->hasMany(Service::class, "service_id");
+        return $this->hasMany(Service::class, "customer_id");
     }
 
     public function coantactInformations()

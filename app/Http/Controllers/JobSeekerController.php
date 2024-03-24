@@ -35,18 +35,16 @@ class JobSeekerController extends Controller
     public function login(Request $request)
     {
         $validator = validator::make($request->all(), [
-            "username" => "unique:job_seekers||required||min:5||max:10",
-            "full_name" => "required",
-            "password" => "required||unique:job_seekers",
+            "username" => "required||min:5||max:10",
+            "password" => "required",
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
         $credential = $request->only("password");
-        $token = Auth::guard("web-job_seeker")->attempt($credential);
-        if ($token) {
+
+        if (Auth::guard("web-job_seeker")->attempt($credential)) {
             $job_seeker = Auth::guard("web-job_seeker")->user();
-            $job_seeker->api = $token;
             return $this->returnData("U R logged-in successfully", "job_seeker data", $job_seeker);
         }
         return $this->returnError("your data is invalid .. please enter it again");
