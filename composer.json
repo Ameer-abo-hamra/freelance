@@ -12,7 +12,8 @@
         "laravel/tinker": "^2.8",
         "mcamara/laravel-localization": "^2.0",
         "symfony/http-client": "^6.4",
-        "symfony/mailgun-mailer": "^6.4"
+        "symfony/mailgun-mailer": "^6.4",
+        "tymon/jwt-auth": "^2.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
