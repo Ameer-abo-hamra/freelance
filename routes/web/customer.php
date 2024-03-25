@@ -17,9 +17,6 @@ use Illuminate\Support\Facades\Mail;
 */
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
 Route::get("csrf", function () {
     return response()->json([
         "status" => true,
@@ -33,3 +30,8 @@ route::get("login", function () {
     return view("login");
 });
 route::post("login", [CustomerController::class, "login"])->name("login");
+
+Route::group(["middleware" => ["check:customer"]], function () {
+
+    Route::get("logout", [CustomerController::class, "logout"]);
+});

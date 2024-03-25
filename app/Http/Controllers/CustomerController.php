@@ -7,14 +7,14 @@ use Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Customer;
 use App\Models\Contact_information;
-use App\Traits\Response;
+use App\Traits\ResponseTrait;
 use Auth;
 use Hash;
 use App\Mail\testmail;
 
 class CustomerController extends Controller
 {
-    use Response;
+    use ResponseTrait;
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -52,7 +52,7 @@ class CustomerController extends Controller
         try {
             if (auth()->guard("customer")->attempt($credential)) {
                 $customer = auth::guard("customer")->user();
-                Mail::to("ameerabohamra314017@gmail.com")->send(new testmail());
+                // Mail::to("ameerabohamra314017@gmail.com")->send(new testmail());
 
                 return $this->returnData("U r logged-in successully", "customer data", $customer);
             }
@@ -61,5 +61,10 @@ class CustomerController extends Controller
             return $this->returnError($e->getMessage());
         }
         return $this->returnError("your data is invalid .. enter it again");
+    }
+
+    public function logout(){
+        Auth::logout();
+       return  $this->returnSuccess("you are logged out successfully");
     }
 }

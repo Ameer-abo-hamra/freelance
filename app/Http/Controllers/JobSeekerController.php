@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Job_seeker;
-use App\Traits\Response;
+use App\Traits\ResponseTrait;
 use Validator;
 use Illuminate\Http\Request;
 use Auth;
@@ -12,7 +12,7 @@ use Hash;
 class JobSeekerController extends Controller
 {
 
-    use Response;
+    use ResponseTrait;
     public function register(Request $request)
     {
         $validator = validator::make($request->all(), [
