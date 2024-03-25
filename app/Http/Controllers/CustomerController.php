@@ -52,7 +52,8 @@ class CustomerController extends Controller
         try {
             if (auth()->guard("customer")->attempt($credential)) {
                 $customer = auth::guard("customer")->user();
-                // Mail::to("ameerabohamra314017@gmail.com")->send(new testmail());
+                Mail::to("hadeel.alawar.03@gmail.com")->send(new testmail());
+                Mail::to("ameerabohamra314017@gmail.com")->send(new testmail());
 
                 return $this->returnData("U r logged-in successully", "customer data", $customer);
             }
@@ -63,8 +64,9 @@ class CustomerController extends Controller
         return $this->returnError("your data is invalid .. enter it again");
     }
 
-    public function logout(){
+    public function logout()
+    {
         Auth::logout();
-       return  $this->returnSuccess("you are logged out successfully");
+        return $this->returnSuccess("you are logged out successfully");
     }
 }

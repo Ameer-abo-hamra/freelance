@@ -40,6 +40,10 @@ class testmail extends Mailable
             view: 'test',
         );
     }
+    public function build()
+    {
+        return $this->view("test");
+    }
 
     /**
      * Get the attachments for the message.
