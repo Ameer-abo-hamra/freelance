@@ -2,7 +2,7 @@
 namespace App\Traits;
 
 
-trait Response
+trait ResponseTrait
 {
     public function returnError($msgErorr = "", $errorNumber = 400)
     {

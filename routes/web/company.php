@@ -22,5 +22,8 @@ route::get("csrf", function () {
     return csrf_token();
 });
 route::post("register", [CompanyController::class, "register"]);
-route::post("login",[CompanyController::class,"login"]);
+route::post("login", [CompanyController::class, "login"]);
+
+
+
 

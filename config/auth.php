@@ -40,7 +40,7 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'web-customer' => [
+        'customer' => [
             'driver' => 'session',
             'provider' => 'customers',
         ],
@@ -122,6 +122,7 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+
     ],
 
     /*

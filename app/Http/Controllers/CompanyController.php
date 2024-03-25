@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
-use App\Traits\Response;
+use App\Traits\ResponseTrait;
 use Validator;
 use Auth;
 
@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
-    use Response;
+    use ResponseTrait;
     public function register(Request $request)
     {
         $validator = validator::make($request->all(), [
@@ -30,7 +30,8 @@ class CompanyController extends Controller
         return $this->returnSuccess("your account created successfully");
     }
 
-    public function login(Request $request){
+    public function login(Request $request)
+    {
         $validator = validator::make($request->all(), [
             "name" => "required|unique:companies| max:15",
             "employee_number" => "required |integer | min:10 | max:500000",
@@ -39,12 +40,11 @@ class CompanyController extends Controller
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        $credential=$request->only("name");
-        $token=Auth::guard("web-company")->attempt($credential);
-        if($token){
-            $company=Auth::guard("web-company")->user();
-            $company->api=$token;
-            return $this->returnData("U R logged-in successfully","company data",$company);
+        $credential = $request->only("name");
+
+        if (Auth::guard("web-company")->attempt($credential)) {
+            $company = Auth::guard("web-company")->user();
+            return $this->returnData("U R logged-in successfully", "company data", $company);
         }
         return $this->returnError("your data is invalid .. enter it again");
     }

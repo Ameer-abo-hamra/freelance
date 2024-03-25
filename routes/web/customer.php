@@ -3,6 +3,8 @@
 use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 use App\Traits\Response;
+use Illuminate\Support\Facades\Mail;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,14 +17,21 @@ use App\Traits\Response;
 */
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
-Route::get("csrf",function(){
+Route::get("csrf", function () {
     return response()->json([
-        "status"=>true,
+        "status" => true,
         "csrf" => csrf_token()
     ]);
 });
-Route::post("register",[CustomerController::class,"register"]);
-route::post("login",[CustomerController::class,"login"]);
+
+Route::post("register", [CustomerController::class, "register"]);
+
+route::get("login", function () {
+    return view("login");
+});
+route::post("login", [CustomerController::class, "login"])->name("login");
+
+Route::group(["middleware" => ["check:customer"]], function () {
+
+    Route::get("logout", [CustomerController::class, "logout"]);
+});
