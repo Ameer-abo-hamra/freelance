@@ -13,14 +13,6 @@ use App\Traits\Response;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-
-
-Route::get("csrf",function(){
-    return response()->json([
-        "status"=>true,
-        "csrf" => csrf_token()
-    ]);
+Route::get('/', function () {
+    return view('welcome');
 });
-Route::post("register",[CustomerController::class,"register"]);
-route::post("login",[CustomerController::class,"login"]);
