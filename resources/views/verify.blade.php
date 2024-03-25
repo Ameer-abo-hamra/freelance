@@ -7,6 +7,13 @@
     <title>Document</title>
 </head>
 <body>
-<h2>hi there</h2>
+
+            <form action="{{Route("verify")}}" method="POST" >
+                @csrf
+                <input type="text" name="verificationCode" placeholder="code">
+                <input type="submit">
+            </form>
+
+
 </body>
 </html>
