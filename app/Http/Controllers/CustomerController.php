@@ -64,6 +64,29 @@ class CustomerController extends Controller
         return $this->returnError("your data is invalid .. enter it again");
     }
 
+    public function login_api(Request $request){
+        $validator = validator::make($request->all(), [
+            "email" => "required | email ",
+            "password" => "required | max:15 | min:6"
+        ]);
+
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+        $credential=$request->only("email" , "password");
+        $token=Auth::guard("api-customer")->attempt($credential);
+        if($token){
+            $customer=Auth::guard("api-customer")->user();
+            $customer->api=$token;
+            return $this->returnData("U R logged-in successfully","customer data",$customer);
+        }
+        return $this->returnError("your data is invalid .. enter it again");
+    }
+
+
+
+
+
     public function logout()
     {
         Auth::logout();

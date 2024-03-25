@@ -4,13 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Company extends Model
+class Company extends Authenticatable implements JWTSubject
 {
     use HasFactory;
 
-    protected $fillable = ["name", "establishment_date", "employee_number"];
-
+    protected $fillable = ["name", "establishment_date", "employee_number", "password"];
+    protected $hidden = ["created_at","updated_at"];
     public function offers()
     {
         return $this->hasMany(Offer::Class);
@@ -43,8 +45,24 @@ class Company extends Model
         return $this->hasMany(Post_like::Class, "company_id");
     }
 
-    public function portfolio(){
-        return $this->hasMany(Portfolio::class,"company_id");
+    public function portfolio()
+    {
+        return $this->hasMany(Portfolio::class, "company_id");
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 
 }

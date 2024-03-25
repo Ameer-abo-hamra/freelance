@@ -52,6 +52,19 @@ return [
             'driver' => 'session',
             'provider' => 'job_seekers',
         ],
+        "api-customer" => [
+            "driver" => "jwt",
+            "provider" => "customers"
+        ],
+        "api-company" => [
+            "driver" => "jwt" ,
+            "provider" => "companies"
+        ],
+        "api-job_seeker" => [
+            "driver" => "jwt",
+            "provider" => "job_seekers"
+        ],
+
     ],
 
     /*
