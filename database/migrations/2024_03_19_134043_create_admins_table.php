@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('portfolios', function (Blueprint $table) {
+        Schema::create('admins', function (Blueprint $table) {
             $table->id();
-            $table->string("URL");
-            $table->foreignId("job_seeker_id")->nullable()->references("id")->on("job_seekers");
-            $table->foreignId("company_id")->nullable()->references("id")->on("companies");
             $table->timestamps();
         });
     }
@@ -25,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('portfolios');
+        Schema::dropIfExists('admins');
     }
 };

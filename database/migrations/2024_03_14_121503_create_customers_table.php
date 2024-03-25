@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string("first-name");
             $table->string("last-name");
+            $table->string("email");
+            $table->string("password");
+            $table->unsignedBigInteger("wallet")->default(10000);
             $table->timestamps();
         });
     }

@@ -1,8 +1,7 @@
 <?php
 
-use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\JobSeekerController;
 use Illuminate\Support\Facades\Route;
-use App\Traits\Response;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +12,10 @@ use App\Traits\Response;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', function () {
-    return view('welcome');
+
+route::get("csrf", function () {
+    return csrf_token();
 });
+
+Route::post("register",[JobSeekerController::class,"register"]);
+Route::post("login",[JobSeekerController::class,"login"]);

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+// new comment from ameer
 class Certificate extends Model
 {
     use HasFactory;
@@ -13,4 +13,5 @@ class Certificate extends Model
     {
         return $this->belongsTo(Job_seeker::class, "job_seeker_id");
     }
+    // new comment from hadeel
 }

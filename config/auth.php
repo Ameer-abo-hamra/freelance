@@ -40,6 +40,18 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'customer' => [
+            'driver' => 'session',
+            'provider' => 'customers',
+        ],
+        'web-company' => [
+            'driver' => 'session',
+            'provider' => 'companies',
+        ],
+        'web-job_seeker' => [
+            'driver' => 'session',
+            'provider' => 'job_seekers',
+        ],
     ],
 
     /*
@@ -64,6 +76,19 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Customer::class,
+        ],
+        'companies' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Company::class,
+        ],
+        'job_seekers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Job_seeker::class
+        ],
+
 
         // 'users' => [
         //     'driver' => 'database',
@@ -97,6 +122,7 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+
     ],
 
     /*
@@ -111,5 +137,6 @@ return [
     */
 
     'password_timeout' => 10800,
+
 
 ];
