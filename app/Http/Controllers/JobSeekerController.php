@@ -26,7 +26,7 @@ class JobSeekerController extends Controller
         Job_seeker::create([
             "username" => $request->username,
             "full_name" => $request->full_name,
-            "password" => $request->password,
+            "password" => Hash::make($request->password),
             "birth_date" => $request->birth_date
         ]);
         return $this->returnSuccess("your account created successfully");
@@ -48,5 +48,25 @@ class JobSeekerController extends Controller
             return $this->returnData("U R logged-in successfully", "job_seeker data", $job_seeker);
         }
         return $this->returnError("your data is invalid .. please enter it again");
+    }
+
+    public function login_api(Request $request){
+        $validator = validator::make($request->all(), [
+            "username" => "required||min:5||max:10",
+            "password" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+        $credential=$request->only("username","password");
+        // return $credential;
+        $token=Auth::guard("api-job_seeker")->attempt($credential);
+        // return $token;
+        if($token){
+            $job_seeker=Auth::guard("api-job_seeker")->user();
+            $job_seeker->api=$token;
+            return $this->returnData("U R logged-in successfully","job_seeker data",$job_seeker);
+        }
+        return $this->returnError("your data is invalid .. enter it again");
     }
 }
