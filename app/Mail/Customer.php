@@ -9,16 +9,16 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class testmail extends Mailable
+class Customer extends Mailable
 {
     use Queueable, SerializesModels;
-
+    public $code;
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($code)
     {
-        //
+        $this->code = $code;
     }
 
     /**
@@ -37,13 +37,13 @@ class testmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'test',
+            view: 'customer',
+            with: [
+                "code" => $this->code,
+            ]
         );
     }
-    public function build()
-    {
-        return $this->view("test");
-    }
+
 
     /**
      * Get the attachments for the message.
