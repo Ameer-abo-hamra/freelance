@@ -6,13 +6,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Contact_information;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Customer extends Authenticatable
+class Customer extends Authenticatable implements JWTSubject
 {
     use HasFactory, HasApiTokens;
     protected $fillable = ["first-name", "last-name", "email", "password", "wallet"];
+    protected $hidden = ["created_at","updated_at"];
 
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
 
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
     public function services()
     {
         return $this->hasMany(Service::class, "customer_id");
