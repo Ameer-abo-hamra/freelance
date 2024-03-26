@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\JobSeekerController;
 use Illuminate\Support\Facades\Route;
 use App\Traits\Response;
 /*
@@ -16,3 +17,5 @@ use App\Traits\Response;
 Route::get('/', function () {
     return view('welcome');
 });
+
+

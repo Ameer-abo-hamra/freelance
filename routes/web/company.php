@@ -24,6 +24,8 @@ route::get("csrf", function () {
 route::post("register", [CompanyController::class, "register"]);
 route::post("login", [CompanyController::class, "login"]);
 
-
+Route::get("category" , [CompanyController::class,"getCategory"]);
+Route::get("types",[CompanyController::class,"getTypesSkills"]);
+Route::get("skills",[CompanyController::class,"getSkillName"]);
 
 
