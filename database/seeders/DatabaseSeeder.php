@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
             "password" => Hash::make("123456789"),
             "establishment_date" => "2024-03-19",
             "employee_number" => 30,
+            "verificationCode"=>"test01"
         ]);
 
         Comment::create([
@@ -65,7 +66,9 @@ class DatabaseSeeder extends Seeder
             "username" => "Ameer314314",
             "password" => Hash::make("123456789"),
             "full_name" => "Ameer Abo Hamra",
-            "birth_date" => "2002-10-15"
+            "birth_date" => "2002-10-15",
+            "verificationCode"=>"test01"
+
         ]);
         Certificate::create([
             "certificate_name" => "IT",
@@ -88,7 +91,7 @@ class DatabaseSeeder extends Seeder
             Skill::create([
 
                 "category" => "programming",
-                "type" => "back-end",   
+                "type" => "back-end",
                 "skill_name" => $b,
             ]);
         }

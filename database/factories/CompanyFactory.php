@@ -21,6 +21,7 @@ class CompanyFactory extends Factory
             "password" => Hash::make(fake()->password(8,15)),
             "establishment_date" => fake()->date('Y-m-d'),
             "employee_number" => fake()->numberBetween(0,1000),
+            "verificationCode"=>fake()->text("6"),
         ];
     }
 }
