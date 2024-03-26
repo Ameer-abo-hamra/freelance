@@ -11,8 +11,8 @@ class Company extends Authenticatable implements JWTSubject
 {
     use HasFactory;
 
-    protected $fillable = ["name", "establishment_date", "employee_number", "password"];
-    protected $hidden = ["created_at","updated_at"];
+    protected $fillable = ["name", "establishment_date", "employee_number", "password", "verificationCode", "isActive"];
+    protected $hidden = ["created_at", "updated_at"];
     public function offers()
     {
         return $this->hasMany(Offer::Class);

@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         Company::factory(10)->create();
         Job_seeker::factory(10)->create();
         Comment::factory(5)->create();
+
         \App\Models\User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -35,11 +36,14 @@ class DatabaseSeeder extends Seeder
             "establishment_date" => "2024-03-19",
             "employee_number" => 30,
         ]);
+
         Comment::create([
             "title" => "title",
             "body" => "body",
             "company_id" => 1,
+
             "post_id" => 1
+
         ]);
         Comment_like::create([
             "comment_id" => 1,
@@ -72,16 +76,19 @@ class DatabaseSeeder extends Seeder
         $front_end = ["html", "css", "js", "flutter", "angular", "vue", "react"];
         foreach ($front_end as $f) {
             Skill::create([
+
                 "category" => "programming",
                 "type" => "front-end",
+
                 "skill_name" => $f,
             ]);
         }
         $back_end = ["php", "java", "js", "laravel", "django", "nodeJs"];
         foreach ($back_end as $b) {
             Skill::create([
+
                 "category" => "programming",
-                "type" => "back-end",
+                "type" => "back-end",   
                 "skill_name" => $b,
             ]);
         }
