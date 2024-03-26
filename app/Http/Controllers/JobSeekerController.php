@@ -59,9 +59,7 @@ class JobSeekerController extends Controller
             return $this->returnError($validator->errors()->first());
         }
         $credential=$request->only("username","password");
-        // return $credential;
         $token=Auth::guard("api-job_seeker")->attempt($credential);
-        // return $token;
         if($token){
             $job_seeker=Auth::guard("api-job_seeker")->user();
             $job_seeker->api=$token;
