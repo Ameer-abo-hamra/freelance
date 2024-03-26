@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Auth;
 use Hash;
 
+
 class JobSeekerController extends Controller
 {
 
@@ -67,4 +68,6 @@ class JobSeekerController extends Controller
         }
         return $this->returnError("your data is invalid .. enter it again");
     }
+
+
 }
