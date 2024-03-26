@@ -22,6 +22,7 @@ class Job_seekerFactory extends Factory
             "password" => Hash::make("123456789"),
             "full_name" => fake()->name(),
             "birth_date" => fake()->date(),
+            "verificationCode"=>fake()->text("6"),
         ];
     }
 }
