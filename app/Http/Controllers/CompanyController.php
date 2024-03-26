@@ -7,6 +7,7 @@ use App\Traits\ResponseTrait;
 use Validator;
 use Auth;
 use Hash;
+use App\Models\Skill;
 
 use Illuminate\Http\Request;
 
@@ -70,5 +71,20 @@ class CompanyController extends Controller
             return $this->returnData("U R logged-in successfully", "company data", $company);
         }
         return $this->returnError("your data is invalid .. enter it again");
+    }
+
+    public function getCategory(){
+        $categories = Skill::distinct()->get("category")->groupBy("skill categoriess");
+        return $categories;
+    }
+
+    public function getTypesSkills(Request $request){
+        $types = Skill::where("category",$request->category)->distinct()->get("type");
+        return $types;
+    }
+
+    public function getSkillName(Request $request){
+        $skills = Skill::where("type",$request->type)->get("skill_name");
+        return $skills;
     }
 }
