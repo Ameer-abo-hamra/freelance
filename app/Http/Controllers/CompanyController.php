@@ -95,6 +95,10 @@ class CompanyController extends Controller
         return $this->returnData("", "types", $arr);
     }
 
+    public function addOffer(Request $request){
+
+    }
+
     public function getSkillName($type)
     {
         $skills = Skill::where("type", $type)->get("skill_name");
