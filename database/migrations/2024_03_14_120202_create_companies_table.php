@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string("name")->unique();
             $table->string("password");
+            $table->string("email")->unique();
             $table->boolean("isActive")->default(false);
             $table->string("verificationCode");
             $table->date("establishment_date");
