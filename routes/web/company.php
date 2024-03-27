@@ -26,4 +26,7 @@ route::post("login", [CompanyController::class, "login"]);
 
 Route::get("category" , [CompanyController::class,"getCategory"]);
 Route::get("types/{category}",[CompanyController::class,"getTypesSkills"]);
-Route::get("skills/{type}",[CompanyController::class,"getSkillName"]);
+
+Route::get("skills/{types}",[CompanyController::class,"getSkillName"]);
+
+

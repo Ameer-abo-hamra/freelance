@@ -82,7 +82,6 @@ class DatabaseSeeder extends Seeder
 
                 "category" => "programming",
                 "type" => "front-end",
-
                 "skill_name" => $f,
             ]);
         }
