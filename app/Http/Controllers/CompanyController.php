@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Offer;
 use App\Traits\ResponseTrait;
+use PHPUnit\Framework\Constraint\IsEmpty;
 use Validator;
 use Auth;
 use Hash;
@@ -20,18 +22,24 @@ class CompanyController extends Controller
             "name" => "required|unique:companies| max:15",
             "password" => "required",
             "employee_number" => "required |integer | min:10 | max:500000",
-            "establishment_date" => "required | date"
+            "establishment_date" => "required | date",
+            "email" => "required | unique:companies| email",
+
+
         ]);
 
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        Company::create([
+        $company = Company::create([
             "name" => $request->name,
             "password" => Hash::make($request->password),
             "establishment_date" => $request->establishment_date,
-            "employee_number" => $request->employee_number
+            "employee_number" => $request->employee_number,
+            "email" => $request->email,
+            "verificationCode" => makeCode("company", $request->email),
         ]);
+        Auth::guard("web-company")->login($company);
         return $this->returnSuccess("your account created successfully");
     }
 
@@ -60,7 +68,7 @@ class CompanyController extends Controller
     {
         $validator = validator::make($request->all(), [
             "name" => "required| max:15",
-            "employee_number" => "required |integer | min:10 | max:500000",
+            "password" => "required | min:8| max:20",
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
@@ -95,9 +103,6 @@ class CompanyController extends Controller
         return $this->returnData("", "types", $arr);
     }
 
-    public function addOffer(Request $request){
-
-    }
 
     public function getSkillName($type)
     {
@@ -108,5 +113,34 @@ class CompanyController extends Controller
         }
         return $this->returnData("", "skill_names", $arr);
 
+    }
+
+    public function addOffer(Request $request)
+    {
+        $validation = Validator::make($request->all(), [
+            "title" => "required",
+            "body" => "required"
+        ]);
+        if ($validation->fails()) {
+            return $this->returnError($validation->errors()->first());
+        }
+
+        $offer = Offer::create([
+            "author" => Auth::guard("web-company")->user()->name,
+            "title" => $request->title,
+            "body" => $request->body,
+            "position" => $request->position,
+            "company_id" => Auth::guard("web-company")->user()->id,
+        ]);
+        $skill_ids = $request->skill_ids;
+        if (!empty($skill_ids)) {
+
+            foreach ($skill_ids as $s) {
+                $offer->skills()->attach($s);
+            }
+        } else {
+            return $this->returnError("you have to enter skills");
+        }
+        return $this->returnSuccess("your offer is saved");
     }
 }
