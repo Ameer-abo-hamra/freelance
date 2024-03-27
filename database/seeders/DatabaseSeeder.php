@@ -141,7 +141,7 @@ class DatabaseSeeder extends Seeder
         foreach($buisness_development_manager as $b){
             Skill::create([
                 "category" => "financial",
-                "type" => "financial" ,
+                "type" => "" ,
                 "skill_name" => $b
             ]);
         }
