@@ -82,14 +82,12 @@ class DatabaseSeeder extends Seeder
 
                 "category" => "programming",
                 "type" => "front-end",
-
                 "skill_name" => $f,
             ]);
         }
         $back_end = ["php", "java", "js", "laravel", "django", "nodeJs"];
         foreach ($back_end as $b) {
             Skill::create([
-
                 "category" => "programming",
                 "type" => "back-end",
                 "skill_name" => $b,
