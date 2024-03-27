@@ -122,9 +122,28 @@ class DatabaseSeeder extends Seeder
         }
 
         $financial_analyst = ["exel"];
-
+        foreach($financial_analyst as $f){
+            Skill::create([
+                "category" => "financial",
+                "type" => "financial_analyst",
+                "skill_name" => $f
+            ]);
+        }
         $marketing_cordenator=["marketing_principles","digital_marketing"];
-
+        foreach($marketing_cordenator as $m){
+            Skill::create([
+                "category" => "financial",
+                "type" => "marketing_cordenator",
+                "skill_name" => $m
+            ]);
+        }
         $buisness_development_manager =["exel","good_writer"];
+        foreach($buisness_development_manager as $b){
+            Skill::create([
+                "category" => "financial",
+                "type" => "financial" ,
+                "skill_name" => $b
+            ]);
+        }
     }
 }
