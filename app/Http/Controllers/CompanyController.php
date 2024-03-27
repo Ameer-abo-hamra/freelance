@@ -74,6 +74,7 @@ class CompanyController extends Controller
         return $this->returnError("your data is invalid .. enter it again");
     }
 
+
     public function getCategory()
     {
         $categories = Skill::distinct()->get("category");
@@ -102,5 +103,6 @@ class CompanyController extends Controller
             array_push($arr, $cat["skill_name"]);
         }
         return $this->returnData("","skill_names",$arr);
+
     }
 }

@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
             "password" => Hash::make("123456789"),
             "establishment_date" => "2024-03-19",
             "employee_number" => 30,
-            "verificationCode"=>"test01"
+            "verificationCode" => "test01"
         ]);
 
         Comment::create([
@@ -67,7 +67,7 @@ class DatabaseSeeder extends Seeder
             "password" => Hash::make("123456789"),
             "full_name" => "Ameer Abo Hamra",
             "birth_date" => "2002-10-15",
-            "verificationCode"=>"test01"
+            "verificationCode" => "test01"
 
         ]);
         Certificate::create([
@@ -94,6 +94,37 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+        $architecture_desginer = ["autocad", "reveit", "sketchUp"];
+        foreach ($architecture_desginer as $a) {
+            Skill::create([
+                "category" => "architecture",
+                "type" => "architecture_desginer",
+                "skill_name" => $a
+            ]);
+        }
 
+        $project_manager = ["planning", "schaduling", "budgeting", "building_codes", "regulations"];
+
+        foreach ($project_manager as $p) {
+            Skill::create([
+                "category" => "architecture",
+                "type" => "project_manager",
+                "skill_name" => $p
+            ]);
+        }
+        $interior_desginer = ["autocad", "3dMax", "adobe_photoshop"];
+        foreach ($interior_desginer as $i) {
+            Skill::create([
+                "category" => "architecture",
+                "type" => "interior_desginer",
+                "skill_name" => $i
+            ]);
+        }
+
+        $financial_analyst = ["exel"];
+
+        $marketing_cordenator=["marketing_principles","digital_marketing"];
+
+        $buisness_development_manager =["exel","good_writer"];
     }
 }
