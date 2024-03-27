@@ -23,10 +23,13 @@ route::get("csrf", function () {
 });
 route::post("register", [CompanyController::class, "register"]);
 route::post("login", [CompanyController::class, "login"]);
+    Route::group(["middleware"=> "check:web-company"],function (){
 
 Route::get("category" , [CompanyController::class,"getCategory"]);
 Route::get("types/{category}",[CompanyController::class,"getTypesSkills"]);
 
 Route::get("skills/{types}",[CompanyController::class,"getSkillName"]);
 
+Route::post("addoffer" , [CompanyController::class , "addOffer"]);
+    });
 

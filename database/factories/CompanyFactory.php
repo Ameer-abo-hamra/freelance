@@ -22,6 +22,7 @@ class CompanyFactory extends Factory
             "establishment_date" => fake()->date('Y-m-d'),
             "employee_number" => fake()->numberBetween(0,1000),
             "verificationCode"=>fake()->text("6"),
+            "email"=>fake()->email(),
         ];
     }
 }
