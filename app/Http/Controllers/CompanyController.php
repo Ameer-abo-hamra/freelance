@@ -75,16 +75,16 @@ class CompanyController extends Controller
 
     public function getCategory(){
         $categories = Skill::distinct()->get("category")->groupBy("skill categoriess");
-        return $categories;
+        return $this->returnData("","category: ",$categories);
     }
 
     public function getTypesSkills(Request $request){
         $types = Skill::where("category",$request->category)->distinct()->get("type");
-        return $types;
+        return $this->returnData("","types: ",$types);
     }
 
     public function getSkillName(Request $request){
         $skills = Skill::where("type",$request->type)->get("skill_name");
-        return $skills;
+        return $this->returnData("","skills: ",$skills);
     }
 }

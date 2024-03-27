@@ -92,6 +92,7 @@ class DatabaseSeeder extends Seeder
 
                 "category" => "programming",
                 "type" => "back-end",
+
                 "skill_name" => $b,
             ]);
         }
