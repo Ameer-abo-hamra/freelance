@@ -92,7 +92,7 @@ class CompanyController extends Controller
         foreach ($types as $cat) {
             array_push($arr, $cat["type"]);
         }
-        return $this->returnData("","types",$arr);
+        return $this->returnData("", "types", $arr);
     }
 
     public function getSkillName($type)
@@ -102,7 +102,7 @@ class CompanyController extends Controller
         foreach ($skills as $cat) {
             array_push($arr, $cat["skill_name"]);
         }
-        return $this->returnData("","skill_names",$arr);
+        return $this->returnData("", "skill_names", $arr);
 
     }
 }
