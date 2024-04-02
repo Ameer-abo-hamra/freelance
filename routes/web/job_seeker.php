@@ -19,3 +19,4 @@ route::get("csrf", function () {
 
 Route::post("register",[JobSeekerController::class,"register"]);
 Route::post("login",[JobSeekerController::class,"login"]);
+Route::post("progress",[JobSeekerController::class,"progress"]);

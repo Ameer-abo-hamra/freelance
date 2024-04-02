@@ -19,6 +19,7 @@ class Job_seekerFactory extends Factory
     {
         return [
             "username" => fake()->unique()->userName(),
+            "email" =>fake()->unique()->email(),
             "password" => Hash::make("123456789"),
             "full_name" => fake()->name(),
             "birth_date" => fake()->date(),

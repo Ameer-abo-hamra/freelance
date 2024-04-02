@@ -20,16 +20,20 @@ class JobSeekerController extends Controller
             "username" => "unique:job_seekers||required||min:5||max:10",
             "full_name" => "required",
             "password" => "required||unique:job_seekers",
+
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        Job_seeker::create([
+        $job_seeker=Job_seeker::create([
             "username" => $request->username,
             "full_name" => $request->full_name,
+            "email" => $request->email,
             "password" => Hash::make($request->password),
-            "birth_date" => $request->birth_date
+            "birth_date" => $request->birth_date,
+            "verificationCode" => makeCode("job_seeker", $request->email),
         ]);
+        Auth::guard("web-job_seeker")->login($job_seeker);
         return $this->returnSuccess("your account created successfully");
     }
 
@@ -42,7 +46,7 @@ class JobSeekerController extends Controller
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        $credential = $request->only("password");
+        $credential = $request->only("username","password");
 
         if (Auth::guard("web-job_seeker")->attempt($credential)) {
             $job_seeker = Auth::guard("web-job_seeker")->user();
@@ -67,6 +71,12 @@ class JobSeekerController extends Controller
             return $this->returnData("U R logged-in successfully","job_seeker data",$job_seeker);
         }
         return $this->returnError("your data is invalid .. enter it again");
+    }
+
+    public function progress(Request $request){
+        $job_seeker = Auth::guard("web-job_seeker")->user();
+        // return $job_seeker;
+        $job_seeker->offers()->attach($request->offer_id);
     }
 
 

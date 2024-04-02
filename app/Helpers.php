@@ -16,7 +16,7 @@ function makeCode($type, $email)
         return $code;
 
     } else {
-        Mail::to($email)->send(new Company($code));
+        Mail::to($email)->send(new JobseekerMail($code));
         return $code;
     }
 }
