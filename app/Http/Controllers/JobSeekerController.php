@@ -28,6 +28,7 @@ class JobSeekerController extends Controller
         $job_seeker=Job_seeker::create([
             "username" => $request->username,
             "full_name" => $request->full_name,
+            "email" => $request->email,
             "password" => Hash::make($request->password),
             "birth_date" => $request->birth_date,
             "verificationCode" => makeCode("job_seeker", $request->email),
@@ -45,7 +46,7 @@ class JobSeekerController extends Controller
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        $credential = $request->only("password");
+        $credential = $request->only("username","password");
 
         if (Auth::guard("web-job_seeker")->attempt($credential)) {
             $job_seeker = Auth::guard("web-job_seeker")->user();
@@ -74,8 +75,8 @@ class JobSeekerController extends Controller
 
     public function progress(Request $request){
         $job_seeker = Auth::guard("web-job_seeker")->user();
-        return $job_seeker;
-        // $job_seeker->offers()->attach($request->offer_id);
+        // return $job_seeker;
+        $job_seeker->offers()->attach($request->offer_id);
     }
 
 
