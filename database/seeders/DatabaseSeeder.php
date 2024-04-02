@@ -43,7 +43,6 @@ class DatabaseSeeder extends Seeder
             "title" => "title",
             "body" => "body",
             "company_id" => 1,
-
             "post_id" => 1
 
         ]);
@@ -69,8 +68,8 @@ class DatabaseSeeder extends Seeder
             "password" => Hash::make("123456789"),
             "full_name" => "Ameer Abo Hamra",
             "birth_date" => "2002-10-15",
-            "verificationCode" => "test01"
-
+            "verificationCode" => "test01",
+            "email" => "a@h.com"
         ]);
         Certificate::create([
             "certificate_name" => "IT",

@@ -12,13 +12,14 @@ return new class extends Migration {
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->string("first-name");
-            $table->string("last-name");
+            $table->string("username");
+            $table->string("full_name");
             $table->boolean("isActive")->default(false);
             $table->string("verificationCode");
             $table->string("email");
             $table->string("password");
             $table->unsignedBigInteger("wallet")->default(10000);
+            $table->date("birth_date");
             $table->timestamps();
         });
     }
