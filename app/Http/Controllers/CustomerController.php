@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
 use Validator;
 use Illuminate\Support\Facades\Mail;
@@ -11,6 +12,8 @@ use App\Traits\ResponseTrait;
 use Auth;
 use Hash;
 use App\Mail\testmail;
+use Tymon\JWTAuth\Exceptions\JWTException;
+
 use App\Helpers;
 
 class CustomerController extends Controller
@@ -19,8 +22,10 @@ class CustomerController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
+
             "username" => "required | unique:customers",
             "full_name" => "required | min:6 | max:20",
+
             "email" => "required | email |unique:customers",
             "password" => "required |min:8 | max:20",
             "birth_date" => "required | date "
@@ -29,6 +34,7 @@ class CustomerController extends Controller
             return $this->returnError($validator->errors()->first());
         } else {
             $customer = Customer::create([
+
                 "username" => $request->username,
                 "full_name" => $request->full_name,
                 "email" => $request->email,
@@ -115,5 +121,23 @@ class CustomerController extends Controller
             return $this->returnSuccess("you have verfied your account successfully");
         }
         return $this->returnError("your code is not equal to our code ");
+    }
+
+    public function logout_api(Request $request){
+        $token=$request->bearerToken();
+        try {
+            JWTAuth::parseToken()->authenticate();
+            JWTAuth::setToken($token)->invalidate();
+
+            return response()->json([
+                'message' => 'تم تسجيل الخروج بنجاح.'
+            ], 200);
+        } catch (JWTException $e) {
+            return response()->json([
+                'message' => 'حدث خطأ أثناء تسجيل الخروج.'
+            ], 400);
+        }
+        // JWTAuth::setToken($token)->invalidate();
+        // return $this->returnSuccess("U R logged-out successfully");
     }
 }

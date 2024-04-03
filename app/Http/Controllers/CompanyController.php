@@ -98,7 +98,9 @@ class CompanyController extends Controller
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
+
         $credential = $request->only("name", "password");
+
 
         if (Auth::guard("web-company")->attempt($credential)) {
             $company = Auth::guard("web-company")->user();
