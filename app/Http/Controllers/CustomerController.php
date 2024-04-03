@@ -22,27 +22,36 @@ class CustomerController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "usrename" => "min:3||max:10",
-            "full_name" => "min:3||max:20",
+
+            "username" => "required | unique:customers",
+            "full_name" => "required | min:6 | max:20",
+
             "email" => "required | email |unique:customers",
-            "password" => "required |min:8 | max:20"
+            "password" => "required |min:8 | max:20",
+            "birth_date" => "required | date "
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         } else {
             $customer = Customer::create([
-                "username" => $request["username"],
-                "full_name" => $request["full_name"],
-                "email" => $request["email"],
-                "password" => Hash::make($request["password"]),
+
+                "username" => $request->username,
+                "full_name" => $request->full_name,
+                "email" => $request->email,
+                "password" => Hash::make($request->password),
                 "birth_date" => $request->birth_date,
                 "verificationCode" => makeCode("customer", $request->email),
             ]);
+
             Auth::guard('customer')->login($customer);
             return $this->returnSuccess("your account created successfully");
         }
     }
 
+    public function resend(){
+        makeCode("company",Auth::guard("web-company")->user()->email);
+        return $this->returnSuccess("check your email please :)");
+}
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -99,6 +108,12 @@ class CustomerController extends Controller
 
     public function verify(Request $request)
     {
+        $validator  = Validator::make($request->all() , [
+            "verificationCode" => "required",
+        ]);
+        if($validator->fails()){
+            return $this->returnError($validator->errors()->first());
+        }
         if (Auth::guard("customer")->user()->verificationCode == $request->verificationCode) {
             auth("customer")->user()->update([
                 "isActive" => true,
