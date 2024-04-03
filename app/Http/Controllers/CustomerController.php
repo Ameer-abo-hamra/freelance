@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
 use Validator;
 use Illuminate\Support\Facades\Mail;
@@ -11,6 +12,8 @@ use App\Traits\ResponseTrait;
 use Auth;
 use Hash;
 use App\Mail\testmail;
+use Tymon\JWTAuth\Exceptions\JWTException;
+
 use App\Helpers;
 
 class CustomerController extends Controller
@@ -19,8 +22,8 @@ class CustomerController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "first-name" => "min:3||max:10",
-            "last-name" => "min:3||max:10",
+            "usrename" => "min:3||max:10",
+            "full_name" => "min:3||max:20",
             "email" => "required | email |unique:customers",
             "password" => "required |min:8 | max:20"
         ]);
@@ -28,10 +31,11 @@ class CustomerController extends Controller
             return $this->returnError($validator->errors()->first());
         } else {
             $customer = Customer::create([
-                "first-name" => $request["first-name"],
-                "last-name" => $request["last-name"],
+                "username" => $request["username"],
+                "full_name" => $request["full_name"],
                 "email" => $request["email"],
                 "password" => Hash::make($request["password"]),
+                "birth_date" => $request->birth_date,
                 "verificationCode" => makeCode("customer", $request->email),
             ]);
             Auth::guard('customer')->login($customer);
@@ -102,5 +106,23 @@ class CustomerController extends Controller
             return $this->returnSuccess("you have verfied your account successfully");
         }
         return $this->returnError("your code is not equal to our code ");
+    }
+
+    public function logout_api(Request $request){
+        $token=$request->bearerToken();
+        try {
+            JWTAuth::parseToken()->authenticate();
+            JWTAuth::setToken($token)->invalidate();
+
+            return response()->json([
+                'message' => 'تم تسجيل الخروج بنجاح.'
+            ], 200);
+        } catch (JWTException $e) {
+            return response()->json([
+                'message' => 'حدث خطأ أثناء تسجيل الخروج.'
+            ], 400);
+        }
+        // JWTAuth::setToken($token)->invalidate();
+        // return $this->returnSuccess("U R logged-out successfully");
     }
 }
