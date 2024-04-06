@@ -15,5 +15,9 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::post("register",[JobSeekerController::class,"register"]);
-Route::post("login",[JobSeekerController::class,"login_api"]);
+    Route::post("register",[JobSeekerController::class,"register"]);
+    Route::post("login",[JobSeekerController::class,"login_api"]);
+Route::group(["middleware" => "check:api-job_seeker"],function(){
+    Route::post("logout",[JobSeekerController::class,"logout_api"]);
+
+});

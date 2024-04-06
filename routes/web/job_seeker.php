@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\JobSeekerController;
 use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,6 +18,12 @@ route::get("csrf", function () {
     return csrf_token();
 });
 
-Route::post("register",[JobSeekerController::class,"register"]);
-Route::post("login",[JobSeekerController::class,"login"]);
-Route::post("progress",[JobSeekerController::class,"progress"]);
+Route::post("register", [JobSeekerController::class, "register"]);
+Route::post("login", [JobSeekerController::class, "login"]);
+Route::group([
+    "middleware" => "check:web-job_seeker"],
+    function () {
+        Route::post("progress", [JobSeekerController::class, "progress"]);
+        Route::get("logout", [JobSeekerController::class, "logout"]);
+    }
+);

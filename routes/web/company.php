@@ -30,5 +30,6 @@ Route::get("types/{category}", [CompanyController::class, "getTypesSkills"]);
 
 Route::get("skills/{types}", [CompanyController::class, "getSkillName"]);
 Route::post("addoffer" , [CompanyController::class , "addOffer"]);
+Route::get("logout",[CompanyController::class,"logout"]);
     });
 
