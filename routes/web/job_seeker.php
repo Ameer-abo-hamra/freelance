@@ -19,11 +19,16 @@ route::get("csrf", function () {
 });
 
 Route::post("register", [JobSeekerController::class, "register"]);
+
 Route::post("login", [JobSeekerController::class, "login"]);
-Route::group([
-    "middleware" => "check:web-job_seeker"],
-    function () {
-        Route::post("progress", [JobSeekerController::class, "progress"]);
-        Route::get("logout", [JobSeekerController::class, "logout"]);
-    }
-);
+
+Route::group(["middleware" => "check:web-job_seeker"], function () {
+
+    Route::post("verify", [JobSeekerController::Class, "verify"])->name("verify");
+
+    Route::get("resend-verify", [JobSeekerController::class, "resend"]);
+
+    Route::get("logout", [JobSeekerController::class, "logout"]);
+
+    Route::post("progress", [JobSeekerController::class, "progress"]);
+});

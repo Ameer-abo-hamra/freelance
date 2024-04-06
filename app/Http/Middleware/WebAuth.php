@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Traits\ResponseTrait;
 use Auth;
 
-class CustomerAuth
+class WebAuth
 {
     use ResponseTrait;
 

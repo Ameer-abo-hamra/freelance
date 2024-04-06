@@ -45,6 +45,31 @@ class CompanyController extends Controller
         return $this->returnSuccess("your account created successfully");
     }
 
+    public function verify(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "verificationCode" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+        if (Auth::guard("web-company")->user()->verificationCode == $request->verificationCode) {
+            auth("web-company")->user()->update([
+                "isActive" => true,
+            ]);
+            return $this->returnSuccess("you have verfied your account successfully");
+        }
+        return $this->returnError("your code is not equal to our code ");
+    }
+    public function resend()
+    {
+        $user = Auth::guard("web-company")->user();
+        $user->update([
+            "verificationCode" => makeCode("company", $user->email)
+        ]);
+        return $this->returnSuccess("check your email please :)");
+    }
+
     public function login_api(Request $request)
     {
         $validator = validator::make($request->all(), [
@@ -84,7 +109,9 @@ class CompanyController extends Controller
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        $credential = $request->only("name","password");
+
+        $credential = $request->only("name", "password");
+
 
         if (Auth::guard("web-company")->attempt($credential)) {
             $company = Auth::guard("web-company")->user();
@@ -93,7 +120,11 @@ class CompanyController extends Controller
         return $this->returnError("your data is invalid .. enter it again");
     }
 
-
+    public function logout()
+    {
+        Auth::guard("web-company")->logout();
+        return $this->returnSuccess("you are logged-out successfully");
+    }
     public function getCategory()
     {
         $categories = Skill::distinct()->get("category");
