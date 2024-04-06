@@ -16,4 +16,7 @@ use App\Http\Controllers\CustomerController;
 */
 Route::post("register",[CustomerController::class,"register"]);
 Route::post("login",[CustomerController::class,"login_api"]);
-Route::post("logout",[CustomerController::class,"logout_api"]);
+Route::group(["middleware"=>"checkApi:api-customer"] , function (){
+    Route::get("logout", [CustomerController::class , "logout_api"]);
+});
+
