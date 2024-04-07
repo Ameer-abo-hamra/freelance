@@ -93,8 +93,6 @@ class CustomerController extends Controller
 
     public function logout_api(Request $request)
     {
-    public function logout_api(Request $request)
-    {
 
         try {
             auth("api-customer")->logout();
