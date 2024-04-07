@@ -7,8 +7,9 @@ use App\Traits\ResponseTrait;
 use Validator;
 use Illuminate\Http\Request;
 use Auth;
-use Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Hash;
 
 
 class JobSeekerController extends Controller
@@ -83,17 +84,17 @@ class JobSeekerController extends Controller
         Auth::guard("web-job_seeker")->logout();
         return $this->returnSuccess("you are logged-out successfully");
     }
-    public function logout_api(Request $request)
-    {
+    // public function logout_api(Request $request)
+    // {
 
-        try {
-            auth("api-job_seeker")->logout();
-            return $this->returnSuccess("you are logged-out successfully");
-        } catch (JWTException $e) {
-            return $this->returnError("there were smth wrong");
-        }
+    //     try {
+    //         auth("api-job_seeker")->logout();
+    //         return $t9his->returnSuccess("you are logged-out successfully");
+    //     } catch (JWTException $e) {
+    //         return $this->returnError("there were smth wrong");
+    //     }
 
-    }
+    // }
     public function login_api(Request $request)
     {
         $validator = validator::make($request->all(), [
@@ -120,5 +121,18 @@ class JobSeekerController extends Controller
         $job_seeker->offers()->attach($request->offer_id);
     }
 
+    public function logout_api(Request $request){
+        $token=$request->bearerToken();
+        try {
+            JWTAuth::setToken($token)->invalidate();
+            return $this->returnSuccess("U R logged-out successfully");
+        } catch (JWTException $e) {
+            return $this->returnError("there were smth wrong");
+        }
+    }
 
+    // public function log_out(){
+    //     Auth::guard("web-job_seeker")->logout();
+    //     return $this->returnSuccess("U R logged-out successfully");
+    // }
 }

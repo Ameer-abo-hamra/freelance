@@ -11,6 +11,7 @@ use Auth;
 use Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\Skill;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 use Illuminate\Http\Request;
 
@@ -90,6 +91,16 @@ class CompanyController extends Controller
         return $this->returnError("your data is invalid .. enter it again");
     }
 
+    // public function logout_api(Request $request)
+    // {
+    //     $token = $request->bearerToken();
+    //     try {
+    //         JWTAuth::setToken($token)->invalidate();
+    //         return $this->returnSuccess("U R logged-out successfully");
+    //     } catch (JWTException $e) {
+    //         return $this->returnError("there were smth wrong");
+    //     }
+    // }
     public function login(Request $request)
     {
         $validator = validator::make($request->all(), [
@@ -187,5 +198,11 @@ class CompanyController extends Controller
             return $this->returnError("you have to enter skills");
         }
         return $this->returnSuccess("your offer is saved");
+    }
+
+    public function log_out()
+    {
+        Auth::guard("web-company")->logout();
+        return $this->returnSuccess("U R logged-out successfully");
     }
 }

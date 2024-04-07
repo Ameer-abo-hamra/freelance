@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Service;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
 use Validator;
@@ -22,37 +23,27 @@ class CustomerController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-
-            "username" => "required | unique:customers",
-            "full_name" => "required | min:6 | max:20",
-
+            "usrename" => "min:3||max:10",
+            "full_name" => "min:3||max:20",
             "email" => "required | email |unique:customers",
-            "password" => "required |min:8 | max:20",
-            "birth_date" => "required | date "
+            "password" => "required |min:8 | max:20"
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         } else {
             $customer = Customer::create([
-
-                "username" => $request->username,
-                "full_name" => $request->full_name,
-                "email" => $request->email,
-                "password" => Hash::make($request->password),
+                "username" => $request["username"],
+                "full_name" => $request["full_name"],
+                "email" => $request["email"],
+                "password" => Hash::make($request["password"]),
                 "birth_date" => $request->birth_date,
                 "verificationCode" => makeCode("customer", $request->email),
             ]);
-
             Auth::guard('customer')->login($customer);
             return $this->returnSuccess("your account created successfully");
         }
     }
 
-    public function resend()
-    {
-        makeCode("company", Auth::guard("web-company")->user()->email);
-        return $this->returnSuccess("check your email please :)");
-    }
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -92,26 +83,25 @@ class CustomerController extends Controller
         // return $this->returnData("","",Auth::guard("api-customer")->user());
 
         if ($token = Auth::guard("api-customer")->attempt($credential)) {
-            $customer = Auth::guard("api-customer")->user();
-            $customer->token = $token;
-            // Auth::guard('api-customer')->login($customer);
-            return $this->returnData("U R logged-in successfully", "customer data", $customer);
+
+            // $token = JWTAuth::fromUser($credential);
+            return $this->returnData("U R logged-in successfully", "customer data", $token);
         }
         return $this->returnError("your data is invalid .. enter it again");
     }
 
 
-    public function logout_api(Request $request)
-    {
+    // public function logout_api(Request $request)
+    // {
 
-        try {
-            auth("api-customer")->logout();
-            return $this->returnSuccess("you are logged-out successfully");
-        } catch (JWTException $e) {
-            return $this->returnError("there were smth wrong");
-        }
+    //     try {
+    //         auth("api-customer")->logout();
+    //         return $this->returnSuccess("you are logged-out successfully");
+    //     } catch (JWTException $e) {
+    //         return $this->returnError("there were smth wrong");
+    //     }
 
-    }
+    // }
 
 
     public function logout()
@@ -122,12 +112,6 @@ class CustomerController extends Controller
 
     public function verify(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            "verificationCode" => "required",
-        ]);
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
         if (Auth::guard("customer")->user()->verificationCode == $request->verificationCode) {
             auth("customer")->user()->update([
                 "isActive" => true,
@@ -137,5 +121,17 @@ class CustomerController extends Controller
         return $this->returnError("your code is not equal to our code ");
     }
 
+    public function logout_api(Request $request)
+    {
+        $token = $request->bearerToken();
+        // return $this->returnData("token" , $token);
+        try {
+            JWTAuth::setToken($token)->invalidate();
 
+            return $this->returnSuccess("you are logged-out successfully");
+        } catch (JWTException $e) {
+            return $this->returnError("there were smth wrong");
+        }
+
+    }
 }
