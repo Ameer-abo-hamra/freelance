@@ -17,6 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::post("register",[CompanyController::class,"register"]);
 Route::post("login",[CompanyController::class,"login_api"]);
 
-Route::group(["middleware"=>"checkApi:web-company"] , function (){
+Route::group(["middleware"=>"check:api-company"] , function (){
     Route::get("logout", [CompanyController::class , "logout_api"]);
 });

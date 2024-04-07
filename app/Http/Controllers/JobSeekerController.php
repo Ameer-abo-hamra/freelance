@@ -8,6 +8,7 @@ use Validator;
 use Illuminate\Http\Request;
 use Auth;
 use Hash;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 
 class JobSeekerController extends Controller
@@ -81,6 +82,17 @@ class JobSeekerController extends Controller
     {
         Auth::guard("web-job_seeker")->logout();
         return $this->returnSuccess("you are logged-out successfully");
+    }
+    public function logout_api(Request $request)
+    {
+
+        try {
+            auth("api-job_seeker")->logout();
+            return $this->returnSuccess("you are logged-out successfully");
+        } catch (JWTException $e) {
+            return $this->returnError("there were smth wrong");
+        }
+
     }
     public function login_api(Request $request)
     {
