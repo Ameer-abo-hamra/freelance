@@ -35,6 +35,8 @@ Route::group(["middleware" => ["check:customer"]], function () {
 
     Route::get("resend-verify", [CustomerController::class, "resend"]);
 
+    Route::post("service",[CustomerController::class,"addService"]);
+
     Route::group(["middleware" => "active:customer"], function () {
 
     });
