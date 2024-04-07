@@ -84,6 +84,17 @@ class JobSeekerController extends Controller
         Auth::guard("web-job_seeker")->logout();
         return $this->returnSuccess("you are logged-out successfully");
     }
+    // public function logout_api(Request $request)
+    // {
+
+    //     try {
+    //         auth("api-job_seeker")->logout();
+    //         return $t9his->returnSuccess("you are logged-out successfully");
+    //     } catch (JWTException $e) {
+    //         return $this->returnError("there were smth wrong");
+    //     }
+
+    // }
     public function login_api(Request $request)
     {
         $validator = validator::make($request->all(), [
@@ -120,8 +131,8 @@ class JobSeekerController extends Controller
         }
     }
 
-    public function logout(){
-        Auth::guard("web-job_seeker")->logout();
-        return $this->returnSuccess("U R logged-out successfully");
-    }
+    // public function log_out(){
+    //     Auth::guard("web-job_seeker")->logout();
+    //     return $this->returnSuccess("U R logged-out successfully");
+    // }
 }
