@@ -110,6 +110,8 @@ class CustomerController extends Controller
 
     public function logout_api(Request $request){
         $token=$request->bearerToken();
+        // $token=$request->header("Authoriaztion");
+        // return $token;
         try {
             JWTAuth::setToken($token)->invalidate();
             return $this->returnSuccess("U R logged-out successfully");

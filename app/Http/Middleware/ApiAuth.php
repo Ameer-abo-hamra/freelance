@@ -25,16 +25,21 @@ class ApiAuth
             // $token = $request->header('Authorization');
             // $token = explode(' ', $token)[1];
             $token = $request->bearerToken();
-            echo $token ."\n";
+            // echo $token ."\n";
             // echo JWTAuth::parseToken($token)->authenticate();
             // $user = Auth::guard($guard)->user();
             // JWTAuth::setToken(Auth::guard($guard)->user());
             // $user = JWTAuth::parseToken()->authenticate();
 
-            if (!JWTAuth::setToken($token)->authenticate()) {
-                return $this->returnError("Unauthorized",401);
+            // if (!JWTAuth::ParseToken()->authenticate()) {
+            //     return $this->returnError("Unauthorized",401);
+            // }
+            try{
+            JWTAuth::ParseToken($token)->authenticate();
             }
-
+            catch(\Exception $e){
+                return $this->returnError("unauthorized",401);
+            }
             return $next($request);
     }
 }
