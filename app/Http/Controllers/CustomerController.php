@@ -92,15 +92,26 @@ class CustomerController extends Controller
         // return $this->returnData("","",Auth::guard("api-customer")->user());
 
         if ($token = Auth::guard("api-customer")->attempt($credential)) {
-
-            // $token = JWTAuth::fromUser($credential);
-            return $this->returnData("U R logged-in successfully", "customer data", $token);
+            $customer = Auth::guard("api-customer")->user();
+            $customer->token = $token;
+            // Auth::guard('api-customer')->login($customer);
+            return $this->returnData("U R logged-in successfully", "customer data", $customer);
         }
         return $this->returnError("your data is invalid .. enter it again");
     }
 
 
+    public function logout_api(Request $request)
+    {
 
+        try {
+            auth("api-customer")->logout();
+            return $this->returnSuccess("you are logged-out successfully");
+        } catch (JWTException $e) {
+            return $this->returnError("there were smth wrong");
+        }
+
+    }
 
 
     public function logout()
@@ -126,17 +137,5 @@ class CustomerController extends Controller
         return $this->returnError("your code is not equal to our code ");
     }
 
-    public function logout_api(Request $request)
-    {
-        $token = $request->bearerToken();
-        // return $this->returnData("token" , $token);
-        try {
-            JWTAuth::setToken($token)->invalidate();
 
-            return $this->returnSuccess("you are logged-out successfully");
-        } catch (JWTException $e) {
-            return $this->returnError("there were smth wrong");
-        }
-
-    }
 }

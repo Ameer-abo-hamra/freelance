@@ -9,6 +9,7 @@ use PHPUnit\Framework\Constraint\IsEmpty;
 use Validator;
 use Auth;
 use Hash;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\Skill;
 
 use Illuminate\Http\Request;
@@ -114,6 +115,19 @@ class CompanyController extends Controller
         Auth::guard("web-company")->logout();
         return $this->returnSuccess("you are logged-out successfully");
     }
+    public function logout_api(Request $request)
+    {
+
+        try {
+            auth("api-company")->logout();
+            return $this->returnSuccess("you are logged-out successfully");
+        } catch (JWTException $e) {
+            return $this->returnError("there were smth wrong");
+        }
+
+    }
+
+
     public function getCategory()
     {
         $categories = Skill::distinct()->get("category");

@@ -14,9 +14,13 @@ use App\Http\Controllers\CustomerController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::post("register",[CustomerController::class,"register"]);
-Route::post("login",[CustomerController::class,"login_api"]);
-Route::group(["middleware"=>"checkApi:api-customer"] , function (){
-    Route::get("logout", [CustomerController::class , "logout_api"]);
+Route::post("register", [CustomerController::class, "register"]);
+
+Route::post("login", [CustomerController::class, "login_api"]);
+
+Route::group(["middleware" => "check:api-customer"], function () {
+
+    Route::post("logout", [CustomerController::class, "logout_api"]);
+
 });
 
