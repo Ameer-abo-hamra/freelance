@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Service;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
 use Validator;
@@ -108,8 +109,9 @@ class CustomerController extends Controller
         return $this->returnError("your code is not equal to our code ");
     }
 
-    public function logout_api(Request $request){
-        $token=$request->bearerToken();
+    public function logout_api(Request $request)
+    {
+        $token = $request->bearerToken();
         // $token=$request->header("Authoriaztion");
         // return $token;
         try {
@@ -118,5 +120,28 @@ class CustomerController extends Controller
         } catch (JWTException $e) {
             return $this->returnError("there were smth wrong");
         }
+    }
+
+    public function addService(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "description" => "required"
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError("where is the description???");
+        }
+        $service = Service::create([
+            "description" => $request->description,
+            "customer_id" => Auth::guard("customer")->user()->id
+        ]);
+        $skill_ids = $request->skill_id;
+        if (!empty($skill_ids)) {
+            foreach ($skill_ids as $s) {
+                $service->skills()->attach($s);
+            }
+        } else {
+            return $this->returnSuccess("you can enter some skills if you want");
+        }
+        return $this->returnSuccess("your service is added successfully , wait to find anyone to solve it");
     }
 }

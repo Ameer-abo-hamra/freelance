@@ -29,7 +29,7 @@ route::post("login", [CompanyController::class, "login"]);
 
 Route::group(["middleware" => "check:web-company"], function () {
 
-    Route::get("logout" , [CompanyController::class , "logout"]);
+    Route::get("logout" , [CompanyController::class , "log_out"]);
 
     Route::post("verify", [CompanyController::Class, "verify"])->name("verify");
 

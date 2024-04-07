@@ -91,8 +91,9 @@ class CompanyController extends Controller
         return $this->returnError("your data is invalid .. enter it again");
     }
 
-    public function logout_api(Request $request){
-        $token=$request->bearerToken();
+    public function logout_api(Request $request)
+    {
+        $token = $request->bearerToken();
         try {
             JWTAuth::setToken($token)->invalidate();
             return $this->returnSuccess("U R logged-out successfully");
@@ -186,7 +187,8 @@ class CompanyController extends Controller
         return $this->returnSuccess("your offer is saved");
     }
 
-    public function logout(){
+    public function log_out()
+    {
         Auth::guard("web-company")->logout();
         return $this->returnSuccess("U R logged-out successfully");
     }
