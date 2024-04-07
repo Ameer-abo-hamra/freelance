@@ -93,6 +93,8 @@ class CustomerController extends Controller
 
     public function logout_api(Request $request)
     {
+    public function logout_api(Request $request)
+    {
 
         try {
             auth("api-customer")->logout();
@@ -121,17 +123,26 @@ class CustomerController extends Controller
         return $this->returnError("your code is not equal to our code ");
     }
 
-    // public function logout_api(Request $request)
-    // {
-    //     $token = $request->bearerToken();
-    //     // return $this->returnData("token" , $token);
-    //     try {
-    //         JWTAuth::setToken($token)->invalidate();
-
-    //         return $this->returnSuccess("you are logged-out successfully");
-    //     } catch (JWTException $e) {
-    //         return $this->returnError("there were smth wrong");
-    //     }
-
-    // }
+    public function addService(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "description" => "required"
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError("where is the description???");
+        }
+        $service = Service::create([
+            "description" => $request->description,
+            "customer_id" => Auth::guard("customer")->user()->id
+        ]);
+        $skill_ids = $request->skill_id;
+        if (!empty($skill_ids)) {
+            foreach ($skill_ids as $s) {
+                $service->skills()->attach($s);
+            }
+        } else {
+            return $this->returnSuccess("you can enter some skills if you want");
+        }
+        return $this->returnSuccess("your service is added successfully , wait to find anyone to solve it");
+    }
 }
