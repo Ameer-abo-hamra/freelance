@@ -121,6 +121,10 @@ class JobSeekerController extends Controller
         $job_seeker->offers()->attach($request->offer_id);
     }
 
+    public function post(Request $request)
+    {
+
+    }
 
 
 }
