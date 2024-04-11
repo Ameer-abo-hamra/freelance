@@ -75,7 +75,6 @@ class CompanyController extends Controller
         $validator = validator::make($request->all(), [
             "name" => "required| max:15",
             "password" => "required",
-            "employee_number" => "required |integer | min:10 | max:500000",
         ]);
 
         if ($validator->fails()) {
