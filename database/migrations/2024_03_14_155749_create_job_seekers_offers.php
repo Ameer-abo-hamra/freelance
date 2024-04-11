@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId("job_seeker_id")->references("id")->on("job_seekers");
             $table->foreignId("offer_id")->references("id")->on("offers");
+
             $table->timestamps();
         });
     }

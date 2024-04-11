@@ -3,7 +3,7 @@ use App\Mail\Customer;
 use App\Mail\JobseekerMail;
 use App\Mail\Company;
 use Illuminate\Support\Str;
-
+use App\Traits\ResponseTrait;
 function makeCode($type, $email)
 {
     $code = Str::random(6);
@@ -16,7 +16,8 @@ function makeCode($type, $email)
         return $code;
 
     } else {
-        Mail::to($email)->send(new Company($code));
+        Mail::to($email)->send(new JobseekerMail($code));
         return $code;
     }
 }
+

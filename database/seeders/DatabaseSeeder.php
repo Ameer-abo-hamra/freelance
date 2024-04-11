@@ -35,14 +35,14 @@ class DatabaseSeeder extends Seeder
             "password" => Hash::make("123456789"),
             "establishment_date" => "2024-03-19",
             "employee_number" => 30,
-            "verificationCode" => "test01"
+            "verificationCode" => "test01",
+            "email" => "aa@a.com0"
         ]);
 
         Comment::create([
             "title" => "title",
             "body" => "body",
             "company_id" => 1,
-
             "post_id" => 1
 
         ]);
@@ -51,6 +51,7 @@ class DatabaseSeeder extends Seeder
             "company_id" => 1
         ]);
         Offer::create([
+            "author" => "test",
             "title" => "offer title",
             "body" => "offer body",
             "company_id" => 1,
@@ -67,8 +68,8 @@ class DatabaseSeeder extends Seeder
             "password" => Hash::make("123456789"),
             "full_name" => "Ameer Abo Hamra",
             "birth_date" => "2002-10-15",
-            "verificationCode" => "test01"
-
+            "verificationCode" => "test01",
+            "email" => "a@h.com"
         ]);
         Certificate::create([
             "certificate_name" => "IT",
@@ -122,9 +123,28 @@ class DatabaseSeeder extends Seeder
         }
 
         $financial_analyst = ["exel"];
-
-        $marketing_cordenator=["marketing_principles","digital_marketing"];
-
-        $buisness_development_manager =["exel","good_writer"];
+        foreach ($financial_analyst as $f) {
+            Skill::create([
+                "category" => "financial",
+                "type" => "financial_analyst",
+                "skill_name" => $f
+            ]);
+        }
+        $marketing_cordenator = ["marketing_principles", "digital_marketing"];
+        foreach ($marketing_cordenator as $m) {
+            Skill::create([
+                "category" => "financial",
+                "type" => "marketing_cordenator",
+                "skill_name" => $m
+            ]);
+        }
+        $buisness_development_manager = ["exel", "good_writer"];
+        foreach ($buisness_development_manager as $b) {
+            Skill::create([
+                "category" => "financial",
+                "type" => "buisness_development_manager",
+                "skill_name" => $b
+            ]);
+        }
     }
 }

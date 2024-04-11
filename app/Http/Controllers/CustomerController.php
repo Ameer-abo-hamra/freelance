@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Service;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
 use Validator;
 use Illuminate\Support\Facades\Mail;
@@ -11,6 +13,8 @@ use App\Traits\ResponseTrait;
 use Auth;
 use Hash;
 use App\Mail\testmail;
+use Tymon\JWTAuth\Exceptions\JWTException;
+
 use App\Helpers;
 
 class CustomerController extends Controller
@@ -19,8 +23,8 @@ class CustomerController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "first-name" => "min:3||max:10",
-            "last-name" => "min:3||max:10",
+            "usrename" => "min:3||max:10",
+            "full_name" => "min:3||max:20",
             "email" => "required | email |unique:customers",
             "password" => "required |min:8 | max:20"
         ]);
@@ -28,10 +32,11 @@ class CustomerController extends Controller
             return $this->returnError($validator->errors()->first());
         } else {
             $customer = Customer::create([
-                "first-name" => $request["first-name"],
-                "last-name" => $request["last-name"],
-                "email" => $request["email"],
-                "password" => Hash::make($request["password"]),
+                "username" => $request->username,
+                "full_name" => $request->full_name,
+                "email" => $request->email,
+                "password" => Hash::make($request->password),
+                "birth_date" => $request->birth_date,
                 "verificationCode" => makeCode("customer", $request->email),
             ]);
             Auth::guard('customer')->login($customer);
@@ -74,17 +79,29 @@ class CustomerController extends Controller
             return $this->returnError($validator->errors()->first());
         }
         $credential = $request->only("email", "password");
-        $token = Auth::guard("api-customer")->attempt($credential);
-        if ($token) {
-            $customer = Auth::guard("api-customer")->user();
-            $customer->api = $token;
-            return $this->returnData("U R logged-in successfully", "customer data", $customer);
+
+        // return $this->returnData("","",Auth::guard("api-customer")->user());
+
+        if ($token = Auth::guard("api-customer")->attempt($credential)) {
+
+            // $token = JWTAuth::fromUser($credential);
+            return $this->returnData("U R logged-in successfully", "customer data", $token);
         }
         return $this->returnError("your data is invalid .. enter it again");
     }
 
 
+    public function logout_api(Request $request)
+    {
 
+        try {
+            auth("api-customer")->logout();
+            return $this->returnSuccess("you are logged-out successfully");
+        } catch (JWTException $e) {
+            return $this->returnError("there were smth wrong");
+        }
+
+    }
 
 
     public function logout()
@@ -103,4 +120,55 @@ class CustomerController extends Controller
         }
         return $this->returnError("your code is not equal to our code ");
     }
+
+    public function addService(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "description" => "required",
+            "skill_id" => "array||required"
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError("where is the description???");
+        }
+        $service = Service::create([
+            "description" => $request->description,
+            "customer_id" => Auth::guard("customer")->user()->id
+            // "customer_id" => $request->customer_id
+        ]);
+        $skill_ids = $request->skill_id;
+        if (!empty($skill_ids)) {
+            foreach ($skill_ids as $s) {
+                $service->skills()->attach($s);
+            }
+        } else {
+            return $this->returnError("you have to enter some skills");
+        }
+        return $this->returnSuccess("your service is added successfully , wait to find anyone to solve it");
+    }
+
+    public function addService_api(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "description" => "required",
+            "skill_id" => "array||required"
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError("where is the description???");
+        }
+        $service = Service::create([
+            "description" => $request->description,
+            "customer_id" => Auth::guard("api-customer")->user()->id
+            // "customer_id" => $request->customer_id
+        ]);
+        $skill_ids = $request->skill_id;
+        if (!empty($skill_ids)) {
+            foreach ($skill_ids as $s) {
+                $service->skills()->attach($s);
+            }
+        } else {
+            return $this->returnError("you have to enter some skills");
+        }
+        return $this->returnSuccess("your service is added successfully , wait to find anyone to solve it");
+    }
 }
+

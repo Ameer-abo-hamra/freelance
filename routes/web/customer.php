@@ -25,22 +25,19 @@ Route::get("csrf", function () {
 });
 
 Route::post("register", [CustomerController::class, "register"])->name("register");
-Route::get("register", function () {
-    return view("register");
-});
-route::get("login", function () {
-    return view("login");
-});
 route::post("login", [CustomerController::class, "login"])->name("login");
 
 Route::group(["middleware" => ["check:customer"]], function () {
 
     Route::get("logout", [CustomerController::class, "logout"]);
+
     Route::post("verify", [CustomerController::Class, "verify"])->name("verify");
-    Route::get("test", function () {
-        return view("verify");
-    });
+
+    Route::get("resend-verify", [CustomerController::class, "resend"]);
+
+    Route::post("service",[CustomerController::class,"addService"]);
+
     Route::group(["middleware" => "active:customer"], function () {
-      
+
     });
 });

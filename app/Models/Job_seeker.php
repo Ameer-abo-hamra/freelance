@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 class Job_seeker extends Authenticatable implements JWTSubject
 {
     use HasFactory;
-    protected $fillable = ["username", "full_name", "birth_date", "password","verificationCode" ,"isActive"];
-    protected $hidden = ["created_at","updated_at"];
+    protected $fillable = ["username", "full_name", "birth_date", "password", "email", "verificationCode", "isActive"];
+    protected $hidden = ["created_at", "updated_at"];
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -63,14 +63,17 @@ class Job_seeker extends Authenticatable implements JWTSubject
 
 
 
-    public function postLikes(){
-        return $this->hasMany(Post_like::class , "job_seeker_id");
+    public function postLikes()
+    {
+        return $this->hasMany(Post_like::class, "job_seeker_id");
     }
-    public function commentLikes(){
-        return $this->hasMany(Comment_like::class , "job_seeker_id");
+    public function commentLikes()
+    {
+        return $this->hasMany(Comment_like::class, "job_seeker_id");
     }
 
-    public function portfolio(){
-        return $this->hasMany(Portfolio::class,"job_seeker_id");
+    public function portfolio()
+    {
+        return $this->hasMany(Portfolio::class, "job_seeker_id");
     }
 }
