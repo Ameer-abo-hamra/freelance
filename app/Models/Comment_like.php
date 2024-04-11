@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Comment_like extends Model
 {
     use HasFactory;
-// for testing confilcts from ameer
+    // for testing confilcts from ameer
 
     public function company()
     {
