@@ -39,9 +39,14 @@ class CompanyController extends Controller
             "establishment_date" => $request->establishment_date,
             "employee_number" => $request->employee_number,
             "email" => $request->email,
-            "verificationCode" => makeCode("company", $request->email),
+            // "verificationCode" => makeCode("company", $request->email),
         ]);
         Auth::guard("web-company")->login($company);
+        $credential = $request->only("name", "password");
+        Auth::guard("api-company")->attempt($credential);
+        Company::where("name", $request->name)->update([
+            "verificationCode" => makeCode("company", $request->email),
+        ]);
         return $this->returnSuccess("your account created successfully");
     }
 

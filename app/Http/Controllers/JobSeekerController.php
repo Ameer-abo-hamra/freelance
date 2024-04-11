@@ -35,26 +35,21 @@ class JobSeekerController extends Controller
             "email" => $request->email,
             "password" => Hash::make($request->password),
             "birth_date" => $request->birth_date,
+        ]);
+        $credential = $request->only("username", "password");
+        Auth::guard("api-job_seeker")->attempt($credential);
+        Auth::guard("web-job_seeker")->login($job_seeker);
+        Job_seeker::where("username", $request->username)->update([
             "verificationCode" => makeCode("job_seeker", $request->email),
         ]);
-        Auth::guard("web-job_seeker")->login($job_seeker);
-        return $this->returnSuccess("your account created successfully");
+        // Auth::guard("api-job_seeker")->login($job_seeker);
+        // return $this->returnSuccess("your account created successfully");
+        return $this->returnData("", "", Auth::guard('api-job_seeker')->user()->username);
     }
-    public function verify(Request $request)
+    public function verifyًWeb(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            "verificationCode" => "required",
-        ]);
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-        if (Auth::guard("web-job_seeker")->user()->verificationCode == $request->verificationCode) {
-            auth("web-job_seeker")->user()->update([
-                "isActive" => true,
-            ]);
-            return $this->returnSuccess("you have verfied your account successfully");
-        }
-        return $this->returnError("your code is not equal to our code ");
+
+        return verify($request, "web-job_seeker");
     }
 
     public function resend()
@@ -88,8 +83,10 @@ class JobSeekerController extends Controller
     {
 
         try {
-            auth("api-job_seeker")->logout();
-            return $this->returnSuccess("you are logged-out successfully");
+            $user = auth("api-job_seeker")->user();
+            // auth("api-job_seeker")->logout();
+            // return $this->returnSuccess("you are logged-out successfully");
+            return $this->returnData("", "user", $user);
         } catch (JWTException $e) {
             return $this->returnError("there were smth wrong");
         }

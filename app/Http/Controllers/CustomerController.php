@@ -40,6 +40,11 @@ class CustomerController extends Controller
                 "verificationCode" => makeCode("customer", $request->email),
             ]);
             Auth::guard('customer')->login($customer);
+            $credential = $request->only("username", "password");
+            Auth::guard("api-customer")->attempt($credential);
+            Customer::where("username", $request->username)->update([
+                "verificationCode" => makeCode("customer", $request->email),
+            ]);
             return $this->returnSuccess("your account created successfully");
         }
     }
