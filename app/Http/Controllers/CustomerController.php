@@ -40,6 +40,11 @@ class CustomerController extends Controller
                 "verificationCode" => makeCode("customer", $request->email),
             ]);
             Auth::guard('customer')->login($customer);
+            $credential = $request->only("username", "password");
+            Auth::guard("api-customer")->attempt($credential);
+            Customer::where("username", $request->username)->update([
+                "verificationCode" => makeCode("customer", $request->email),
+            ]);
             return $this->returnSuccess("your account created successfully");
         }
     }
@@ -91,7 +96,7 @@ class CustomerController extends Controller
     }
 
 
-    public function logout_api(Request $request)
+    public function logout_api()
     {
 
         try {
@@ -121,6 +126,11 @@ class CustomerController extends Controller
         return $this->returnError("your code is not equal to our code ");
     }
 
+    public function apiVerify(Request $request)
+    {
+        return verify($request, "api-customer");
+
+    }
     public function addService(Request $request)
     {
         $validator = Validator::make($request->all(), [

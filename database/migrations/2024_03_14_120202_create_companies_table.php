@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string("password");
             $table->string("email")->unique();
             $table->boolean("isActive")->default(false);
-            $table->string("verificationCode");
+            $table->string("verificationCode")->nullable();
             $table->date("establishment_date");
             $table->unsignedInteger("employee_number");
             $table->timestamps();

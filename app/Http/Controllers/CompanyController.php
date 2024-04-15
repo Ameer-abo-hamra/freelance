@@ -26,8 +26,6 @@ class CompanyController extends Controller
             "employee_number" => "required |integer | min:10 | max:500000",
             "establishment_date" => "required | date",
             "email" => "required | unique:companies| email",
-
-
         ]);
 
         if ($validator->fails()) {
@@ -39,9 +37,14 @@ class CompanyController extends Controller
             "establishment_date" => $request->establishment_date,
             "employee_number" => $request->employee_number,
             "email" => $request->email,
-            "verificationCode" => makeCode("company", $request->email),
+            // "verificationCode" => makeCode("company", $request->email),
         ]);
         Auth::guard("web-company")->login($company);
+        $credential = $request->only("name", "password");
+        Auth::guard("api-company")->attempt($credential);
+        Company::where("name", $request->name)->update([
+            "verificationCode" => makeCode("company", $request->email),
+        ]);
         return $this->returnSuccess("your account created successfully");
     }
 
@@ -60,6 +63,11 @@ class CompanyController extends Controller
             return $this->returnSuccess("you have verfied your account successfully");
         }
         return $this->returnError("your code is not equal to our code ");
+    }
+    public function apiVerify(Request $request)
+    {
+        return verify($request, "api-company");
+
     }
     public function resend()
     {
