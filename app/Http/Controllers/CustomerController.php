@@ -117,13 +117,7 @@ class CustomerController extends Controller
 
     public function verify(Request $request)
     {
-        if (Auth::guard("customer")->user()->verificationCode == $request->verificationCode) {
-            auth("customer")->user()->update([
-                "isActive" => true,
-            ]);
-            return $this->returnSuccess("you have verfied your account successfully");
-        }
-        return $this->returnError("your code is not equal to our code ");
+        return verify($request, "customer");
     }
 
     public function apiVerify(Request $request)

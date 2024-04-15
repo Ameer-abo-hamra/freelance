@@ -50,19 +50,7 @@ class CompanyController extends Controller
 
     public function verify(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            "verificationCode" => "required",
-        ]);
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-        if (Auth::guard("web-company")->user()->verificationCode == $request->verificationCode) {
-            auth("web-company")->user()->update([
-                "isActive" => true,
-            ]);
-            return $this->returnSuccess("you have verfied your account successfully");
-        }
-        return $this->returnError("your code is not equal to our code ");
+       return verify($request , "web-company");
     }
     public function apiVerify(Request $request)
     {
