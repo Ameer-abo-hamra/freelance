@@ -96,7 +96,7 @@ class CustomerController extends Controller
     }
 
 
-    public function logout_api(Request $request)
+    public function logout_api()
     {
 
         try {
@@ -126,6 +126,11 @@ class CustomerController extends Controller
         return $this->returnError("your code is not equal to our code ");
     }
 
+    public function apiVerify(Request $request)
+    {
+        return verify($request, "api-customer");
+
+    }
     public function addService(Request $request)
     {
         $validator = Validator::make($request->all(), [

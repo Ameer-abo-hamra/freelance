@@ -23,7 +23,7 @@ class JobSeekerController extends Controller
             "full_name" => "required | min:6 |max:20",
             "password" => "required",
             "birth_date" => "required | date",
-            "email" => "required | unique:job_seekers|email",
+            "email" => "required |unique:job_seekers",
 
         ]);
         if ($validator->fails()) {
@@ -43,15 +43,20 @@ class JobSeekerController extends Controller
             "verificationCode" => makeCode("job_seeker", $request->email),
         ]);
         // Auth::guard("api-job_seeker")->login($job_seeker);
-        // return $this->returnSuccess("your account created successfully");
-        return $this->returnData("", "", Auth::guard('api-job_seeker')->user()->username);
+        return $this->returnSuccess("your account created successfully");
+        // return $this->returnData("", "", Auth::guard('api-job_seeker')->user()->username);
     }
-    public function verifyًWeb(Request $request)
+    public function verifyWeb(Request $request)
     {
 
         return verify($request, "web-job_seeker");
     }
 
+    public function apiVerify(Request $request)
+    {
+        return verify($request, "api-job_seeker");
+
+    }
     public function resend()
     {
         makeCode("company", Auth::guard("web-company")->user()->email);
