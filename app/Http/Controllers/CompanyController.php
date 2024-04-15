@@ -69,15 +69,14 @@ class CompanyController extends Controller
     public function login_api(Request $request)
     {
         $validator = validator::make($request->all(), [
-            "name" => "required| max:15",
+            "email" => "required| email",
             "password" => "required",
-            "employee_number" => "required |integer | min:10 | max:500000",
         ]);
 
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        $credential = $request->only("name", "password");
+        $credential = $request->only("email", "password");
         $token = Auth::guard("api-company")->attempt($credential);
         if ($token) {
             $company = Auth::guard("api-company")->user();

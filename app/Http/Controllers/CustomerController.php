@@ -32,10 +32,10 @@ class CustomerController extends Controller
             return $this->returnError($validator->errors()->first());
         } else {
             $customer = Customer::create([
-                "username" => $request["username"],
-                "full_name" => $request["full_name"],
-                "email" => $request["email"],
-                "password" => Hash::make($request["password"]),
+                "username" => $request->username,
+                "full_name" => $request->full_name,
+                "email" => $request->email,
+                "password" => Hash::make($request->password),
                 "birth_date" => $request->birth_date,
                 "verificationCode" => makeCode("customer", $request->email),
             ]);
@@ -128,7 +128,8 @@ class CustomerController extends Controller
     public function addService(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "description" => "required"
+            "description" => "required",
+            "skill_id" => "array||required"
         ]);
         if ($validator->fails()) {
             return $this->returnError("where is the description???");
@@ -136,6 +137,7 @@ class CustomerController extends Controller
         $service = Service::create([
             "description" => $request->description,
             "customer_id" => Auth::guard("customer")->user()->id
+            // "customer_id" => $request->customer_id
         ]);
         $skill_ids = $request->skill_id;
         if (!empty($skill_ids)) {
@@ -143,8 +145,34 @@ class CustomerController extends Controller
                 $service->skills()->attach($s);
             }
         } else {
-            return $this->returnSuccess("you can enter some skills if you want");
+            return $this->returnError("you have to enter some skills");
+        }
+        return $this->returnSuccess("your service is added successfully , wait to find anyone to solve it");
+    }
+
+    public function addService_api(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "description" => "required",
+            "skill_id" => "array||required"
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError("where is the description???");
+        }
+        $service = Service::create([
+            "description" => $request->description,
+            "customer_id" => Auth::guard("api-customer")->user()->id
+            // "customer_id" => $request->customer_id
+        ]);
+        $skill_ids = $request->skill_id;
+        if (!empty($skill_ids)) {
+            foreach ($skill_ids as $s) {
+                $service->skills()->attach($s);
+            }
+        } else {
+            return $this->returnError("you have to enter some skills");
         }
         return $this->returnSuccess("your service is added successfully , wait to find anyone to solve it");
     }
 }
+

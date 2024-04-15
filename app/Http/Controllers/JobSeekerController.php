@@ -100,13 +100,13 @@ class JobSeekerController extends Controller
     public function login_api(Request $request)
     {
         $validator = validator::make($request->all(), [
-            "username" => "required||min:5||max:10",
+            "email" => "required||min:5||max:10",
             "password" => "required",
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        $credential = $request->only("username", "password");
+        $credential = $request->only("email", "password");
         $token = Auth::guard("api-job_seeker")->attempt($credential);
         if ($token) {
             $job_seeker = Auth::guard("api-job_seeker")->user();
@@ -123,6 +123,10 @@ class JobSeekerController extends Controller
         $job_seeker->offers()->attach($request->offer_id);
     }
 
+    public function post(Request $request)
+    {
+
+    }
 
 
 }

@@ -23,5 +23,6 @@ Route::group(["middleware" => "check:api-customer"], function () {
     Route::get("logout", [CustomerController::class, "logout_api"]);
     route::post("verify", [CustomerController::class, "apiVerify"]);
 
+    Route::post("service",[CustomerController::class,"addService_api"]);
 });
 
