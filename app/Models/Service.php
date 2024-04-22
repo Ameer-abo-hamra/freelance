@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Service extends Model
 {
     use HasFactory;
-    protected $fillable = ["description","customer_id"];
+    protected $fillable = ["description", "customer_id"];
 
     public function job_seeker()
     {
@@ -32,4 +32,5 @@ class Service extends Model
         return $this->belongsToMany(Skill::class, "skills_services", "service_id", "skill_id");
 
 
+    }
 }

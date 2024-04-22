@@ -12,6 +12,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Hash;
 
 
+
 class JobSeekerController extends Controller
 {
 
@@ -89,9 +90,8 @@ class JobSeekerController extends Controller
 
         try {
             $user = auth("api-job_seeker")->user();
-            // auth("api-job_seeker")->logout();
-            // return $this->returnSuccess("you are logged-out successfully");
-            return $this->returnData("", "user", $user);
+            auth("api-job_seeker")->logout();
+            return $this->returnSuccess("you are logged-out successfully");
         } catch (JWTException $e) {
             return $this->returnError("there were smth wrong");
         }
@@ -100,7 +100,7 @@ class JobSeekerController extends Controller
     public function login_api(Request $request)
     {
         $validator = validator::make($request->all(), [
-            "email" => "required||min:5||max:10",
+            "email" => "required|email",
             "password" => "required",
         ]);
         if ($validator->fails()) {
@@ -116,17 +116,24 @@ class JobSeekerController extends Controller
         return $this->returnError("your data is invalid .. enter it again");
     }
 
-    public function progress(Request $request)
+    public function applyApi(Request $request)
     {
-        $job_seeker = Auth::guard("web-job_seeker")->user();
-        // return $job_seeker;
-        $job_seeker->offers()->attach($request->offer_id);
+        return $this->apply($request, "api-job_seeker");
     }
 
+    public function applyWeb(Request $request)
+    {
+        return $this->apply($request, "web-job_seeker");
+    }
     public function post(Request $request)
     {
 
     }
 
+    // public function upload(Request $request)
+    // {
+    //     $this->localStore($request, "job_seeker");
+    //     return $this->returnSuccess("your file is saved");
+    // }
 
 }

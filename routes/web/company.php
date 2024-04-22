@@ -41,7 +41,7 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::get("skills/{types}", [CompanyController::class, "getSkillName"]);
 
-    Route::post("addoffer", [CompanyController::class, "addOffer"]);
+    Route::post("addoffer", [CompanyController::class, "addOfferWeb"]);
 
 });
 

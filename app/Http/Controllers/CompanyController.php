@@ -50,7 +50,7 @@ class CompanyController extends Controller
 
     public function verify(Request $request)
     {
-       return verify($request , "web-company");
+        return verify($request, "web-company");
     }
     public function apiVerify(Request $request)
     {
@@ -86,16 +86,7 @@ class CompanyController extends Controller
         return $this->returnError("your data is invalid .. enter it again");
     }
 
-    // public function logout_api(Request $request)
-    // {
-    //     $token = $request->bearerToken();
-    //     try {
-    //         JWTAuth::setToken($token)->invalidate();
-    //         return $this->returnSuccess("U R logged-out successfully");
-    //     } catch (JWTException $e) {
-    //         return $this->returnError("there were smth wrong");
-    //     }
-    // }
+
     public function login(Request $request)
     {
         $validator = validator::make($request->all(), [
@@ -116,11 +107,6 @@ class CompanyController extends Controller
         return $this->returnError("your data is invalid .. enter it again");
     }
 
-    public function logout()
-    {
-        Auth::guard("web-company")->logout();
-        return $this->returnSuccess("you are logged-out successfully");
-    }
     public function logout_api(Request $request)
     {
 
@@ -166,35 +152,14 @@ class CompanyController extends Controller
 
     }
 
-    public function addOffer(Request $request)
+    public function addOfferWeb(Request $request)
     {
-        $validation = Validator::make($request->all(), [
-            "title" => "required",
-            "body" => "required"
-        ]);
-        if ($validation->fails()) {
-            return $this->returnError($validation->errors()->first());
-        }
-
-        $offer = Offer::create([
-            "author" => Auth::guard("web-company")->user()->name,
-            "title" => $request->title,
-            "body" => $request->body,
-            "position" => $request->position,
-            "company_id" => Auth::guard("web-company")->user()->id,
-        ]);
-        $skill_ids = $request->skill_ids;
-        if (!empty($skill_ids)) {
-
-            foreach ($skill_ids as $s) {
-                $offer->skills()->attach($s);
-            }
-        } else {
-            return $this->returnError("you have to enter skills");
-        }
-        return $this->returnSuccess("your offer is saved");
+        return addOffer($request, "web-company");
     }
-
+    public function addOfferApi(Request $request)
+    {
+        return addOffer($request, "api-company");
+    }
     public function log_out()
     {
         Auth::guard("web-company")->logout();
