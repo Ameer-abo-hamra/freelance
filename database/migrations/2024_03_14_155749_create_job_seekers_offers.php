@@ -14,7 +14,9 @@ return new class extends Migration {
             $table->id();
             $table->foreignId("job_seeker_id")->references("id")->on("job_seekers");
             $table->foreignId("offer_id")->references("id")->on("offers");
-
+            $table->boolean("isAccepted")->default(false);
+            $table->string("CV");
+            $table->text("additionalInfo")->nullable();
             $table->timestamps();
         });
     }

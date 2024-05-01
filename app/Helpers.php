@@ -4,11 +4,7 @@ use App\Mail\JobseekerMail;
 use App\Mail\Company;
 use Illuminate\Support\Str;
 use App\Traits\ResponseTrait;
-
-class Re
-{
-    use ResponseTrait;
-}
+use App\Models\Offer;
 
 function makeCode($type, $email)
 {
@@ -29,20 +25,19 @@ function makeCode($type, $email)
 
 function verify($request, $guard)
 {
-    $re = new Re();
     $validator = Validator::make($request->all(), [
         "verificationCode" => "required",
     ]);
     if ($validator->fails()) {
-        return $re->returnError($validator->errors()->first());
+        return ResponseTrait::returnError($validator->errors()->first());
     }
     if (Auth::guard($guard)->user()->verificationCode == $request->verificationCode) {
         auth($guard)->user()->update([
             "isActive" => true,
         ]);
-        return $re->returnSuccess("you have verfied your account successfully");
+        return ResponseTrait::returnSuccess("you have verfied your account successfully");
     }
-    return $re->returnError("your code is not equal to our code ");
+    return ResponseTrait::returnError("your code is not equal to our code ");
 }
 
 
@@ -50,4 +45,49 @@ function getAuth($guard)
 {
     return Auth::guard($guard)->user();
 
+}
+
+
+function addOffer($request, $guard)
+{
+    $validation = Validator::make($request->all(), [
+        "title" => "required",
+        "body" => "required",
+        "position" => "required",
+        "skill_ids" => "required",
+    ]);
+    if ($validation->fails()) {
+        return ResponseTrait::returnError($validation->errors()->first());
+    }
+
+    $offer = Offer::create([
+        "author" => Auth::guard($guard)->user()->name,
+        "title" => $request->title,
+        "body" => $request->body,
+        "position" => $request->position,
+        "type" => $request->type,
+        "details" => $request->details,
+        "company_id" => Auth::guard($guard)->user()->id,
+    ]);
+    $skill_ids = $request->skill_ids;
+    if (!empty($skill_ids)) {
+
+        foreach ($skill_ids as $s) {
+            $offer->skills()->attach($s);
+        }
+    } else {
+        return ResponseTrait::returnError("you have to enter skills");
+    }
+    return ResponseTrait::returnSuccess("your offer is saved");
+}
+
+
+function category()
+{
+
+    return [
+        "programming",
+        "architecture",
+        "financial",
+    ];
 }

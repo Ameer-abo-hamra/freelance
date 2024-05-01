@@ -11,6 +11,7 @@ use Auth;
 use Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\Skill;
+use App\Models\Post;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 use Illuminate\Http\Request;
@@ -50,19 +51,7 @@ class CompanyController extends Controller
 
     public function verify(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            "verificationCode" => "required",
-        ]);
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-        if (Auth::guard("web-company")->user()->verificationCode == $request->verificationCode) {
-            auth("web-company")->user()->update([
-                "isActive" => true,
-            ]);
-            return $this->returnSuccess("you have verfied your account successfully");
-        }
-        return $this->returnError("your code is not equal to our code ");
+        return verify($request, "web-company");
     }
     public function apiVerify(Request $request)
     {
@@ -98,16 +87,7 @@ class CompanyController extends Controller
         return $this->returnError("your data is invalid .. enter it again");
     }
 
-    // public function logout_api(Request $request)
-    // {
-    //     $token = $request->bearerToken();
-    //     try {
-    //         JWTAuth::setToken($token)->invalidate();
-    //         return $this->returnSuccess("U R logged-out successfully");
-    //     } catch (JWTException $e) {
-    //         return $this->returnError("there were smth wrong");
-    //     }
-    // }
+
     public function login(Request $request)
     {
         $validator = validator::make($request->all(), [
@@ -128,11 +108,6 @@ class CompanyController extends Controller
         return $this->returnError("your data is invalid .. enter it again");
     }
 
-    public function logout()
-    {
-        Auth::guard("web-company")->logout();
-        return $this->returnSuccess("you are logged-out successfully");
-    }
     public function logout_api(Request $request)
     {
 
@@ -178,38 +153,51 @@ class CompanyController extends Controller
 
     }
 
-    public function addOffer(Request $request)
+    public function addOfferWeb(Request $request)
     {
-        $validation = Validator::make($request->all(), [
-            "title" => "required",
-            "body" => "required"
-        ]);
-        if ($validation->fails()) {
-            return $this->returnError($validation->errors()->first());
-        }
-
-        $offer = Offer::create([
-            "author" => Auth::guard("web-company")->user()->name,
-            "title" => $request->title,
-            "body" => $request->body,
-            "position" => $request->position,
-            "company_id" => Auth::guard("web-company")->user()->id,
-        ]);
-        $skill_ids = $request->skill_ids;
-        if (!empty($skill_ids)) {
-
-            foreach ($skill_ids as $s) {
-                $offer->skills()->attach($s);
-            }
-        } else {
-            return $this->returnError("you have to enter skills");
-        }
-        return $this->returnSuccess("your offer is saved");
+        return addOffer($request, "web-company");
+    }
+    public function addOfferApi(Request $request)
+    {
+        return addOffer($request, "api-company");
     }
 
+    public function offerUpdate(Request $request)
+    {
+
+        $offer = Offer::find($request->offer_id);
+        if ($offer) {
+            $offer->update([
+                "title" => $request->title,
+                "body" => $request->body,
+                "position" => $request->position,
+                "type" => $request->type,
+                "details" => $request->details,
+            ]);
+
+            $offer->skills()->sync($request->skill_ids);
+            return $this->returnSuccess("your data is updated");
+        }
+
+        return $this->returnError("the offer id is not correct ");
+    }
     public function log_out()
     {
         Auth::guard("web-company")->logout();
         return $this->returnSuccess("U R logged-out successfully");
+    }
+
+    public function postApi(Request $request)
+    {
+
+        return $this->post($request, "api-company", "company_id", "company");
+    }
+
+    public function postWeb(Request $request)
+    {
+
+            category()[0];
+        return $this->post($request, "company", "company_id", "company");
+        
     }
 }
