@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
-    protected $fillable = ["title", "body"];
+    protected $fillable = ["title", "body", "job_seeker_id","company_id"];
 
     public function jobSeeker()
     {
@@ -22,7 +22,8 @@ class Post extends Model
     {
         return $this->hasMany(Comment::Class, "post_id");
     }
-    public function likes(){
-        return $this->hasMany(Post_like::class , "post_id");
+    public function likes()
+    {
+        return $this->hasMany(Post_like::class, "post_id");
     }
 }

@@ -11,6 +11,7 @@ use Auth;
 use Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\Skill;
+use App\Models\Post;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 use Illuminate\Http\Request;
@@ -160,9 +161,43 @@ class CompanyController extends Controller
     {
         return addOffer($request, "api-company");
     }
+
+    public function offerUpdate(Request $request)
+    {
+
+        $offer = Offer::find($request->offer_id);
+        if ($offer) {
+            $offer->update([
+                "title" => $request->title,
+                "body" => $request->body,
+                "position" => $request->position,
+                "type" => $request->type,
+                "details" => $request->details,
+            ]);
+
+            $offer->skills()->sync($request->skill_ids);
+            return $this->returnSuccess("your data is updated");
+        }
+
+        return $this->returnError("the offer id is not correct ");
+    }
     public function log_out()
     {
         Auth::guard("web-company")->logout();
         return $this->returnSuccess("U R logged-out successfully");
+    }
+
+    public function postApi(Request $request)
+    {
+
+        return $this->post($request, "api-company", "company_id", "company");
+    }
+
+    public function postWeb(Request $request)
+    {
+
+            category()[0];
+        return $this->post($request, "company", "company_id", "company");
+        
     }
 }

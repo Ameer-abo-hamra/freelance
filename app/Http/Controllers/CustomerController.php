@@ -132,7 +132,7 @@ class CustomerController extends Controller
             "skill_id" => "array||required"
         ]);
         if ($validator->fails()) {
-            return $this->returnError("where is the description???");
+            return $this->returnError($validator->errors()->first());
         }
         $service = Service::create([
             "description" => $request->description,
@@ -157,7 +157,7 @@ class CustomerController extends Controller
             "skill_id" => "array||required"
         ]);
         if ($validator->fails()) {
-            return $this->returnError("where is the description???");
+            return $this->returnError($validator->errors()->first());
         }
         $service = Service::create([
             "description" => $request->description,

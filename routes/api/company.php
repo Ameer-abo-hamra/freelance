@@ -15,10 +15,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post("register",[CompanyController::class,"register"]);
+
 Route::post("login",[CompanyController::class,"login_api"]);
 
 Route::group(["middleware"=>"check:api-company"] , function (){
+
     Route::get("logout", [CompanyController::class , "logout_api"]);
+
     route::post("verify" , [CompanyController::class , "apiVerify"]);
+
     Route::post("add-offer" , [CompanyController::Class , "addOfferApi"]);
+
+    Route::post("update-offer",[CompanyController::class , "offerUpdate"]);
+
+    Route::post("post",[CompanyController::Class , "postApi"]);
 });

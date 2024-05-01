@@ -22,4 +22,5 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
     route::get("logout",[ JobSeekerController::class, "logout_api"]);
     route::post("verify" , [JobSeekerController::class , "apiVerify"]);
     Route::post("apply", [JobSeekerController::class, "applyApi"]);
+    Route::post("post", [JobSeekerController::class, "postApi"]);
 });

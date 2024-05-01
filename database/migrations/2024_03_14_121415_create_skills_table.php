@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('skills', function (Blueprint $table) {
             $table->id();
+            $table->string("skill_name");
             $table->string("category");
             $table->string("type");
-            $table->string("skill_name");
             $table->timestamps();
         });
     }

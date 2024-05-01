@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 use App\Traits\ResponseTrait;
 use App\Models\Offer;
 
-
 function makeCode($type, $email)
 {
     $code = Str::random(6);
@@ -55,7 +54,7 @@ function addOffer($request, $guard)
         "title" => "required",
         "body" => "required",
         "position" => "required",
-        "skill_ids"=> "required",
+        "skill_ids" => "required",
     ]);
     if ($validation->fails()) {
         return ResponseTrait::returnError($validation->errors()->first());
@@ -66,6 +65,8 @@ function addOffer($request, $guard)
         "title" => $request->title,
         "body" => $request->body,
         "position" => $request->position,
+        "type" => $request->type,
+        "details" => $request->details,
         "company_id" => Auth::guard($guard)->user()->id,
     ]);
     $skill_ids = $request->skill_ids;
@@ -78,4 +79,15 @@ function addOffer($request, $guard)
         return ResponseTrait::returnError("you have to enter skills");
     }
     return ResponseTrait::returnSuccess("your offer is saved");
+}
+
+
+function category()
+{
+
+    return [
+        "programming",
+        "architecture",
+        "financial",
+    ];
 }

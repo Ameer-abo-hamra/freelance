@@ -9,10 +9,11 @@
 </head>
 
 <body>
+    <form action="">
 
-    <img src="{{ asset('job_seeker/CV/1713744376.pdf') }}"  width="100%" height="600px">
-
-
+        
+    </form>
+   <input type="file" name="file" >
 </body>
 
 </html>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Job_seeker;
+use App\Models\Post;
 use App\Traits\ResponseTrait;
 use Validator;
 use Illuminate\Http\Request;
@@ -125,15 +126,16 @@ class JobSeekerController extends Controller
     {
         return $this->apply($request, "web-job_seeker");
     }
-    public function post(Request $request)
+    public function postApi(Request $request)
     {
-
+        return $this->post($request, "api-job_seeker", "job_seeker_id", "job_seeker");
     }
 
-    // public function upload(Request $request)
-    // {
-    //     $this->localStore($request, "job_seeker");
-    //     return $this->returnSuccess("your file is saved");
-    // }
+    public function postWeb(Request $request)
+    {
+        return $this->post($request, "job_seeker", "job_seeker_id", "job_seeker");
+    }
+
+
 
 }

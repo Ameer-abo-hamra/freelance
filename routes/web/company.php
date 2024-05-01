@@ -43,5 +43,11 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("addoffer", [CompanyController::class, "addOfferWeb"]);
 
+    Route::post("update-offer",[CompanyController::class , "offerUpdate"]);
+
+    Route::post("post",[CompanyController::class , "postWeb"]);
+
 });
+
+
 
