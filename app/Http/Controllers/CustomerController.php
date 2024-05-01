@@ -117,13 +117,7 @@ class CustomerController extends Controller
 
     public function verify(Request $request)
     {
-        if (Auth::guard("customer")->user()->verificationCode == $request->verificationCode) {
-            auth("customer")->user()->update([
-                "isActive" => true,
-            ]);
-            return $this->returnSuccess("you have verfied your account successfully");
-        }
-        return $this->returnError("your code is not equal to our code ");
+        return verify($request, "customer");
     }
 
     public function apiVerify(Request $request)
@@ -138,7 +132,7 @@ class CustomerController extends Controller
             "skill_id" => "array||required"
         ]);
         if ($validator->fails()) {
-            return $this->returnError("where is the description???");
+            return $this->returnError($validator->errors()->first());
         }
         $service = Service::create([
             "description" => $request->description,
@@ -163,7 +157,7 @@ class CustomerController extends Controller
             "skill_id" => "array||required"
         ]);
         if ($validator->fails()) {
-            return $this->returnError("where is the description???");
+            return $this->returnError($validator->errors()->first());
         }
         $service = Service::create([
             "description" => $request->description,

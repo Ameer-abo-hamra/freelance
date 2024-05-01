@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string("email");
             $table->string("password");
             $table->unsignedBigInteger("wallet")->default(10000);
+            $table->string("profile_photo")->nullable();
             $table->date("birth_date");
             $table->timestamps();
         });

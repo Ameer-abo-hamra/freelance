@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->string("title");
             $table->text("body");
             $table->string("position");
+            $table->string("type");
+            $table->text("details");
             $table->foreignId("company_id")->references("id")->on("companies");
             $table->timestamps();
         });

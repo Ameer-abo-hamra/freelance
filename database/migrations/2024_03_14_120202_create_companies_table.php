@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string("verificationCode")->nullable();
             $table->date("establishment_date");
             $table->unsignedInteger("employee_number");
+            $table->string("profile_photo")->nullable();
             $table->timestamps();
         });
     }
