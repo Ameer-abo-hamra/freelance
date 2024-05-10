@@ -102,6 +102,7 @@ class JobSeekerController extends Controller
     {
         $validator = validator::make($request->all(), [
             "email" => "required|email",
+
             "password" => "required",
         ]);
         if ($validator->fails()) {
