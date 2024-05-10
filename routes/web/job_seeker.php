@@ -24,11 +24,14 @@ Route::post("login", [JobSeekerController::class, "login"]);
 
 Route::group(["middleware" => "check:web-job_seeker"], function () {
 
-    Route::post("verify", [JobSeekerController::Class, "verify"])->name("verify");
+    Route::post("verify", [JobSeekerController::Class, "verifyWeb"])->name("verify");
 
     Route::get("resend-verify", [JobSeekerController::class, "resend"]);
 
     Route::get("logout", [JobSeekerController::class, "logout"]);
 
-    Route::post("progress", [JobSeekerController::class, "progress"]);
+    Route::post("apply", [JobSeekerController::class, "applyWeb"]);
+
+  Route::post("post", [JobSeekerController::class , "postWeb"]);
 });
+

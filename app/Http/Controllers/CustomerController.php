@@ -40,6 +40,11 @@ class CustomerController extends Controller
                 "verificationCode" => makeCode("customer", $request->email),
             ]);
             Auth::guard('customer')->login($customer);
+            $credential = $request->only("username", "password");
+            Auth::guard("api-customer")->attempt($credential);
+            Customer::where("username", $request->username)->update([
+                "verificationCode" => makeCode("customer", $request->email),
+            ]);
             return $this->returnSuccess("your account created successfully");
         }
     }
@@ -91,7 +96,7 @@ class CustomerController extends Controller
     }
 
 
-    public function logout_api(Request $request)
+    public function logout_api()
     {
 
         try {
@@ -112,15 +117,14 @@ class CustomerController extends Controller
 
     public function verify(Request $request)
     {
-        if (Auth::guard("customer")->user()->verificationCode == $request->verificationCode) {
-            auth("customer")->user()->update([
-                "isActive" => true,
-            ]);
-            return $this->returnSuccess("you have verfied your account successfully");
-        }
-        return $this->returnError("your code is not equal to our code ");
+        return verify($request, "customer");
     }
 
+    public function apiVerify(Request $request)
+    {
+        return verify($request, "api-customer");
+
+    }
     public function addService(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -128,7 +132,7 @@ class CustomerController extends Controller
             "skill_id" => "array||required"
         ]);
         if ($validator->fails()) {
-            return $this->returnError("where is the description???");
+            return $this->returnError($validator->errors()->first());
         }
         $service = Service::create([
             "description" => $request->description,
@@ -153,7 +157,7 @@ class CustomerController extends Controller
             "skill_id" => "array||required"
         ]);
         if ($validator->fails()) {
-            return $this->returnError("where is the description???");
+            return $this->returnError($validator->errors()->first());
         }
         $service = Service::create([
             "description" => $request->description,

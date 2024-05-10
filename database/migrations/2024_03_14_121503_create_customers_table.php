@@ -15,10 +15,11 @@ return new class extends Migration {
             $table->string("username")->unique();
             $table->string("full_name");
             $table->boolean("isActive")->default(false);
-            $table->string("verificationCode");
+            $table->string("verificationCode")->nullable();
             $table->string("email");
             $table->string("password");
             $table->unsignedBigInteger("wallet")->default(10000);
+            $table->string("profile_photo")->nullable();
             $table->date("birth_date");
             $table->timestamps();
         });

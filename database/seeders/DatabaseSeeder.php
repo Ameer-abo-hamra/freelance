@@ -55,7 +55,9 @@ class DatabaseSeeder extends Seeder
             "title" => "offer title",
             "body" => "offer body",
             "company_id" => 1,
-            "position" => "laravel developer"
+            "position" => "laravel developer",
+            "type"=> "full-time",
+            "details"=> "This offer is provided to more than 10 employees"
         ]);
         Contact_information::create([
             "email" => "ameer@gmail.com",

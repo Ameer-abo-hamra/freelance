@@ -9,8 +9,13 @@
 </head>
 
 <body>
-    <h2>hi there hi hi hi</h2>
-    <p>this is the verification code {{$code}}</p>
+    <h2>welcome @if (getAuth('api-company'))
+            {{ getAuth('api-company')->name }}
+        @elseif (getAuth('web-company'))
+            {{ getAuth('web-company')->name }}
+        @endif
+    </h2>
+    <p>this is the verification code {{ $code }}</p>
     <a href="http://127.0.0.1:8000/customer/test" style="color: red ; padding:10px; background-color:aqua;">click</a>
 </body>
 
