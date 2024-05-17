@@ -18,7 +18,7 @@ class ForTesting implements ShouldBroadcast
      * Create a new event instance.
      */
 
-     public $var ;
+    public $var;
     public function __construct($var)
     {
         $this->var = $var;
@@ -33,6 +33,14 @@ class ForTesting implements ShouldBroadcast
     {
         return [
             new Channel('ameer'),
+        ];
+    }
+
+    public function broadcastWith()
+    {
+
+        return [
+            "tt" => $this->var,
         ];
     }
 }

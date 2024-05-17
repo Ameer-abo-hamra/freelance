@@ -45,6 +45,10 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("update-offer",[CompanyController::class , "offerUpdate"]);
 
+    Route::get("get-offers/{company_id}" , [CompanyController::Class , "getOffers"]);
+
+    Route::get("get-job-applicants/{offer_id}" , [CompanyController::class , "getJobApplicants"]);
+
     Route::post("post",[CompanyController::class , "postWeb"]);
 
 });

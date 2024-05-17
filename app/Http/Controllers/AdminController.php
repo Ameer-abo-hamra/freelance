@@ -18,7 +18,7 @@ class AdminController extends Controller
             $company = Company::find($id);
             if ($company) {
                 $company->delete();
-                broadcast(new ForTesting("you deleted company"));
+                // broadcast(new ForTesting("you deleted company"));
                 return $this->returnSuccess("done");
             }
             return $this->returnError("check id :)");

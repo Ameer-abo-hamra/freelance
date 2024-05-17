@@ -12,13 +12,13 @@
 
 
     <script>
-        console.log("hi")
 
-        setTimeout(() => {
-            Echo.Channel("test").listen("ForTesting", (e) => {
+            window.onload = ()=> {
+                Echo.channel("ameer").listen("ForTesting", (e) => {
                 console.log(e);
+                console.log("hi");
             })
-        }, 200);
+            }
     </script>
 </body>
 
