@@ -55,7 +55,7 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::get("get-job-applicants/{offer_id}", [CompanyController::class, "getJobApplicants"]);
 
-    Route::post("change-offer-state", []);
+    Route::post("change-offer-state", [CompanyController::class , "ChangeOfferState"]);
 
     Route::post("post", [CompanyController::class, "postWeb"]);
 
