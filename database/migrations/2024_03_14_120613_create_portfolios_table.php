@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('portfolios', function (Blueprint $table) {
             $table->id();
             $table->string("URL");
-            $table->foreignId("job_seeker_id")->nullable()->references("id")->on("job_seekers");
-            $table->foreignId("company_id")->nullable()->references("id")->on("companies");
+            $table->foreignId("job_seeker_id")->nullable()->references("id")->on("job_seekers")->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId("company_id")->nullable()->references("id")->on("companies")->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

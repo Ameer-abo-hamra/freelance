@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Offer extends Model
 {
     use HasFactory;
-    protected $fillable = ["title", "body", "position", "author", "company_id", "skill_id", "type","details"];
+    protected $fillable = ["title", "body", "position", "author", "company_id", "skill_id", "type","details","CV"];
 
     public function company()
     {
@@ -17,7 +17,7 @@ class Offer extends Model
 
     public function jobSeekers()
     {
-        return $this->belongsToMany(Job_seeker::class, "job_seekers_offers", "offer_id", "job_seeker_id");
+        return $this->belongsToMany(Job_seeker::class, "job_seekers_offers", "offer_id", "job_seeker_id")->withPivot(["CV","additionalInfo","isAccepted"]);
     }
 
     public function skills()
