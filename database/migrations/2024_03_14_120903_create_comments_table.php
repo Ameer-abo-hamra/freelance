@@ -14,9 +14,9 @@ return new class extends Migration {
             $table->id();
             $table->string("title");
             $table->text("body");
-            $table->foreignId("company_id")->nullable()->references("id")->on("companies");
-            $table->foreignId("job_seeker_id")->nullable()->references("id")->on("job_seekers");
-            $table->foreignId("post_id")->references("id")->on("job_seekers");
+            $table->foreignId("company_id")->nullable()->references("id")->on("companies")->cascadeOnDelete()->cascadeOnUpdate();;
+            $table->foreignId("job_seeker_id")->nullable()->references("id")->on("job_seekers")->cascadeOnDelete()->cascadeOnUpdate();;
+            $table->foreignId("post_id")->references("id")->on("job_seekers")->cascadeOnDelete()->cascadeOnUpdate();;
             $table->timestamps();
         });
     }

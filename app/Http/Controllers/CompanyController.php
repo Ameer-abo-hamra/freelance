@@ -196,8 +196,32 @@ class CompanyController extends Controller
     public function postWeb(Request $request)
     {
 
-            category()[0];
+
         return $this->post($request, "company", "company_id", "company");
-        
+
+    }
+
+    public function getOffers($company_id)
+    {
+
+        $company = Company::find($company_id);
+
+        if ($company) {
+            return $this->returnData("", "offers", $company->offers);
+        }
+        return $this->returnError("check company id :)");
+
+    }
+
+    public function getJobApplicants($offer_id)
+    {
+
+        $offer = Offer::find($offer_id);
+
+        if ($offer) {
+            return $this->returnData("", "applicants", $offer->jobSeekers);
+        }
+        return $this->returnError("check offer id :)");
+
     }
 }

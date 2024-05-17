@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('job_seekers_skills', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("job_seeker_id")->references("id")->on("job_seekers");
-            $table->foreignId("skill_id")->references("id")->on("skills");
+            $table->foreignId("job_seeker_id")->references("id")->on("job_seekers")->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId("skill_id")->references("id")->on("skills")->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
