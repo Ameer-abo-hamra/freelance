@@ -196,8 +196,8 @@ class CompanyController extends Controller
     public function postWeb(Request $request)
     {
 
-            category()[0];
+           
         return $this->post($request, "company", "company_id", "company");
-        
+
     }
 }

@@ -12,9 +12,9 @@ return new class extends Migration {
     {
         Schema::create('comment_likes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("comment_id")->references("id")->on("comments");
-            $table->foreignId("company_id")->nullable()->references("id")->on("companies");
-            $table->foreignId("job_seeker_id")->nullable()->references("id")->on("job_seekers");
+            $table->foreignId("comment_id")->references("id")->on("comments")->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId("company_id")->nullable()->references("id")->on("companies")->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId("job_seeker_id")->nullable()->references("id")->on("job_seekers")->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
