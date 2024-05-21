@@ -11,16 +11,16 @@ class Company extends Authenticatable implements JWTSubject
 {
     use HasFactory;
 
-    protected $fillable = ["id","name", "establishment_date", "employee_number", "password", "verificationCode", "isActive","email"];
+    protected $fillable = ["id", "name", "establishment_date", "employee_number", "password", "verificationCode", "isActive", "email"];
     protected $hidden = ["created_at", "updated_at"];
     public function offers()
     {
-        return $this->hasMany(Offer::Class,"company_id");
+        return $this->hasMany(Offer::class, "company_id");
     }
 
     public function comments()
     {
-        return $this->hasMany(Comment::Class, "company_id");
+        return $this->hasMany(Comment::class, "company_id");
     }
     public function commentLikes()
     {
@@ -42,7 +42,7 @@ class Company extends Authenticatable implements JWTSubject
 
     public function postLikes()
     {
-        return $this->hasMany(Post_like::Class, "company_id");
+        return $this->hasMany(Post_like::class, "company_id");
     }
 
     public function portfolio()
@@ -50,10 +50,22 @@ class Company extends Authenticatable implements JWTSubject
         return $this->hasMany(Portfolio::class, "company_id");
     }
 
+
+    public function reportsMade()
+    {
+        return $this->morphMany(Report::class, "reporter");
+    }
+    public function reportsReceived()
+    {
+        return $this->morphMany(Report::class, "reported");
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
+
+
 
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.

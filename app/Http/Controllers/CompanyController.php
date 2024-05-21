@@ -240,10 +240,12 @@ class CompanyController extends Controller
         if ($offer = Offer::find($request->offer_id)) {
             foreach ($offer->jobSeekers as $jobseeker) {
                 if ($jobseeker->id == $request->job_seeker_id) {
-                        $jobseeker->craete([
-                            "isAccepted" => $request->state,
-                        ]);
-                    // $jobseeker->isAccepted = $request->state;
+                    $offer->jobSeekers()->updateExistingPivot(
+                        $request->offer_id,
+                        [
+                            "isAccepted" => true
+                        ]
+                    );
                     return $this->returnSuccess("this order is changed ");
                 }
                 return $this->returnError("this jobSeeker does not exist ");

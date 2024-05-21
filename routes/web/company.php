@@ -2,6 +2,7 @@
 
 use App\Events\ForTesting;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ReportController;
 use App\Models\Company;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,8 @@ Route::get('/', function () {
 route::get("csrf", function () {
     return csrf_token();
 });
+
+ Route::get("report/{reporter_id}/{reported_id}" , [ReportController::class , "report"]);
 
 
 Route::get("testws", function () {

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Job_seeker extends Authenticatable implements JWTSubject
 {
     use HasFactory;
-    protected $fillable = ["username", "full_name", "birth_date", "password", "email", "verificationCode", "isActive"];
+    protected $fillable = ["username", "full_name", "birth_date", "password", "email", "verificationCode", "isActive", "CV", "additionalInfo", "isAccepted"];
     protected $hidden = ["created_at", "updated_at"];
     public function getJWTIdentifier()
     {
@@ -43,7 +43,7 @@ class Job_seeker extends Authenticatable implements JWTSubject
 
     public function offers()
     {
-        return $this->belongsToMany(Offer::class, "job_seekers_offers", "job_seeker_id", "offer_id");
+        return $this->belongsToMany(Offer::class, "job_seekers_offers", "job_seeker_id", "offer_id")->withPivot(["CV", "additionalInfo", "isAccepted"]);
     }
 
     public function companies()
@@ -58,7 +58,7 @@ class Job_seeker extends Authenticatable implements JWTSubject
 
     public function comments()
     {
-        return $this->hasMany(Comment::Class, "job_seeker_id");
+        return $this->hasMany(Comment::class, "job_seeker_id");
     }
 
 
@@ -75,5 +75,14 @@ class Job_seeker extends Authenticatable implements JWTSubject
     public function portfolio()
     {
         return $this->hasMany(Portfolio::class, "job_seeker_id");
+    }
+
+    public function reportsMade()
+    {
+        return $this->morphMany(Report::class, "reporter");
+    }
+    public function reportsReceived()
+    {
+        return $this->morphMany(Report::class, "reported");
     }
 }

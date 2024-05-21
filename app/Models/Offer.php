@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Offer extends Model
 {
     use HasFactory;
-    protected $fillable = ["title", "body", "position", "author", "company_id", "skill_id", "type","details","CV"];
+    protected $fillable = ["title", "body", "position", "author", "company_id", "skill_id", "type","details","CV","additionalInfo","isAccepted"];
 
     public function company()
     {
