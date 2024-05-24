@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string("certificate_name");
             $table->date("graduation_date");
             $table->unsignedDouble("rate");
-            $table->foreignId("job_seeker_id")->references("id")->on("job_seekers");
+            $table->foreignId("job_seeker_id")->references("id")->on("job_seekers")->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

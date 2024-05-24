@@ -15,7 +15,7 @@ class Company extends Authenticatable implements JWTSubject
     protected $hidden = ["created_at", "updated_at"];
     public function offers()
     {
-        return $this->hasMany(Offer::Class,"job_seeker_id");
+        return $this->hasMany(Offer::Class,"company_id");
     }
 
     public function comments()
