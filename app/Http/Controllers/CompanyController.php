@@ -224,4 +224,33 @@ class CompanyController extends Controller
         return $this->returnError("check offer id :)");
 
     }
+
+    public function ChangeOfferState(Request $request)
+    {
+
+        $validator = validator::make($request->all(), [
+            "state" => "required",
+            "offer_id" => "required ",
+            "job_seeker_id" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+
+        if ($offer = Offer::find($request->offer_id)) {
+            foreach ($offer->jobSeekers as $jobseeker) {
+                if ($jobseeker->id == $request->job_seeker_id) {
+                        $jobseeker->craete([
+                            "isAccepted" => $request->state,
+                        ]);
+                    // $jobseeker->isAccepted = $request->state;
+                    return $this->returnSuccess("this order is changed ");
+                }
+                return $this->returnError("this jobSeeker does not exist ");
+            }
+        }
+        return $this->returnError("this offer does not exist ");
+
+
+    }
 }
