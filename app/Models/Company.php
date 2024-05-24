@@ -50,6 +50,14 @@ class Company extends Authenticatable implements JWTSubject
         return $this->hasMany(Portfolio::class, "company_id");
     }
 
+    public function sendReport(){
+        return $this->morphMany(Report::class,"reporter");
+    }
+
+    public function receivedReport(){
+        return $this->morphMany(Report::class,"reported");
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();

@@ -27,6 +27,8 @@ route::post("register", [CompanyController::class, "register"]);
 
 route::post("login", [CompanyController::class, "login"]);
 
+route::get("report\{reported_id\reported_type}",[CompanyController::class,"report"]);
+
 Route::group(["middleware" => "check:web-company"], function () {
 
     Route::get("logout" , [CompanyController::class , "log_out"]);

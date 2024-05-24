@@ -37,4 +37,12 @@ class Customer extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Contact_information::class, "customer_id");
     }
+
+    public function sendReport(){
+        return $this->morphMany(Report::class,"reporter");
+    }
+
+    public function receivedReport(){
+        return $this->morphMany(Report::class,"reported");
+    }
 }

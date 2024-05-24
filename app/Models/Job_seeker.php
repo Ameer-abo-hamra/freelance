@@ -76,4 +76,12 @@ class Job_seeker extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Portfolio::class, "job_seeker_id");
     }
+
+    public function sendReport(){
+        return $this->morphMany(Report::class,"reporter");
+    }
+
+    public function receivedReport(){
+        return $this->morphMany(Report::class,"reported");
+    }
 }
