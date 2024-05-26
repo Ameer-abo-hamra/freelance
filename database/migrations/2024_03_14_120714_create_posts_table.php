@@ -14,9 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string("title");
             $table->text("body");
-            $table->string("photo")->nullable();
-            $table->foreignId("job_seeker_id")->nullable()->references("id")->on("job_seekers")->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId("company_id")->nullable()->references("id")->on("companies")->cascadeOnDelete()->cascadeOnUpdate();
+            $table->morphs("postable");
             $table->timestamps();
         });
     }

@@ -2,6 +2,7 @@
 use App\Mail\Customer;
 use App\Mail\JobseekerMail;
 use App\Mail\Company;
+use App\Models\Job_seeker;
 use Illuminate\Support\Str;
 use App\Traits\ResponseTrait;
 use App\Models\Offer;
@@ -90,4 +91,17 @@ function category()
         "architecture",
         "financial",
     ];
+}
+
+function getCategoryApi($guard){
+    $job_seeker = Auth::guard($guard)->user();
+    $skills = $job_seeker->skills();
+    return $skills;
+    // $type =$skills->type;
+    // return $job_seeker_id;
+    // $job_seeker_id=11;
+    // $job_seeker=Job_seeker::where("id",$job_seeker_id)->get();
+    // return $job_seeker->skills();
+    // return $skills;
+    // return $job_seeker;
 }
