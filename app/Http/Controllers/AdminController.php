@@ -47,4 +47,8 @@ class AdminController extends Controller
         $post=Post::find($id);
         $post->delete();
     }
+
+    public function addSkill(){
+
+    }
 }
