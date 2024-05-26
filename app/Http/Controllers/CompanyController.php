@@ -197,8 +197,61 @@ class CompanyController extends Controller
     public function postWeb(Request $request)
     {
 
-            category()[0];
+
         return $this->post($request, "company", "company_id", "company");
+
+    }
+
+    public function getOffers($company_id)
+    {
+
+        $company = Company::find($company_id);
+
+        if ($company) {
+            return $this->returnData("", "offers", $company->offers);
+        }
+        return $this->returnError("check company id :)");
+
+    }
+
+    public function getJobApplicants($offer_id)
+    {
+
+        $offer = Offer::find($offer_id);
+
+        if ($offer) {
+            return $this->returnData("", "applicants", $offer->jobSeekers);
+        }
+        return $this->returnError("check offer id :)");
+
+    }
+
+    public function ChangeOfferState(Request $request)
+    {
+
+        $validator = validator::make($request->all(), [
+            "state" => "required",
+            "offer_id" => "required ",
+            "job_seeker_id" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+
+        if ($offer = Offer::find($request->offer_id)) {
+            foreach ($offer->jobSeekers as $jobseeker) {
+                if ($jobseeker->id == $request->job_seeker_id) {
+                        $jobseeker->craete([
+                            "isAccepted" => $request->state,
+                        ]);
+                    // $jobseeker->isAccepted = $request->state;
+                    return $this->returnSuccess("this order is changed ");
+                }
+                return $this->returnError("this jobSeeker does not exist ");
+            }
+        }
+        return $this->returnError("this offer does not exist ");
+
 
     }
 

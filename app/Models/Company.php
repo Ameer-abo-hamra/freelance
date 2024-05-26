@@ -11,51 +11,62 @@ class Company extends Authenticatable implements JWTSubject
 {
     use HasFactory;
 
-    protected $fillable = ["id","name", "establishment_date", "employee_number", "password", "verificationCode", "isActive","email"];
+    protected $fillable = ["id", "name", "establishment_date", "employee_number", "password", "verificationCode", "isActive", "email"];
     protected $hidden = ["created_at", "updated_at"];
     public function offers()
     {
-        return $this->hasMany(Offer::Class,"job_seeker_id");
+        return $this->hasMany(Offer::class, "company_id");
     }
 
-    public function comments()
-    {
-        return $this->hasMany(Comment::Class, "company_id");
+    // public function services()
+    // {
+    //     return $this->morphMany(Service::class, "serviceable");
+    // }
+    public function makeApply(){
+        return $this->morphMany(ServiceApply::class,"applyable");
     }
-    public function commentLikes()
+
+
+    public function comment()
     {
-        return $this->hasMany(Comment_like::class, "company_id");
+        return $this->morphMany(Comment::class, "commentable");
     }
-    public function contactInformations()
+
+
+    public function coantacts()
     {
-        return $this->hasMany(Contact_information::class, "company_id");
+        return $this->morphMany(Contact_information::class, "contactable");
     }
 
     public function jobSeekers()
     {
         return $this->belongsToMany(Job_seeker::class, "company_job_seeker", "company_id", "job_seeker_id");
     }
-    public function posts()
+
+    public function post()
     {
-        return $this->hasMany(Post::class, "company_id");
+        return $this->morphMany(Post::class, "postable");
     }
 
-    public function postLikes()
-    {
-        return $this->hasMany(Post_like::Class, "company_id");
-    }
 
     public function portfolio()
     {
-        return $this->hasMany(Portfolio::class, "company_id");
+        return $this->morphMany(Portfolio::class, "portfolioable");
     }
 
-    public function sendReport(){
-        return $this->morphMany(Report::class,"reporter");
+    public function sendReport()
+    {
+        return $this->morphMany(Report::class, "reporter");
     }
 
-    public function receivedReport(){
-        return $this->morphMany(Report::class,"reported");
+    public function receivedReport()
+    {
+        return $this->morphMany(Report::class, "reported");
+    }
+
+    public function likes()
+    {
+        return $this->morphMany(Like::class, "likeable");
     }
 
     public function getJWTIdentifier()

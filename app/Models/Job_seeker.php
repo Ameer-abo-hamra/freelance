@@ -26,6 +26,14 @@ class Job_seeker extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    // public function services()
+    // {
+    //     return $this->morphMany(Service::class, "serviceable");
+    // }
+    public function makeApply(){
+        return $this->morphMany(ServiceApply::class,"applyable");
+    }
     public function certificates()
     {
         return $this->hasMany(Certificate::class, "job_seeker_id");
@@ -36,9 +44,9 @@ class Job_seeker extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Skill::class, "job_seekers_skills", "job_seeker_id", "skill_id");
     }
 
-    public function contacts()
+    public function coantacts()
     {
-        return $this->hasMany(Contact_information::class, "job_seeker_id");
+        return $this->morphMany(Contact_information::class, "contactable");
     }
 
     public function offers()
@@ -50,38 +58,33 @@ class Job_seeker extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Company::class, "company_job_seeker", "job_seeker_id", "company_id");
     }
-
     public function posts()
     {
-        return $this->hasMany(Post::class, "job_seeker_id");
+        return $this->morphMany(Post::class, "postable");
     }
-
     public function comments()
     {
-        return $this->hasMany(Comment::Class, "job_seeker_id");
+        return $this->morphMany(Comment::class, "commentable");
     }
 
 
-
-    public function postLikes()
+    public function likes()
     {
-        return $this->hasMany(Post_like::class, "job_seeker_id");
-    }
-    public function commentLikes()
-    {
-        return $this->hasMany(Comment_like::class, "job_seeker_id");
+        return $this->morphMany(Like::class, "likeable");
     }
 
     public function portfolio()
     {
-        return $this->hasMany(Portfolio::class, "job_seeker_id");
+        return $this->morphTo(Portfolio::class, "portfolioable");
     }
 
-    public function sendReport(){
-        return $this->morphMany(Report::class,"reporter");
+    public function sendReport()
+    {
+        return $this->morphMany(Report::class, "reporter");
     }
 
-    public function receivedReport(){
-        return $this->morphMany(Report::class,"reported");
+    public function receivedReport()
+    {
+        return $this->morphMany(Report::class, "reported");
     }
 }

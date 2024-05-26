@@ -4,6 +4,7 @@ namespace App\Traits;
 use Auth;
 use Validator;
 use App\Models\Post;
+
 trait ResponseTrait
 {
     public static function returnError($msgErorr = "", $errorNumber = 400)
@@ -54,15 +55,18 @@ trait ResponseTrait
         }
 
         $job_seeker = Auth::guard($guard)->user();
-        $job_seeker->offers()->attach($request->offer_id, [
-            "CV" => $this->localStore($request, "CV", "job_seeker"),
-            "additionalInfo" => $request->additionalInfo
+        $job_seeker->offers()->sync([
+            $request->offer_id => [
+                "CV" => $this->localStore($request, "CV", "job_seeker"),
+                "additionalInfo" => $request->additionalInfo
+            ]
         ]);
         return $this->returnSuccess("Successfully applied");
     }
 
 
-    public function post($request ,$guard , $who,$disk ) {
+    public function post($request, $guard, $who, $disk)
+    {
 
         $validator = Validator::make($request->all(), [
             "title" => "required",

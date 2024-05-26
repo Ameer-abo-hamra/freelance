@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Report extends Model
 {
     use HasFactory;
-    protected $fillable=["reporter_id","repoter_type","reported_id","reported_type","reason"];
-    public function reporter(){
+    protected $fillable = ["reporter_id", "repoter_type", "reported_id", "reported_type", "reason"];
+    public function reporter()
+    {
         return $this->morphTo();
     }
 
-    public function reported(){
+    public function reported()
+    {
         return $this->morphTo();
     }
 }

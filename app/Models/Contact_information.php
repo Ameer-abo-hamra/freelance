@@ -8,18 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Contact_information extends Model
 {
     use HasFactory;
-    protected $fillable = ['email', "phone", "address"];
+    protected $fillable = ['email', "phone", "address", "contactable_id", "contactable_type"];
 
-    public function company()
+    public function contactable()
     {
-        return $this->belongsTo(Company::class, "company_id");
-    }
-    public function jobSeeker()
-    {
-        return $this->belongsTo(Job_seeker::class, "job_seeker_id");
-    }
-    public function customer()
-    {
-        return $this->belongsTo(Customer::class, "customer_id");
+        return $this->morphTo();
     }
 }

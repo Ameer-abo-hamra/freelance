@@ -18,7 +18,8 @@ return new class extends Migration {
             $table->string("position");
             $table->string("type");
             $table->text("details");
-            $table->foreignId("company_id")->references("id")->on("companies");
+            $table->foreignId("company_id")->references("id")->on("companies")->cascadeOnDelete()->cascadeOnUpdate();
+            ;
             $table->timestamps();
         });
     }

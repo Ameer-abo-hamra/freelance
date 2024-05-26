@@ -12,11 +12,10 @@ return new class extends Migration {
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
+            $table->morphs("commentable");
+            $table->foreignId("post_id")->references("id")->on("posts");
             $table->string("title");
             $table->text("body");
-            $table->foreignId("company_id")->nullable()->references("id")->on("companies");
-            $table->foreignId("job_seeker_id")->nullable()->references("id")->on("job_seekers");
-            $table->foreignId("post_id")->references("id")->on("job_seekers");
             $table->timestamps();
         });
     }

@@ -8,7 +8,10 @@ use App\Models\Comment;
 use App\Models\Comment_like;
 use App\Models\Company;
 use App\Models\Contact_information;
+use App\Models\Customer;
 use App\Models\Job_seeker;
+use App\Models\Post;
+use App\Models\Service;
 use App\Models\Offer;
 use App\Models\Skill;
 use Illuminate\Database\Seeder;
@@ -24,7 +27,7 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
         Company::factory(10)->create();
         Job_seeker::factory(10)->create();
-        Comment::factory(5)->create();
+        // Comment::factory(5)->create();
 
         \App\Models\User::factory()->create([
             'name' => 'Test User',
@@ -38,18 +41,24 @@ class DatabaseSeeder extends Seeder
             "verificationCode" => "test01",
             "email" => "aa@a.com0"
         ]);
+        Post::create([
+            "title" => "fsgd" ,
+            "body" => "gsd" ,
+            "postable_type" => "App\Models\Job_seeker",
+            "postable_id" => 1
 
+        ]);
         Comment::create([
             "title" => "title",
             "body" => "body",
-            "company_id" => 1,
-            "post_id" => 1
-
+            "post_id" => 1,
+            "commentable_type" => "App\Models\Job_seeker",
+            "commentable_id" => 1
         ]);
-        Comment_like::create([
-            "comment_id" => 1,
-            "company_id" => 1
-        ]);
+        // Comment_like::create([
+        //     "comment_id" => 1,
+        //     "company_id" => 1
+        // ]);
         Offer::create([
             "author" => "test",
             "title" => "offer title",
@@ -59,12 +68,12 @@ class DatabaseSeeder extends Seeder
             "type"=> "full-time",
             "details"=> "This offer is provided to more than 10 employees"
         ]);
-        Contact_information::create([
-            "email" => "ameer@gmail.com",
-            "phone" => "0935771318",
-            "address" => "AL-sweida",
-            "company_id" => 1
-        ]);
+        // Contact_information::create([
+        //     "email" => "ameer@gmail.com",
+        //     "phone" => "0935771318",
+        //     "address" => "AL-sweida",
+        //     "company_id" => 1
+        // ]);
         Job_seeker::create([
             "username" => "Ameer314314",
             "password" => Hash::make("123456789"),
@@ -79,74 +88,91 @@ class DatabaseSeeder extends Seeder
             "rate" => 99.5,
             "job_seeker_id" => 1
         ]);
-        $front_end = ["html", "css", "js", "flutter", "angular", "vue", "react"];
-        foreach ($front_end as $f) {
-            Skill::create([
 
-                "category" => "programming",
-                "type" => "front-end",
-                "skill_name" => $f,
-            ]);
-        }
-        $back_end = ["php", "java", "js", "laravel", "django", "nodeJs"];
-        foreach ($back_end as $b) {
-            Skill::create([
-                "category" => "programming",
-                "type" => "back-end",
-                "skill_name" => $b,
-            ]);
-        }
+        Customer::create([
 
-        $architecture_desginer = ["autocad", "reveit", "sketchUp"];
-        foreach ($architecture_desginer as $a) {
-            Skill::create([
-                "category" => "architecture",
-                "type" => "architecture_desginer",
-                "skill_name" => $a
-            ]);
-        }
+            "username" => "ameer" ,
+            "full_name" => "ameer abo hamra" ,
+            "isActive" => 0 ,
+            "verificationCode" => "kjhn" ,
+            "email" => "laknflk@qd.com" ,
+            "password"=>"2345676543" ,
+            "wallet" => "10000",
+            "birth_date"=>"2022-10-10",
+        ]);
+        Service::create([
 
-        $project_manager = ["planning", "schaduling", "budgeting", "building_codes", "regulations"];
+            "description" => "this is wg sd" ,
+            "customer_id" =>1
+        ]);
+        // $front_end = ["html", "css", "js", "flutter", "angular", "vue", "react"];
+        // foreach ($front_end as $f) {
+        //     Skill::create([
 
-        foreach ($project_manager as $p) {
-            Skill::create([
-                "category" => "architecture",
-                "type" => "project_manager",
-                "skill_name" => $p
-            ]);
-        }
-        $interior_desginer = ["autocad", "3dMax", "adobe_photoshop"];
-        foreach ($interior_desginer as $i) {
-            Skill::create([
-                "category" => "architecture",
-                "type" => "interior_desginer",
-                "skill_name" => $i
-            ]);
-        }
+        //         "category" => "programming",
+        //         "type" => "front-end",
+        //         "skill_name" => $f,
+        //     ]);
+        // }
+        // $back_end = ["php", "java", "js", "laravel", "django", "nodeJs"];
+        // foreach ($back_end as $b) {
+        //     Skill::create([
+        //         "category" => "programming",
+        //         "type" => "back-end",
+        //         "skill_name" => $b,
+        //     ]);
+        // }
 
-        $financial_analyst = ["exel"];
-        foreach ($financial_analyst as $f) {
-            Skill::create([
-                "category" => "financial",
-                "type" => "financial_analyst",
-                "skill_name" => $f
-            ]);
-        }
-        $marketing_cordenator = ["marketing_principles", "digital_marketing"];
-        foreach ($marketing_cordenator as $m) {
-            Skill::create([
-                "category" => "financial",
-                "type" => "marketing_cordenator",
-                "skill_name" => $m
-            ]);
-        }
-        $buisness_development_manager = ["exel", "good_writer"];
-        foreach ($buisness_development_manager as $b) {
-            Skill::create([
-                "category" => "financial",
-                "type" => "buisness_development_manager",
-                "skill_name" => $b
-            ]);
-        }
+        // $architecture_desginer = ["autocad", "reveit", "sketchUp"];
+        // foreach ($architecture_desginer as $a) {
+        //     Skill::create([
+        //         "category" => "architecture",
+        //         "type" => "architecture_desginer",
+        //         "skill_name" => $a
+        //     ]);
+        // }
+
+        // $project_manager = ["planning", "schaduling", "budgeting", "building_codes", "regulations"];
+
+        // foreach ($project_manager as $p) {
+        //     Skill::create([
+        //         "category" => "architecture",
+        //         "type" => "project_manager",
+        //         "skill_name" => $p
+        //     ]);
+        // }
+        // $interior_desginer = ["autocad", "3dMax", "adobe_photoshop"];
+        // foreach ($interior_desginer as $i) {
+        //     Skill::create([
+        //         "category" => "architecture",
+        //         "type" => "interior_desginer",
+        //         "skill_name" => $i
+        //     ]);
+        // }
+
+        // $financial_analyst = ["exel"];
+        // foreach ($financial_analyst as $f) {
+        //     Skill::create([
+        //         "category" => "financial",
+        //         "type" => "financial_analyst",
+        //         "skill_name" => $f
+        //     ]);
+        // }
+        // $marketing_cordenator = ["marketing_principles", "digital_marketing"];
+        // foreach ($marketing_cordenator as $m) {
+        //     Skill::create([
+        //         "category" => "financial",
+        //         "type" => "marketing_cordenator",
+        //         "skill_name" => $m
+        //     ]);
+        // }
+        // $buisness_development_manager = ["exel", "good_writer"];
+        // foreach ($buisness_development_manager as $b) {
+        //     Skill::create([
+        //         "category" => "financial",
+        //         "type" => "buisness_development_manager",
+        //         "skill_name" => $b
+        //     ]);
+        // }
     }
 }

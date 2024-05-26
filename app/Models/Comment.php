@@ -8,19 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class Comment extends Model
 {
     use HasFactory;
-    protected $fillable = ["title", "body"];
-    public function company()
-    {
-        return $this->belongsTo(Company::class, "company_id");
-    }
+    protected $fillable = ["title", "body", "commentable_id", "commentable_type", "user_id", "user_type"];
 
+    public function commentable()
+    {
+        return $this->morphTo();
+    }
     public function post()
     {
         return $this->belongsTo(Post::class, "post_id");
     }
-
     public function likes()
     {
-        return $this->hasMany(Comment_like::class, "comment_id");
+        return $this->morphMany(Like::class, "likeable");
     }
 }

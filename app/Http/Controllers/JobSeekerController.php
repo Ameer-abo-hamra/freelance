@@ -102,6 +102,7 @@ class JobSeekerController extends Controller
     {
         $validator = validator::make($request->all(), [
             "email" => "required|email",
+
             "password" => "required",
         ]);
         if ($validator->fails()) {
@@ -138,6 +139,11 @@ class JobSeekerController extends Controller
 
     public function getCategory(){
         return getCategoryApi("api-job_seeker");
+    }
+
+    public function apply_(){
+        $job_seeker=Job_seeker::find(1);
+        $job_seeker->makeApply()->create();
     }
     /* public function showPosts(){
        firstly..i will pring the category for each jobSeeker or company

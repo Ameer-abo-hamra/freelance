@@ -8,22 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Service extends Model
 {
     use HasFactory;
-    protected $fillable = ["description", "customer_id"];
+    protected $fillable = ["description", "customer_id", "serviceable_id", "serviceable_type", "requestable_id", "requestable_type"];
 
-    public function job_seeker()
-    {
-        return $this->belongsTo(Job_seeker::class, "job_seeker_id");
 
+
+    public function appliers(){
+        return $this->belongsToMany(ServiceApply::class,"services_applied","service_id","serviceApplied_id");
     }
-
-    public function customer()
-    {
-        return $this->belongsTo(Customer::class, "customer_id");
-    }
-
-    public function company()
-    {
-        return $this->belongsTo(Company::class, "company_id");
+    // public function requester()
+    // {
+    //     return $this->morphTo();
+    // }
+    public function customer(){
+        return $this->belongsTo(Customer::class,"customer_id");
     }
 
 
