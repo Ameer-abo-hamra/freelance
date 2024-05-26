@@ -16,15 +16,15 @@ class Company extends Authenticatable implements JWTSubject
     public function offers()
     {
         return $this->hasMany(Offer::class, "company_id");
-        return $this->hasMany(Offer::class, "company_id");
     }
 
     // public function services()
     // {
     //     return $this->morphMany(Service::class, "serviceable");
     // }
-    public function makeApply(){
-        return $this->morphMany(ServiceApply::class,"applyable");
+    public function makeApply()
+    {
+        return $this->morphMany(ServiceApply::class, "applyable");
     }
 
 
