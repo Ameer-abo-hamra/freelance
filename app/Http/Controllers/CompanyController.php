@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\Offer;
+use App\Models\Report;
 use App\Traits\ResponseTrait;
 use PHPUnit\Framework\Constraint\IsEmpty;
 use Validator;
@@ -255,4 +256,9 @@ class CompanyController extends Controller
 
 
     }
+
+    // public function report(){
+    //     $report=new Report();
+    //     $reported=
+    // }
 }

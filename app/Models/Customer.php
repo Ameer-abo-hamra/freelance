@@ -28,13 +28,39 @@ class Customer extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    public function likes()
+    {
+        return $this->morphMany(Like::class, "likeable");
+    }
     public function services()
     {
         return $this->hasMany(Service::class, "customer_id");
     }
 
-    public function coantactInformations()
+    public function coantacts()
     {
-        return $this->hasMany(Contact_information::class, "customer_id");
+        return $this->morphMany(Contact_information::class, "contactable");
     }
+
+    public function sendReport()
+    {
+        return $this->morphMany(Report::class, "reporter");
+    }
+
+    public function receivedReport()
+    {
+        return $this->morphMany(Report::class, "reported");
+    }
+
+    public function posts()
+    {
+        return $this->morphMany(Post::class, "postable");
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, "commentable");
+    }
+
 }

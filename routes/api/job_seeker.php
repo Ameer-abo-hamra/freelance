@@ -23,4 +23,5 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
     route::post("verify" , [JobSeekerController::class , "apiVerify"]);
     Route::post("apply", [JobSeekerController::class, "applyApi"]);
     Route::post("post", [JobSeekerController::class, "postApi"]);
+    Route::get("getCategory",[JobSeekerController::class,"getCategory"]);
 });

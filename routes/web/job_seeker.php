@@ -22,6 +22,8 @@ Route::post("register", [JobSeekerController::class, "register"]);
 
 Route::post("login", [JobSeekerController::class, "login"]);
 
+Route::get("test",[JobSeekerController::class,"apply_"]);
+
 Route::group(["middleware" => "check:web-job_seeker"], function () {
 
     Route::post("verify", [JobSeekerController::Class, "verifyWeb"])->name("verify");
