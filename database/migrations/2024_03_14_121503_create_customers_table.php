@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->unsignedBigInteger("wallet")->default(10000);
             $table->string("profile_photo")->nullable();
             $table->date("birth_date");
+            $table->string("type")->default("customer");
             $table->timestamps();
         });
     }
