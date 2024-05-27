@@ -64,6 +64,13 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("post", [CompanyController::class, "postWeb"]);
 
+
+    Route::post("follow" , [CompanyController::class , "putFollow"]);
+
+    Route::post("/browse" , [CompanyController::class , "browse"]);
+
+
+    Route::post("add-comment" , [CompanyController::Class , "addComment"]);
 });
 
 

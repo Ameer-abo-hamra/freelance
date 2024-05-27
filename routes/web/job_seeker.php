@@ -35,5 +35,11 @@ Route::group(["middleware" => "check:web-job_seeker"], function () {
     Route::post("apply", [JobSeekerController::class, "applyWeb"]);
 
   Route::post("post", [JobSeekerController::class , "postWeb"]);
+
+  Route::post("browse" , [JobSeekerController::class , "browse"]);
+
+  Route::post("follow" , [JobSeekerController::class , "putFollow"]);
+
+
 });
 

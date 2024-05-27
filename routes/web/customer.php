@@ -40,4 +40,9 @@ Route::group(["middleware" => ["check:customer"]], function () {
     Route::group(["middleware" => "active:customer"], function () {
 
     });
+
+    Route::post("browse" , [CustomerController::class , "browse"]);
+
+    Route::post("follow" , [CustomerController::class , "putFollow"]);
+
 });

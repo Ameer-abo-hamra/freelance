@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Job_seeker;
 use App\Models\Offer;
 use App\Models\Report;
 use App\Traits\ResponseTrait;
@@ -237,14 +238,13 @@ class CompanyController extends Controller
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-
-        if ($offer = Offer::find($request->offer_id)) {
+        $offer = Offer::find($request->offer_id);
+        if ($offer) {
             foreach ($offer->jobSeekers as $jobseeker) {
                 if ($jobseeker->id == $request->job_seeker_id) {
-                    $offer->jobSeekers()->updateExistingPivot(
-                        $request->offer_id,
+                    $offer->jobSeekers()->update(
                         [
-                            "isAccepted" => true
+                            "isAccepted" => $request->state
                         ]
                     );
                     return $this->returnSuccess("this order is changed ");
@@ -252,13 +252,41 @@ class CompanyController extends Controller
                 return $this->returnError("this jobSeeker does not exist ");
             }
         }
-        return $this->returnError("this offer does not exist ");
+        return $this->returnError("this offer does not exist");
+    }
+
+    public function browse(Request $request)
+    {
+
+        $validator = validator::make($request->all(), [
+            "type" => "required",
+            "id" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+        return browse($request->type, $request->id);
+    }
+
+    public function putFollow(Request $request)
+    {
+
+        $validator = validator::make($request->all(), [
+            "followMakerType" => "required",
+            "followMakerid" => "required",
+            "followReciverType" => "required",
+            "followReciverid" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+        return putFollow($request->followMakerType, $request->followMakerid, $request->followReciverType, $request->followReciverid);
 
 
     }
 
-    // public function report(){
-    //     $report=new Report();
-    //     $reported=
-    // }
+    public function addComment(Request $request) {
+
+        
+    }
 }

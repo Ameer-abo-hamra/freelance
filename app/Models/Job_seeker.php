@@ -31,8 +31,9 @@ class Job_seeker extends Authenticatable implements JWTSubject
     // {
     //     return $this->morphMany(Service::class, "serviceable");
     // }
-    public function makeApply(){
-        return $this->morphMany(ServiceApply::class,"applyable");
+    public function makeApply()
+    {
+        return $this->morphMany(ServiceApply::class, "applyable");
     }
     public function certificates()
     {
@@ -94,5 +95,17 @@ class Job_seeker extends Authenticatable implements JWTSubject
     public function reportsReceived()
     {
         return $this->morphMany(Report::class, "reported");
+    }
+
+    public function followMade()
+    {
+        return $this->morphMany(Follow::class, "followMaker");
+
+    }
+
+    public function followRecived()
+    {
+        return $this->morphMany(Follow::class, "followReciver");
+
     }
 }

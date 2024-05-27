@@ -80,6 +80,16 @@ class Company extends Authenticatable implements JWTSubject
         return $this->morphMany(Report::class, "reported");
     }
 
+    public function followMade() {
+        return $this->morphMany(Follow::class , "followMaker");
+
+    }
+
+    public function followRecived() {
+        return $this->morphMany(Follow::class , "followReciver");
+
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
