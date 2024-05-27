@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->boolean("isActive")->default(false);
             $table->string("verificationCode")->nullable();
             $table->date("establishment_date");
+            $table->string("type")->default("company");
             $table->unsignedInteger("employee_number");
             $table->string("profile_photo")->nullable();
             $table->timestamps();
