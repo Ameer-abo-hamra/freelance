@@ -63,4 +63,13 @@ class Customer extends Authenticatable implements JWTSubject
         return $this->morphMany(Comment::class, "commentable");
     }
 
+    public function followMade() {
+        return $this->morphMany(Follow::class , "followMaker");
+
+    }
+
+    public function followRecived() {
+        return $this->morphMany(Follow::class , "followReciver");
+
+    }
 }

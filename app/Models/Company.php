@@ -22,8 +22,9 @@ class Company extends Authenticatable implements JWTSubject
     // {
     //     return $this->morphMany(Service::class, "serviceable");
     // }
-    public function makeApply(){
-        return $this->morphMany(ServiceApply::class,"applyable");
+    public function makeApply()
+    {
+        return $this->morphMany(ServiceApply::class, "applyable");
     }
 
 
@@ -69,10 +70,42 @@ class Company extends Authenticatable implements JWTSubject
         return $this->morphMany(Like::class, "likeable");
     }
 
+
+    public function reportsMade()
+    {
+        return $this->morphMany(Report::class, "reporter");
+    }
+    public function reportsReceived()
+    {
+        return $this->morphMany(Report::class, "reported");
+    }
+
+    public function followMade() {
+        return $this->morphMany(Follow::class , "followMaker");
+
+    }
+
+    public function followRecived() {
+        return $this->morphMany(Follow::class , "followReciver");
+
+    }
+
+    public function notificationSent() {
+
+        return $this->morphMany(Notification::class ,"notfiSender" );
+    }
+
+    public function notificationReciver() {
+
+        return $this->morphMany(Notification::class ,"notfiReciver" );
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
+
+
 
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.

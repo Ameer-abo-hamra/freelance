@@ -93,7 +93,8 @@ function category()
     ];
 }
 
-function getCategoryApi($guard){
+function getCategoryApi($guard)
+{
     $job_seeker = Auth::guard($guard)->user();
     $skills = $job_seeker->skills();
     return $skills;
@@ -104,4 +105,71 @@ function getCategoryApi($guard){
     // return $job_seeker->skills();
     // return $skills;
     // return $job_seeker;
+}
+
+
+function browse($type, $id)
+{
+
+    $user = '';
+
+    if ($type = "company") {
+
+        $user = \App\Models\Company::find($id);
+
+    } elseif ($type = "job_seeker") {
+        $user = Job_seeker::find($id);
+
+    } elseif ($type = "customer") {
+        $user = \App\Models\Customer::find($id);
+    }
+
+    $posts = [];
+    foreach ($user->followMade as $f) {
+
+        if (class_exists($f->followReciver_type)) {
+            array_push($posts, $f->followReciver_type::find($f->followReciver_id)->posts);
+        } else {
+            return ResponseTrait::returnError("this class does not exist");
+
+        }
+    }
+    return ResponseTrait::returnData("", "posts", $posts);
+}
+
+function putFollow($followMakerType, $followMakerid, $followReciverType, $followReciverid)
+{
+    $followMaker = '';
+    $follwReciver = '';
+    if ($followMakerType == "company") {
+
+        $followMaker = \App\Models\Company::find($followMakerid);
+
+    } elseif ($followMakerType == "job_seeker") {
+        $followMaker = Job_seeker::find($followMakerid);
+
+    } elseif ($followMakerType == "customer") {
+        $followMaker = \App\Models\Customer::find($followMakerid);
+    } else {
+        return ResponseTrait::returnError("check the followMakerType or followMakerid ");
+    }
+    if ($followReciverType == "company") {
+
+        $follwReciver = " App\Models\Company";
+
+    } elseif ($followReciverType == "job_seeker") {
+        $follwReciver = "App\Models\Job_seeker";
+
+    } elseif ($followReciverType == "customer") {
+        $follwReciver = "App\Models\Customer";
+    } else {
+        return ResponseTrait::returnError("check the followReciverType");
+    }
+    $followMaker->followMade()->create([
+
+        "followReciver_type" => $follwReciver,
+        "followReciver_id" => $followReciverid,
+    ]);
+
+    return ResponseTrait::returnSuccess("done");
 }
