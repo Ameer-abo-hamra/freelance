@@ -48,7 +48,4 @@ class AdminController extends Controller
         $post->delete();
     }
 
-    public function addSkill(){
-
-    }
 }

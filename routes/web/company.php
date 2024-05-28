@@ -2,6 +2,7 @@
 
 use App\Events\ForTesting;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ReportController;
 use App\Models\Company;
 use Illuminate\Support\Facades\Route;
 
@@ -33,7 +34,7 @@ route::post("register", [CompanyController::class, "register"]);
 
 route::post("login", [CompanyController::class, "login"]);
 
-route::get("report\{reported_id\reported_type}",[CompanyController::class,"report"]);
+route::get("report",[ReportController::class,"report"]);
 
 Route::group(["middleware" => "check:web-company"], function () {
 
@@ -62,6 +63,3 @@ Route::group(["middleware" => "check:web-company"], function () {
     Route::post("post", [CompanyController::class, "postWeb"]);
 
 });
-
-
-
