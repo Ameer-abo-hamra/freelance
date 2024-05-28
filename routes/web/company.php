@@ -25,7 +25,7 @@ route::get("csrf", function () {
     return csrf_token();
 });
 
- Route::get("report/{reporter_id}/{reported_id}" , [ReportController::class , "report"]);
+Route::get("report/{reporter_id}/{reported_id}", [ReportController::class, "report"]);
 
 
 Route::get("testws", function () {
@@ -36,7 +36,7 @@ route::post("register", [CompanyController::class, "register"]);
 
 route::post("login", [CompanyController::class, "login"]);
 
-route::get("report\{reported_id\reported_type}",[CompanyController::class,"report"]);
+route::get("report\{reported_id\reported_type}", [CompanyController::class, "report"]);
 
 Route::group(["middleware" => "check:web-company"], function () {
 
@@ -56,22 +56,27 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("update-offer", [CompanyController::class, "offerUpdate"]);
 
-    Route::get("get-offers/{company_id}", [CompanyController::class, "getOffers"]);
+    Route::get("get-offers", [CompanyController::class, "getOffers"]);
 
     Route::get("get-job-applicants/{offer_id}", [CompanyController::class, "getJobApplicants"]);
 
-    Route::post("change-offer-state", [CompanyController::class , "ChangeOfferState"]);
+    Route::post("change-offer-state", [CompanyController::class, "ChangeOfferState"]);
 
     Route::post("post", [CompanyController::class, "postWeb"]);
 
 
-    Route::post("follow" , [CompanyController::class , "putFollow"]);
+    Route::post("follow", [CompanyController::class, "putFollow"]);
 
-    Route::post("/browse" , [CompanyController::class , "browse"]);
+    Route::post("/browse", [CompanyController::class, "browse"]);
 
 
-    Route::post("add-comment" , [CompanyController::Class , "addComment"]);
+    Route::post("add-comment", [CompanyController::class, "addComment"]);
 });
 
 
+// Route::get("test", [CompanyController::class, "test"]);
 
+
+Route::get("vist", function () {
+    return view("test");
+});

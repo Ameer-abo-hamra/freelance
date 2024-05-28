@@ -104,7 +104,7 @@ class DatabaseSeeder extends Seeder
             "author" => "test",
             "title" => "offer title",
             "body" => "offer body",
-            "company_id" => 1,
+            "company_id" => 11,
             "position" => "laravel developer",
             "type" => "full-time",
             "details" => "This offer is provided to more than 10 employees"

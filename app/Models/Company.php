@@ -90,6 +90,16 @@ class Company extends Authenticatable implements JWTSubject
 
     }
 
+    public function notificationSent() {
+
+        return $this->morphMany(Notification::class ,"notfiSender" );
+    }
+
+    public function notificationReciver() {
+
+        return $this->morphMany(Notification::class ,"notfiReciver" );
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();

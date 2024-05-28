@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\Job_seeker;
+use App\Models\Notification;
 use App\Models\Offer;
 use App\Models\Report;
 use App\Traits\ResponseTrait;
@@ -11,6 +12,7 @@ use PHPUnit\Framework\Constraint\IsEmpty;
 use Validator;
 use Auth;
 use Hash;
+use App\Events\RespondApplicants;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\Skill;
 use App\Models\Post;
@@ -206,7 +208,7 @@ class CompanyController extends Controller
     public function getOffers($company_id)
     {
 
-        $company = Company::find($company_id);
+        $company = getAuth("web-company");
 
         if ($company) {
             return $this->returnData("", "offers", $company->offers);
@@ -238,8 +240,8 @@ class CompanyController extends Controller
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        $offer = Offer::find($request->offer_id);
-        if ($offer) {
+        ;
+        if ($offer = Offer::findOrFail($request->offer_id)) {
             foreach ($offer->jobSeekers as $jobseeker) {
                 if ($jobseeker->id == $request->job_seeker_id) {
                     $offer->jobSeekers()->update(
@@ -247,10 +249,25 @@ class CompanyController extends Controller
                             "isAccepted" => $request->state
                         ]
                     );
+                    $content = '';
+                    if ($request->state) {
+                        $content ="Your employment application has been accepted by " . getAuth("web-company")->name;
+                        broadcast(new RespondApplicants(getAuth("web-company")->name, $request->state, $content));
+
+                    } else {
+                        $content ="Your employment application has been rejected by " . getAuth("web-company")->name;
+                        broadcast(new RespondApplicants(getAuth("web-company")->name, $request->state, $content));
+                    }
+
+                    getAuth("web-company")->notificationSent()->create([
+                        "notfiReciver_type" => "app\Models\Job_seeker",
+                        "notfiReciver_id" => $request->job_seeker_id,
+                        "content" => $content
+                    ]);
                     return $this->returnSuccess("this order is changed ");
                 }
-                return $this->returnError("this jobSeeker does not exist ");
             }
+            return $this->returnError("this jobSeeker did not apply for this offer");
         }
         return $this->returnError("this offer does not exist");
     }
@@ -285,8 +302,17 @@ class CompanyController extends Controller
 
     }
 
-    public function addComment(Request $request) {
+    public function addComment(Request $request)
+    {
 
-        
+
     }
+
+    // public function test()
+    // {
+    //     broadcast(new RespondApplicants("1" ,true));
+
+    // }
+
+
 }
