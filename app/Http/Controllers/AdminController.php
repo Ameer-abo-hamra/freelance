@@ -6,6 +6,7 @@ use App\Events\ForTesting;
 use App\Models\Company;
 use App\Models\Customer;
 use App\Models\Job_seeker;
+use App\Models\Post;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 
@@ -40,5 +41,14 @@ class AdminController extends Controller
         }
 
         return $this->returnError("check the type that you send it ");
+    }
+
+    public function deletePost($id){
+        $post=Post::find($id);
+        $post->delete();
+    }
+
+    public function addSkill(){
+
     }
 }

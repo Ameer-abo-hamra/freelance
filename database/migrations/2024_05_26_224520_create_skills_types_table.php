@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('skills', function (Blueprint $table) {
+        Schema::create('skills_types', function (Blueprint $table) {
             $table->id();
-            $table->string("skill_name");
-            $table->string("category");
-            $table->string("type");
+            $table->foreignId("skill_id")->references("id")->on("skills");
+            $table->foreignId("type_id")->references("id")->on("types");
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('skills');
+        Schema::dropIfExists('skills_types');
     }
 };

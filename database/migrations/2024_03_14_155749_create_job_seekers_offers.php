@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId("job_seeker_id")->references("id")->on("job_seekers")->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId("offer_id")->references("id")->on("offers")->cascadeOnDelete()->cascadeOnUpdate();
-            $table->boolean("isAccepted")->default(false);
+            $table->boolean("isAccepted")->nullable();
             $table->string("CV");
             $table->text("additionalInfo")->nullable();
             $table->timestamps();

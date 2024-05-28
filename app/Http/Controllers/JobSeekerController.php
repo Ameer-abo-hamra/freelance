@@ -137,6 +137,25 @@ class JobSeekerController extends Controller
         return $this->post($request, "job_seeker", "job_seeker_id", "job_seeker");
     }
 
+    public function getCategory(){
+        return getCategoryApi("api-job_seeker");
+    }
+
+    public function apply_(){
+        $job_seeker=Job_seeker::find(1);
+        $job_seeker->makeApply()->create();
+    }
+    /* public function showPosts(){
+       firstly..i will pring the category for each jobSeeker or company
+       secondly..i will classify the posts according to category
+       thirdly..i will show particular posts to each one
+    */
+    /*
+    public function getCategoryApi($guard){
+        $job_seeker = Auth::guard($guard)->user();
+        $job_seeker->skills();
+    }
+    */
 
 
 }

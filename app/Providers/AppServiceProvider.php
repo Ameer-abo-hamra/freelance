@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Observers\job_seekers_offersObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +20,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // job_seekers_offers::observe(job_seekers_offersObserver::class);
     }
 }
