@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\JobSeekerController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,11 +23,13 @@ Route::post("register", [JobSeekerController::class, "register"]);
 
 Route::post("login", [JobSeekerController::class, "login"]);
 
-Route::get("test",[JobSeekerController::class,"apply_"]);
+Route::get("test", [JobSeekerController::class, "apply_"]);
+
+route::post("report", [ReportController::class, "report"]);
 
 Route::group(["middleware" => "check:web-job_seeker"], function () {
 
-    Route::post("verify", [JobSeekerController::Class, "verifyWeb"])->name("verify");
+    Route::post("verify", [JobSeekerController::class, "verifyWeb"])->name("verify");
 
     Route::get("resend-verify", [JobSeekerController::class, "resend"]);
 
@@ -34,6 +37,12 @@ Route::group(["middleware" => "check:web-job_seeker"], function () {
 
     Route::post("apply", [JobSeekerController::class, "applyWeb"]);
 
-  Route::post("post", [JobSeekerController::class , "postWeb"]);
+    Route::post("post", [JobSeekerController::class, "postWeb"]);
+
+    Route::post("browse", [JobSeekerController::class, "browse"]);
+
+    Route::post("follow", [JobSeekerController::class, "putFollow"]);
+
+
 });
 

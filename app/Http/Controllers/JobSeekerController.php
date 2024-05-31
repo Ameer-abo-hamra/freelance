@@ -137,25 +137,47 @@ class JobSeekerController extends Controller
         return $this->post($request, "job_seeker", "job_seeker_id", "job_seeker");
     }
 
-    public function getCategory(){
+    public function getCategory()
+    {
         return getCategoryApi("api-job_seeker");
     }
 
-    public function apply_(){
-        $job_seeker=Job_seeker::find(1);
+    public function apply_()
+    {
+        $job_seeker = Job_seeker::find(1);
         $job_seeker->makeApply()->create();
     }
-    /* public function showPosts(){
-       firstly..i will pring the category for each jobSeeker or company
-       secondly..i will classify the posts according to category
-       thirdly..i will show particular posts to each one
-    */
-    /*
-    public function getCategoryApi($guard){
-        $job_seeker = Auth::guard($guard)->user();
-        $job_seeker->skills();
+    public function browse(Request $request)
+    {
+
+        $validator = validator::make($request->all(), [
+            "type" => "required",
+            "id" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+        return browse($request->type, $request->id);
     }
-    */
 
+    public function putFollow(Request $request)
+    {
 
+        $validator = validator::make($request->all(), [
+            "followMakerType" => "required",
+            "followMakerid" => "required",
+            "followReciverType" => "required",
+            "followReciverid" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+        return putFollow($request->followMakerType, $request->followMakerid, $request->followReciverType, $request->followReciverid);
+    }
+
+    public function showJob_seekers()
+    {
+        $job_seekers = Job_seeker::get();
+        return $job_seekers;
+    }
 }

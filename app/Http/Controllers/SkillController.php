@@ -13,20 +13,20 @@ class SkillController extends Controller
     use ResponseTrait;
     public function addSkill(Request $request)
     {
-        $validator = validator::make($request->all, [
+        $validator = validator::make($request->all(), [
             "skill_name" => "required|string",
             "category_id" => "required|exists:categories,id",
-            "type_id" => "required|array",
-            "type_id.*" => "exists:types,id"
+            "type_ids" => "required|array",
+            "type_ids.*" => "exists:types,id"
         ]);
         if ($validator->fails()) {
-            return $this->returnError("your information is not complete");
+            return $this->returnError($validator->errors()->first());
         }
         $skill = Skill::create([
             "skill_name" => $request->skill_name,
             "category_id" => $request->category_id
         ]);
-        $type_ids = $request->type_id;
+        $type_ids = $request->type_ids;
         foreach ($type_ids as $type_id) {
             $skill->types()->attach($type_id);
         }
@@ -35,13 +35,15 @@ class SkillController extends Controller
 
     public function updateSkill(Request $request)
     {
-        Skill::update([
-            "skill_name"=> $request->skill_name
+        $skill_id=$request->skill_id;
+        Skill::find($skill_id)->update([
+            "skill_name" => $request->skill_name
         ]);
         return $this->returnSuccess("the skill is updated");
     }
 
-    public function deleteSkill($id){
+    public function deleteSkill($id)
+    {
         Skill::find($id)->delete();
         return $this->returnSuccess("the skill deleted successfully");
     }

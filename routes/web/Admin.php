@@ -5,23 +5,38 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\TypeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JobSeekerController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\PostController;
 
-Route::get("delete/{type}/{id}", [AdminController::class, "deleteUser"]);
+Route::get("deleteUser/{type}/{id}", [AdminController::class, "deleteUser"]);
 
-Route::get("deletePost/{id}",[AdminController::class,"deletePost"]);
+Route::get("deletePost/{post_id}", [PostController::class, "deletePostDirectly"]);
 
-Route::post("add-skill", [SkillController::class, "addSkill"]);
+Route::post("addSkill", [SkillController::class, "addSkill"]);
 
-Route::post("updateSkill",[SkillController::class,"updateSkill"]);
+Route::post("updateSkill", [SkillController::class, "updateSkill"]);
 
-Route::get("deleteSkill/{id}",[SkillController::class,"deleteSkill"]);
+Route::get("deleteSkill/{id}", [SkillController::class, "deleteSkill"]);
 
-Route::post("addType",[TypeController::class,"addType"]);
+Route::post("addType", [TypeController::class, "addType"]);
 
-Route::post("updateType",[TypeController::class,"updateType"]);
+Route::post("updateType", [TypeController::class, "updateType"]);
 
-Route::get("deleteType/{id}",[TypeController::class,"deleteType"]);
+Route::get("deleteType/{type_id}", [TypeController::class, "deleteType"]);
 
-Route::post("addCategory",[CategoryController::class,"addCategory"]);
+Route::post("addCategory", [CategoryController::class, "addCategory"]);
 
-// Route::post("report",[ReportController::class,"report"]);
+Route::post("updateCategory", [CategoryController::class, "updateCategory"]);
+
+Route::get("deleteCategory/{id}", [CategoryController::class, "deleteCategory"]);
+
+Route::get("showJobSeekers", [JobSeekerController::class, "showJob_seekers"]);
+
+Route::get("showCompanies", [CompanyController::class, "showCompanies"]);
+
+Route::get("showCustomers", [CustomerController::class, "showCustomers"]);
+
+// Route::get("countReports/{post_id}",[ReportController::class,"countReports"]);
+

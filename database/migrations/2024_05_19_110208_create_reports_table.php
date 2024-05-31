@@ -10,13 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('admins', function (Blueprint $table) {
+        Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->string("full_name");
-            $table->string("type")->default("admin");
-            $table->date("birthOfDate");
-            $table->string("city");
-            $table->string("profilePhoto");
+            $table->string("reason")->nullable();
+            $table->morphs("reporter");
+            $table->morphs("reported");
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('admins');
+        Schema::dropIfExists('reports');
     }
 };

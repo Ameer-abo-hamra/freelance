@@ -174,5 +174,39 @@ class CustomerController extends Controller
         }
         return $this->returnSuccess("your service is added successfully , wait to find anyone to solve it");
     }
+    public function browse(Request $request)
+    {
+
+        $validator = validator::make($request->all(), [
+            "type" => "required",
+            "id" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+        return browse($request->type, $request->id);
+    }
+    public function putFollow(Request $request)
+    {
+
+        $validator = validator::make($request->all(), [
+            "followMakerType" => "required",
+            "followMakerid" => "required",
+            "followReciverType" => "required",
+            "followReciverid" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+        return putFollow($request->followMakerType, $request->followMakerid, $request->followReciverType, $request->followReciverid);
+
+
+    }
+
+    public function showCustomers()
+    {
+        $customers = Customer::get();
+        return $customers;
+    }
 }
 

@@ -8,7 +8,10 @@ use App\Models\Customer;
 use App\Models\Job_seeker;
 use App\Models\Post;
 use App\Traits\ResponseTrait;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\ReportController;
+
 
 class AdminController extends Controller
 {
@@ -30,8 +33,7 @@ class AdminController extends Controller
                 return $this->returnSuccess("done");
             }
             return $this->returnError("check id :)");
-        }
-        elseif($type== "customer") {
+        } elseif ($type == "customer") {
             $customer = Customer::find($id);
             if ($customer) {
                 $customer->delete();
@@ -43,9 +45,8 @@ class AdminController extends Controller
         return $this->returnError("check the type that you send it ");
     }
 
-    public function deletePost($id){
-        $post=Post::find($id);
-        $post->delete();
-    }
+
+
+
 
 }

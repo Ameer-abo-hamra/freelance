@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Job_seeker extends Authenticatable implements JWTSubject
 {
     use HasFactory;
-    protected $fillable = ["username", "full_name", "birth_date", "password", "email", "verificationCode", "isActive"];
+    protected $fillable = ["username", "full_name", "birth_date", "password", "email", "verificationCode", "isActive", "CV", "additionalInfo", "isAccepted","type"];
     protected $hidden = ["created_at", "updated_at"];
     public function getJWTIdentifier()
     {
@@ -31,8 +31,9 @@ class Job_seeker extends Authenticatable implements JWTSubject
     // {
     //     return $this->morphMany(Service::class, "serviceable");
     // }
-    public function makeApply(){
-        return $this->morphMany(ServiceApply::class,"applyable");
+    public function makeApply()
+    {
+        return $this->morphMany(ServiceApply::class, "applyable");
     }
     public function certificates()
     {
@@ -51,7 +52,7 @@ class Job_seeker extends Authenticatable implements JWTSubject
 
     public function offers()
     {
-        return $this->belongsToMany(Offer::class, "job_seekers_offers", "job_seeker_id", "offer_id");
+        return $this->belongsToMany(Offer::class, "job_seekers_offers", "job_seeker_id", "offer_id")->withPivot(["CV", "additionalInfo", "isAccepted"]);
     }
 
     public function companies()
@@ -66,7 +67,6 @@ class Job_seeker extends Authenticatable implements JWTSubject
     {
         return $this->morphMany(Comment::class, "commentable");
     }
-
 
     public function likes()
     {
@@ -86,5 +86,26 @@ class Job_seeker extends Authenticatable implements JWTSubject
     public function receivedReport()
     {
         return $this->morphMany(Report::class, "reported");
+    }
+
+    public function reportsMade()
+    {
+        return $this->morphMany(Report::class, "reporter");
+    }
+    public function reportsReceived()
+    {
+        return $this->morphMany(Report::class, "reported");
+    }
+
+    public function followMade()
+    {
+        return $this->morphMany(Follow::class, "followMaker");
+
+    }
+
+    public function followRecived()
+    {
+        return $this->morphMany(Follow::class, "followReciver");
+
     }
 }
