@@ -137,12 +137,14 @@ class JobSeekerController extends Controller
         return $this->post($request, "job_seeker", "job_seeker_id", "job_seeker");
     }
 
-    public function getCategory(){
+    public function getCategory()
+    {
         return getCategoryApi("api-job_seeker");
     }
 
-    public function apply_(){
-        $job_seeker=Job_seeker::find(1);
+    public function apply_()
+    {
+        $job_seeker = Job_seeker::find(1);
         $job_seeker->makeApply()->create();
     }
     public function browse(Request $request)
@@ -171,7 +173,11 @@ class JobSeekerController extends Controller
             return $this->returnError($validator->errors()->first());
         }
         return putFollow($request->followMakerType, $request->followMakerid, $request->followReciverType, $request->followReciverid);
+    }
 
-
+    public function showJob_seekers()
+    {
+        $job_seekers = Job_seeker::get();
+        return $job_seekers;
     }
 }

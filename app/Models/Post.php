@@ -23,4 +23,10 @@ class Post extends Model
     {
         return $this->morphTo();
     }
+
+    public function reportRecived()
+    {
+        return $this->morphMany(Report::class, "reported");
+    }
+
 }

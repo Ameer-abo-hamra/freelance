@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Job_seeker extends Authenticatable implements JWTSubject
 {
     use HasFactory;
-    protected $fillable = ["username", "full_name", "birth_date", "password", "email", "verificationCode", "isActive", "CV", "additionalInfo", "isAccepted"];
+    protected $fillable = ["username", "full_name", "birth_date", "password", "email", "verificationCode", "isActive", "CV", "additionalInfo", "isAccepted","type"];
     protected $hidden = ["created_at", "updated_at"];
     public function getJWTIdentifier()
     {

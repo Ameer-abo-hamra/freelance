@@ -251,11 +251,11 @@ class CompanyController extends Controller
                     );
                     $content = '';
                     if ($request->state) {
-                        $content ="Your employment application has been accepted by " . getAuth("web-company")->name;
+                        $content = "Your employment application has been accepted by " . getAuth("web-company")->name;
                         broadcast(new RespondApplicants(getAuth("web-company")->name, $request->state, $content));
 
                     } else {
-                        $content ="Your employment application has been rejected by " . getAuth("web-company")->name;
+                        $content = "Your employment application has been rejected by " . getAuth("web-company")->name;
                         broadcast(new RespondApplicants(getAuth("web-company")->name, $request->state, $content));
                     }
 
@@ -306,6 +306,12 @@ class CompanyController extends Controller
     {
 
 
+    }
+
+    public function showCompanies()
+    {
+        $companies = Company::get();
+        return $companies;
     }
 
     // public function test()

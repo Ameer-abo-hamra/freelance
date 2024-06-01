@@ -36,7 +36,7 @@ route::post("register", [CompanyController::class, "register"]);
 
 route::post("login", [CompanyController::class, "login"]);
 
-route::get("report\{reported_id\reported_type}", [CompanyController::class, "report"]);
+route::post("report", [ReportController::class, "report"]);
 
 Route::group(["middleware" => "check:web-company"], function () {
 
