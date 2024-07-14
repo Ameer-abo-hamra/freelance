@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\ForTesting;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ReportController;
 use App\Models\Company;
@@ -70,7 +71,19 @@ Route::group(["middleware" => "check:web-company"], function () {
     Route::post("/browse", [CompanyController::class, "browse"]);
 
 
-    Route::post("add-comment", [CompanyController::class, "addComment"]);
+    Route::post("add-comment/{post_id}", [CompanyController::class, "addComment"]);
+
+    Route::post("updateComment/{comment_id}", [CompanyController::class, "updateComment"]);
+
+    Route::get("deleteComment/{comment_id}",[CompanyController::class,"deleteComment"]);
+
+    Route::post("addLikeToPost",[CompanyController::class,"addLikeToPost"]);
+
+    Route::post("unlikePost",[CompanyController::class,"unlikePost"]);
+
+    Route::post("addLikeToComment",[CompanyController::class,"addLikeToComment"]);
+
+    Route::post("unlikeComment",[CompanyController::class,"unlikeComment"]);
 });
 
 

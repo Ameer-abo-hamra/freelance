@@ -14,6 +14,8 @@ use Auth;
 use Hash;
 use App\Mail\testmail;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Models\Post;
+use App\Models\Comment;
 
 use App\Helpers;
 
@@ -208,5 +210,61 @@ class CustomerController extends Controller
         $customers = Customer::get();
         return $customers;
     }
+
+    public function addComment(Request $request, $post_id)
+    {
+        $validator = validator::make($request->all(), [
+            'customer_id' => 'required|exists:customers,id',
+            'body' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+
+        $post = Post::find($post_id);
+        if (!$post) {
+            return $this->returnError("post not found");
+        }
+
+        $customer = Customer::find($request->customer_id);
+        if (!$customer) {
+            return $this->returnError("customer not found");
+        }
+
+        $comment = new Comment();
+        $comment->body = $request->body;
+        $comment->commentable_type = Customer::class;
+        $comment->commentable_id = $customer->id;
+        $comment->post_id = $post_id;
+
+        $comment->save();
+
+        return $this->returnSuccess("comment added successfully");
+    }
+
+    // public function updateComment(Request $request, $comment_id)
+    // {
+    //     $validator = validator::make($request->all(), [
+    //         'body' => 'required|string',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return $this->returnError($validator->errors()->first());
+    //     }
+
+    //     $comment = Comment::find($comment_id);
+    //     if (!$comment) {
+    //         return $this->returnError("Comment not found");
+    //     }
+
+    //     $comment->body = $request->input('body');
+    //     $comment->save();
+
+    //     return $this->returnSuccess("comment updated successfully");
+    // }
+
+
 }
+
 

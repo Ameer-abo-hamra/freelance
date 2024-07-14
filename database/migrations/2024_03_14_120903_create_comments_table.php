@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->id();
             $table->morphs("commentable");
             $table->foreignId("post_id")->references("id")->on("posts")->onDelete("cascade");
-            $table->string("title");
             $table->text("body");
             $table->timestamps();
         });
