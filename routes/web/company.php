@@ -71,19 +71,19 @@ Route::group(["middleware" => "check:web-company"], function () {
     Route::post("/browse", [CompanyController::class, "browse"]);
 
 
-    Route::post("add-comment/{post_id}", [CompanyController::class, "addComment"]);
+    Route::post("add-comment/{post_id}", [CompanyController::class, "addComment_web"]);
 
     Route::post("updateComment/{comment_id}", [CompanyController::class, "updateComment"]);
 
     Route::get("deleteComment/{comment_id}",[CompanyController::class,"deleteComment"]);
 
-    Route::post("addLikeToPost",[CompanyController::class,"addLikeToPost"]);
+    Route::post("addLikeToPost",[CompanyController::class,"addLikeToPost_web"]);
 
-    Route::post("unlikePost",[CompanyController::class,"unlikePost"]);
+    Route::post("unlikePost",[CompanyController::class,"unlikePost_web"]);
 
-    Route::post("addLikeToComment",[CompanyController::class,"addLikeToComment"]);
+    Route::post("addLikeToComment",[CompanyController::class,"addLikeToComment_web"]);
 
-    Route::post("unlikeComment",[CompanyController::class,"unlikeComment"]);
+    Route::post("unlikeComment",[CompanyController::class,"unlikeComment_web"]);
 });
 
 

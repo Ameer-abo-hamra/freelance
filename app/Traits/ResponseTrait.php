@@ -115,6 +115,16 @@ trait ResponseTrait
             $comment->commentable_type = Company::class;
             $comment->commentable_id = $company_id;
             $comment->save();
+        } elseif($guard == "api-company"){
+            $company_id = getAuth("api-company")->id;
+            $comment->commentable_type = Company::class;
+            $comment->commentable_id = $company_id;
+            $comment->save();
+        } elseif($guard == "api-job_seeker"){
+            $company_id = getAuth("api-job_seeker")->id;
+            $comment->commentable_type = Company::class;
+            $comment->commentable_id = $company_id;
+            $comment->save();
         }
         return $this->returnSuccess("your comment created successfully");
     }
