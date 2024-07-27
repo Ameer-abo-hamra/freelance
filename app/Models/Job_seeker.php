@@ -31,6 +31,10 @@ class Job_seeker extends Authenticatable implements JWTSubject
     // {
     //     return $this->morphMany(Service::class, "serviceable");
     // }
+
+    public function wallet(){
+        return $this->belongsTo(Wallet::class,"job_seeker_id");
+    }
     public function makeApply()
     {
         return $this->morphMany(ServiceApply::class, "applyable");
@@ -108,4 +112,12 @@ class Job_seeker extends Authenticatable implements JWTSubject
         return $this->morphMany(Follow::class, "followReciver");
 
     }
+
+    public function scopeSearch($query, $term)
+    {
+        return $query->where('username', 'like', '%' . $term . '%')
+                    ->orWhere('full_name','like','%' . $term . '%')
+                    ->orWhere('email', 'like', '%' . $term . '%');
+    }
+
 }

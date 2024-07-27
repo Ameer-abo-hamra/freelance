@@ -37,6 +37,8 @@ route::post("register", [CompanyController::class, "register"]);
 
 route::post("login", [CompanyController::class, "login"]);
 
+Route::get("delete-account/{id}",[CompanyController::class,"deleteAccount"]);
+
 route::post("report", [ReportController::class, "report"]);
 
 Route::group(["middleware" => "check:web-company"], function () {
@@ -65,11 +67,13 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("post", [CompanyController::class, "postWeb"]);
 
+    Route::post("updatePost",[CompanyController::class,"updatePost"]);
+
+    Route::get("deletePost/{post_id}",[CompanyController::class,"deletePost"]);
 
     Route::post("follow", [CompanyController::class, "putFollow"]);
 
     Route::post("/browse", [CompanyController::class, "browse"]);
-
 
     Route::post("add-comment/{post_id}", [CompanyController::class, "addComment_web"]);
 
@@ -84,11 +88,19 @@ Route::group(["middleware" => "check:web-company"], function () {
     Route::post("addLikeToComment",[CompanyController::class,"addLikeToComment_web"]);
 
     Route::post("unlikeComment",[CompanyController::class,"unlikeComment_web"]);
+
+    Route::post("search",[CompanyController::class,"search"]);
+
+    Route::post("filter",[CompanyController::class,"searchWithFilter"]);
+
+    Route::get("viewProfile/{type}/{id}",[CompanyController::class,"show"]);
+
+    Route::post("updateProfile",[CompanyController::class,'updateProfile_web']);
+
+    Route::get("deleteAccount/{id}",[CompanyController::class,"deleteAccount"]);
 });
 
-
 // Route::get("test", [CompanyController::class, "test"]);
-
 
 Route::get("vist", function () {
     return view("test");

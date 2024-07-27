@@ -18,6 +18,8 @@ Route::post("register",[CompanyController::class,"register"]);
 
 Route::post("login",[CompanyController::class,"login_api"]);
 
+Route::get("delete-account/{id}",[CompanyController::class,"deleteAccount"]);
+
 Route::group(["middleware"=>"check:api-company"] , function (){
 
     Route::get("logout", [CompanyController::class , "logout_api"]);
@@ -39,7 +41,6 @@ Route::group(["middleware"=>"check:api-company"] , function (){
     Route::post("updateComment/{comment_id}", [CompanyController::class, "updateComment"]);
 
     Route::get("deleteComment/{comment_id}",[CompanyController::class,"deleteComment"]);
-
 
     Route::post("addLikeToPost",[CompanyController::class,"addLikeToPost_api"]);
 

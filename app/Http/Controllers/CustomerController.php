@@ -16,7 +16,6 @@ use App\Mail\testmail;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\Post;
 use App\Models\Comment;
-
 use App\Helpers;
 
 class CustomerController extends Controller

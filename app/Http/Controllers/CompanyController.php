@@ -18,13 +18,15 @@ use App\Models\Skill;
 use App\Models\Post;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Comment;
+use App\Models\Customer;
 use App\Models\Like;
-
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
-
+use App\Http\Resources\UserProfileResource;
+use App\Traits\StorePhotoTrait;
 class CompanyController extends Controller
 {
-    use ResponseTrait;
+    use ResponseTrait,StorePhotoTrait;
     public function register(Request $request)
     {
         $validator = validator::make($request->all(), [
@@ -33,6 +35,7 @@ class CompanyController extends Controller
             "employee_number" => "required |integer | min:10 | max:500000",
             "establishment_date" => "required | date",
             "email" => "required | unique:companies| email",
+            "profile_photo" => "image||mimes:jpeg,png,jpg,gif|max:2048"
         ]);
 
         if ($validator->fails()) {
@@ -44,8 +47,13 @@ class CompanyController extends Controller
             "establishment_date" => $request->establishment_date,
             "employee_number" => $request->employee_number,
             "email" => $request->email,
+            "profile_photo" => $request->profile_photo
             // "verificationCode" => makeCode("company", $request->email),
         ]);
+        $company->profile_photo =isset($request["profile_photo"])
+                                ?$this->store($request["profile_photo"],"profile_photos")
+                                :null;
+
         Auth::guard("web-company")->login($company);
         $credential = $request->only("name", "password");
         Auth::guard("api-company")->attempt($credential);
@@ -113,6 +121,13 @@ class CompanyController extends Controller
         }
         return $this->returnError("your data is invalid .. enter it again");
     }
+
+    public function deleteAccount($id)
+    {
+        $company = Company::findOrFail($id);
+        $company->delete();
+    }
+
 
     public function logout_api(Request $request)
     {
@@ -201,10 +216,59 @@ class CompanyController extends Controller
 
     public function postWeb(Request $request)
     {
-
-
         return $this->post($request, "company", "company_id", "company");
+    }
 
+    public function updatePost(Request $request, $id, $guard, $who, $disk)
+    {
+        $validator = Validator::make($request->all(), [
+            "title" => "sometimes|required",
+            "body" => "sometimes|required",
+            "file" => "sometimes|file|max:50000"
+        ]);
+
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+
+        $post = Post::find($id);
+
+        if (!$post) {
+            return $this->returnError("Post not found");
+        }
+
+        $user = getAuth($guard);
+
+        if ($post->$who != $user->id) {
+            return $this->returnError("You are not authorized to update this post");
+        }
+
+        if ($request->has('title')) {
+            $post->title = $request->title;
+        }
+
+        if ($request->has('body')) {
+            $post->body = $request->body;
+        }
+
+        if ($request->hasFile('file')) {
+            if ($post->photo) {
+                Storage::disk($disk)->delete($post->photo);
+            }
+
+            $post->photo = $this->localStore($request, "post", $disk);
+        }
+
+        $post->save();
+
+        return $this->returnSuccess("Your post has been updated successfully");
+    }
+
+    public function deletePost($post_id)
+    {
+        $post = Post::find($post_id);
+        $post->delete();
+        return $this->returnSuccess("post deleted successfully");
     }
 
     public function getOffers($company_id)
@@ -310,8 +374,9 @@ class CompanyController extends Controller
         return $this->comment($request, "web-company", $post_id);
     }
 
-    public function addComment_api(Request $request , $post_id){
-        return $this->comment($request,"api-company",$post_id);
+    public function addComment_api(Request $request, $post_id)
+    {
+        return $this->comment($request, "api-company", $post_id);
     }
 
 
@@ -374,7 +439,8 @@ class CompanyController extends Controller
         return $this->returnSuccess("post liked successfully");
     }
 
-    public function addLikeToPost_api(Request $request){
+    public function addLikeToPost_api(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'post_id' => 'required|integer|exists:posts,id',
@@ -435,10 +501,10 @@ class CompanyController extends Controller
         }
 
         $like = Like::where('likeable_id', $post->id)
-                    ->where('likeable_type', 'App\\Models\\Post')
-                    ->where('user_id', $user->id)
-                    ->where('user_type', get_class($user))
-                    ->first();
+            ->where('likeable_type', 'App\\Models\\Post')
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
 
         if (!$like) {
             return $this->returnError("like not found");
@@ -473,10 +539,10 @@ class CompanyController extends Controller
         }
 
         $like = Like::where('likeable_id', $post->id)
-                    ->where('likeable_type', 'App\\Models\\Post')
-                    ->where('user_id', $user->id)
-                    ->where('user_type', get_class($user))
-                    ->first();
+            ->where('likeable_type', 'App\\Models\\Post')
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
 
         if (!$like) {
             return $this->returnError("like not found");
@@ -510,10 +576,10 @@ class CompanyController extends Controller
         }
 
         $existingLike = Like::where('likeable_id', $comment->id)
-                            ->where('likeable_type', 'App\\Models\\Comment')
-                            ->where('user_id', $user->id)
-                            ->where('user_type', get_class($user))
-                            ->first();
+            ->where('likeable_type', 'App\\Models\\Comment')
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
 
         if ($existingLike) {
             return $this->returnError("User has already liked this comment");
@@ -549,10 +615,10 @@ class CompanyController extends Controller
         }
 
         $existingLike = Like::where('likeable_id', $comment->id)
-                            ->where('likeable_type', 'App\\Models\\Comment')
-                            ->where('user_id', $user->id)
-                            ->where('user_type', get_class($user))
-                            ->first();
+            ->where('likeable_type', 'App\\Models\\Comment')
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
 
         if ($existingLike) {
             return $this->returnError("User has already liked this comment");
@@ -591,10 +657,10 @@ class CompanyController extends Controller
         }
 
         $existingLike = Like::where('likeable_id', $comment->id)
-                            ->where('likeable_type', 'App\\Models\\Comment')
-                            ->where('user_id', $user->id)
-                            ->where('user_type', get_class($user))
-                            ->first();
+            ->where('likeable_type', 'App\\Models\\Comment')
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
 
         if (!$existingLike) {
             return $this->returnError("Like not found");
@@ -629,10 +695,10 @@ class CompanyController extends Controller
         }
 
         $existingLike = Like::where('likeable_id', $comment->id)
-                            ->where('likeable_type', 'App\\Models\\Comment')
-                            ->where('user_id', $user->id)
-                            ->where('user_type', get_class($user))
-                            ->first();
+            ->where('likeable_type', 'App\\Models\\Comment')
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
 
         if (!$existingLike) {
             return $this->returnError("Like not found");
@@ -643,5 +709,94 @@ class CompanyController extends Controller
         return $this->returnSuccess("Comment unliked successfully");
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        $jobSeekers = Job_seeker::search($query)->get();
+        $companies = Company::search($query)->get();
+        $customers = Customer::search($query)->get();
+        $posts = Post::search($query)->get();
+
+        if ($jobSeekers || $companies || $customers || $posts) {
+            $results = [
+                'job_seekers' => $jobSeekers,
+                'companies' => $companies,
+                'customers' => $customers,
+                'posts' => $posts
+            ];
+        }
+
+        return response()->json($results);
+    }
+
+    public function searchWithFilter(Request $request)
+    {
+        $query = $request->input('query');
+        $filter = $request->input('filter');
+
+        $results = [
+            'job_seekers' => collect(),
+            'companies' => collect(),
+            'customers' => collect(),
+            'posts' => collect()
+        ];
+
+
+        if ($filter == 'job_seekers' || !$filter) {
+            $results['job_seekers'] = Job_seeker::search($query)->get();
+        }
+
+        if ($filter == 'companies' || !$filter) {
+            $results['companies'] = Company::search($query)->get();
+        }
+
+        if ($filter == 'customers' || !$filter) {
+            $results['customers'] = Customer::search($query)->get();
+        }
+
+        if ($filter == 'posts' || !$filter) {
+            $results['posts'] = Post::search($query)->get();
+        }
+
+        return response()->json($results[$filter]);
+    }
+
+    private function getUserByTypeAndId($type, $id)
+    {
+        switch ($type) {
+            case 'Job_seeker':
+                return Job_seeker::find($id);
+            case 'Company':
+                return Company::find($id);
+            case 'Customer':
+                return Customer::find($id);
+            default:
+                return null;
+        }
+    }
+
+    public function show($type, $id)
+    {
+        $user = $this->getUserByTypeAndId($type, $id);
+
+        if (!$user) {
+            return $this->returnError("User not found");
+        }
+
+        $posts = Post::where('postable_id', $id)
+                    ->where('postable_type', "App\\Models\\$type")
+                    ->with(['comments.likes', 'likes'])
+                    ->get();
+        $user->posts=$posts;
+        if($posts){
+            $user->load(['posts.comments.likes', 'posts.likes']);
+        }
+        return new UserProfileResource($user);
+    }
+
+    public function updateProfile_web(Request $request){
+        return $this->updateProfile($request, "web-company" );
+    }
 
 }

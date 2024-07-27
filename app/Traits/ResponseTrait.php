@@ -7,6 +7,7 @@ use Validator;
 use App\Models\Post;
 use App\Models\Comment;
 use App\Models\Company;
+use Illuminate\Support\Facades\Storage;
 
 trait ResponseTrait
 {
@@ -115,12 +116,12 @@ trait ResponseTrait
             $comment->commentable_type = Company::class;
             $comment->commentable_id = $company_id;
             $comment->save();
-        } elseif($guard == "api-company"){
+        } elseif ($guard == "api-company") {
             $company_id = getAuth("api-company")->id;
             $comment->commentable_type = Company::class;
             $comment->commentable_id = $company_id;
             $comment->save();
-        } elseif($guard == "api-job_seeker"){
+        } elseif ($guard == "api-job_seeker") {
             $company_id = getAuth("api-job_seeker")->id;
             $comment->commentable_type = Company::class;
             $comment->commentable_id = $company_id;
@@ -129,11 +130,12 @@ trait ResponseTrait
         return $this->returnSuccess("your comment created successfully");
     }
 
-    public function update($request,$comment_id){
-        $validator=Validator::make($request->all(),[
+    public function update($request, $comment_id)
+    {
+        $validator = Validator::make($request->all(), [
             "body" => "required"
         ]);
-        if($validator->fails()){
+        if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
         $comment = Comment::find($comment_id);
@@ -145,4 +147,34 @@ trait ResponseTrait
         return $this->returnSuccess("comment updated successfully");
     }
 
-}
+
+    public function updateProfile($request, $guard)
+    {
+        $user = getAuth($guard);
+
+        if (!$user) {
+            return $this->returnError("user not found");
+        }
+
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->has('name')) {
+            $user->name = $request->input('name');
+        }
+
+        if ($request->hasFile('profile_photo')) {
+            if ($user->profile_photo) {
+                Storage::disk('public')->delete($user->profile_photo);
+            }
+            $path = $request->file('profile_photo')->store('profile_photos', 'public');
+            $user->profile_photo = $path;
+        }
+        $user->save();
+
+        return $this->returnData('Profile updated successfully',"profile",$user);
+    }
+
+    }
