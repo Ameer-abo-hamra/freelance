@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->string("description");
+            $table->unsignedInteger("price");
             $table->foreignId("customer_id")->references("id")->on("customers");
             $table->timestamps();
         });
