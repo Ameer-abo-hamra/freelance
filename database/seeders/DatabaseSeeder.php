@@ -90,7 +90,6 @@ class DatabaseSeeder extends Seeder
             }
         }
         Comment::create([
-            "title" => "title",
             "body" => "body",
             "post_id" => 1,
             "commentable_type" => "App\Models\Job_seeker",

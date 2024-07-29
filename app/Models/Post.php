@@ -23,4 +23,16 @@ class Post extends Model
     {
         return $this->morphTo();
     }
+
+    public function reportRecived()
+    {
+        return $this->morphMany(Report::class, "reported");
+    }
+
+    public function scopeSearch($query, $term)
+    {
+        return $query->where('title', 'like', '%' . $term . '%')
+                    ->orWhere('body', 'like', '%' . $term . '%');
+    }
+
 }

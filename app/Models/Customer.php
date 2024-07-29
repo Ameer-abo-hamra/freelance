@@ -11,7 +11,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class Customer extends Authenticatable implements JWTSubject
 {
     use HasFactory, HasApiTokens;
-    protected $fillable = ["username", "full_name", "email", "password", "wallet", "verificationCode", "isActive", "birth_date", "type"];
+    protected $fillable = ["username", "full_name", "email", "password", "wallet", "verificationCode", "isActive", "birth_date","type"];
     protected $hidden = ["created_at", "updated_at"];
 
     public function getJWTIdentifier()
@@ -29,6 +29,9 @@ class Customer extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function wallet(){
+        return $this->belongsTo(Wallet::class,"customer_id");
+    }
     public function likes()
     {
         return $this->morphMany(Like::class, "likeable");
@@ -72,4 +75,12 @@ class Customer extends Authenticatable implements JWTSubject
         return $this->morphMany(Follow::class , "followReciver");
 
     }
+
+    public function scopeSearch($query, $term)
+    {
+        return $query->where('username', 'like', '%' . $term . '%')
+                    ->orWhere('full_name', 'like', '%' . $term . '%')
+                    ->orWhere('email', 'like', '%' . $term . '%');
+    }
+
 }
