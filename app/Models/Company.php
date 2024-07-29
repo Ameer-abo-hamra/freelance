@@ -11,11 +11,15 @@ class Company extends Authenticatable implements JWTSubject
 {
     use HasFactory;
 
-    protected $fillable = ["id", "type","name", "establishment_date", "employee_number", "password", "verificationCode", "isActive", "email"];
+    protected $fillable = ["id", "name", "establishment_date", "employee_number", "password", "verificationCode", "isActive", "email","type","profile_photo"];
     protected $hidden = ["created_at", "updated_at"];
     public function offers()
     {
         return $this->hasMany(Offer::class, "company_id");
+    }
+
+    public function wallet(){
+        return $this->belongsTo(Wallet::class,"company_id");
     }
 
     // public function services()
@@ -44,7 +48,7 @@ class Company extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Job_seeker::class, "company_job_seeker", "company_id", "job_seeker_id");
     }
 
-    public function post()
+    public function posts()
     {
         return $this->morphMany(Post::class, "postable");
     }
@@ -115,6 +119,12 @@ class Company extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function scopeSearch($query, $term)
+    {
+        return $query->where('name', 'like', '%' . $term . '%')
+                    ->orWhere('email', 'like', '%' . $term . '%');
     }
 
 }
