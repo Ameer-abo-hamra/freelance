@@ -56,8 +56,8 @@ Route::group(["middleware" => "check:web-job_seeker"], function () {
 
     Route::post("addLikeToComment",[JobSeekerController::class,"addLikeToComment"]);
 
-    Route::post("unlikeComment",[JobSeekerController::class,"unlikeComment"]);
   Route::post("add-comment", [JobSeekerController::class, "addComment"]);
+    Route::post("unlikeComment",[JobSeekerController::class,"unlikeComment"]);
 
 });
 

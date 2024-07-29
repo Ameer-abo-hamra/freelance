@@ -37,7 +37,6 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
 
     Route::post("add-comment", [JobSeekerController::class, "addComment"]);
 
-
     Route::post("add-comment/{post_id}", [JobSeekerController::class, "addComment_api"]);
 
     Route::post("updateComment/{comment_id}", [JobSeekerController::class, "updateComment"]);
