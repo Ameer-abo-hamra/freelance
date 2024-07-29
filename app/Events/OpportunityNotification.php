@@ -10,20 +10,19 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class RespondApplicants implements ShouldBroadcast
+class OpportunityNotification implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public $job_seeker_id, $isAccepted, $message;
-
-    public function __construct($job_seeker_id, $isAccepted, $message)
+    public $opportunityOwnerID, $position, $opportunityOwnerName;
+    public function __construct($opportunityOwner, $position, $opportunityOwnerName)
     {
-        $this->job_seeker_id = $job_seeker_id;
-        $this->message = $message;
-        $this->isAccepted = $isAccepted;
+        $this->opportunityOwner = $opportunityOwner;
+        $this->position = $position;
+        $this->opportunityOwnerName = $opportunityOwnerName;
     }
 
     /**
@@ -34,17 +33,16 @@ class RespondApplicants implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('Respond' . $this->job_seeker_id),
+            new Channel('Opportunities' . $this->opportunityOwnerID),
         ];
     }
-
-    public function broadcastWith()
+    public function broadcatWith()
     {
-        return [
-            "job_seeker_id" => $this->job_seeker_id,
-            "isAccepted" => $this->isAccepted,
-            "message" => $this->message
-        ];
 
+        return [
+            "opportunityOwnerID" => $this->opportunityOwnerID,
+            "position" => $this->position,
+            "opportunityOwnerName" => $this->opportunityOwnerName,
+        ];
     }
 }

@@ -274,7 +274,7 @@ class CompanyController extends Controller
     public function getOffers($company_id)
     {
 
-        $company = getAuth("web-company");
+        $company = Company::find($company_id);
 
         if ($company) {
             return $this->returnData("", "offers", $company->offers);
@@ -295,7 +295,7 @@ class CompanyController extends Controller
 
     }
 
-    public function ChangeOfferState(Request $request)
+    public function ChangeOfferStateWeb(Request $request)
     {
 
         $validator = validator::make($request->all(), [
@@ -306,6 +306,19 @@ class CompanyController extends Controller
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
+        return ChangeOfferState($request, "web-company");
+    }
+    public function ChangeOfferStateApi(Request $request)
+    {
+
+
+        $validator = validator::make($request->all(), [
+            "state" => "required",
+            "offer_id" => "required ",
+            "job_seeker_id" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
         ;
         if ($offer = Offer::findOrFail($request->offer_id)) {
             foreach ($offer->jobSeekers as $jobseeker) {
@@ -335,7 +348,8 @@ class CompanyController extends Controller
             }
             return $this->returnError("this jobSeeker did not apply for this offer");
         }
-        return $this->returnError("this offer does not exist");
+        return ChangeOfferState($request, "api-company");
+
     }
 
     public function browse(Request $request)

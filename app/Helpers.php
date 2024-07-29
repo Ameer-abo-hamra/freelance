@@ -6,6 +6,7 @@ use App\Models\Job_seeker;
 use Illuminate\Support\Str;
 use App\Traits\ResponseTrait;
 use App\Models\Offer;
+use App\Events\RespondApplicants;
 
 function makeCode($type, $email)
 {
@@ -131,7 +132,6 @@ function browse($type, $id)
             array_push($posts, $f->followReciver_type::find($f->followReciver_id)->posts);
         } else {
             return ResponseTrait::returnError("this class does not exist");
-
         }
     }
     return ResponseTrait::returnData("", "posts", $posts);
@@ -172,4 +172,70 @@ function putFollow($followMakerType, $followMakerid, $followReciverType, $follow
     ]);
 
     return ResponseTrait::returnSuccess("done");
+}
+
+function addComment($commentMaker_type, $commentMaker_id, $post_id, $title, $body)
+{
+
+    if ($commentMaker_type == "company") {
+
+        $commentMaker = \App\Models\Company::find($commentMaker_id);
+
+    } elseif ($commentMaker_type == "job_seeker") {
+        $commentMaker = Job_seeker::find($commentMaker_id);
+
+    } elseif ($commentMaker_type == "customer") {
+        $commentMaker = \App\Models\Customer::find($commentMaker_id);
+    } else {
+        return ResponseTrait::returnError("check the followMakerType or followMakerid ");
+    }
+
+    $commentMaker->comments()->create([
+        "post_id" => $post_id,
+        "body" => $body,
+        "title" => $title,
+    ]);
+    return ResponseTrait::returnSuccess("done");
+}
+
+
+function ChangeOfferState($request, $guard)
+{
+
+    $company = getAuth($guard);
+
+    foreach ($company->offers as $of) {
+        if ($of->id == $request->offer_id) {
+            if ($offer = Offer::findOrFail($request->offer_id)) {
+                foreach ($offer->jobSeekers as $jobseeker) {
+                    if ($jobseeker->id == $request->job_seeker_id) {
+                        $offer->jobSeekers()->update(
+                            [
+                                "isAccepted" => $request->state
+                            ]
+                        );
+                        $content = '';
+                        if ($request->state) {
+                            $content = "Your employment application has been accepted by " . getAuth("web-company")->name;
+                            broadcast(new RespondApplicants($jobseeker->id, $request->state, $content));
+
+                        } else {
+                            $content = "Your employment application has been rejected by " . getAuth("web-company")->name;
+                            broadcast(new RespondApplicants($jobseeker->id, $request->state, $content));
+                        }
+
+                        getAuth($guard)->notificationSent()->create([
+                            "notfiReciver_type" => "app\Models\Job_seeker",
+                            "notfiReciver_id" => $request->job_seeker_id,
+                            "content" => $content
+                        ]);
+                        return ResponseTrait::returnSuccess("this order is changed ");
+                    }
+                }
+                return ResponseTrait::returnError("this jobSeeker did not apply for this offer");
+            }
+        }
+    }
+    return ResponseTrait::returnError("you do not have a permission to change this employment aplicant");
+
 }

@@ -197,6 +197,7 @@ class JobSeekerController extends Controller
         return $this->update($request,$comment_id);
     }
 
+
     public function deleteComment($comment_id)
     {
         Comment::find($comment_id)->delete();
