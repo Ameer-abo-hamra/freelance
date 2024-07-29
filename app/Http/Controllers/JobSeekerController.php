@@ -174,4 +174,27 @@ class JobSeekerController extends Controller
 
 
     }
+
+    public function addComment(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            "commentMaker_type" => "required",
+            "commentMaker_id" => "required",
+            "post_id" => "required",
+            "title" => "required",
+            "body" => "required",
+        ]);
+        if ($validator->fails())
+            return $this->returnError($validator->errors()->first());
+
+        return addComment(
+            $request->commentMaker_type,
+            $request->commentMaker_id,
+            $request->post_id,
+            $request->title,
+            $request->body
+        );
+    }
+
 }

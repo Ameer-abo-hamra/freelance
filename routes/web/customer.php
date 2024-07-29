@@ -45,4 +45,6 @@ Route::group(["middleware" => ["check:customer"]], function () {
 
     Route::post("follow" , [CustomerController::class , "putFollow"]);
 
+    Route::post("add-comment", [CustomerController::class, "addComment"]);
+
 });

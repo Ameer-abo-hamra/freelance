@@ -16,12 +16,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post("register", [JobSeekerController::class, "register"]);
+
 Route::post("login", [JobSeekerController::class, "login_api"]);
 
 Route::group(["middleware" => "check:api-job_seeker"], function () {
-    route::get("logout",[ JobSeekerController::class, "logout_api"]);
-    route::post("verify" , [JobSeekerController::class , "apiVerify"]);
+
+    route::get("logout", [JobSeekerController::class, "logout_api"]);
+
+    route::post("verify", [JobSeekerController::class, "apiVerify"]);
+
     Route::post("apply", [JobSeekerController::class, "applyApi"]);
+
     Route::post("post", [JobSeekerController::class, "postApi"]);
-    Route::get("getCategory",[JobSeekerController::class,"getCategory"]);
+
+    Route::get("getCategory", [JobSeekerController::class, "getCategory"]);
+
+    Route::post("browse", [JobSeekerController::class, "browse"]);
+
+    Route::post("follow", [JobSeekerController::class, "putFollow"]);
+
+    Route::post("add-comment", [JobSeekerController::class, "addComment"]);
+
+
 });

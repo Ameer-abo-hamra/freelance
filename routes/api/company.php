@@ -32,5 +32,14 @@ Route::group(["middleware"=>"check:api-company"] , function (){
 
     Route::get("get-job-applicants/{offer_id}" , [CompanyController::class , "getJobApplicants"]);
 
+    Route::post("change-offer-state", [CompanyController::class, "ChangeOfferStateApi"]);
+
     Route::post("post",[CompanyController::Class , "postApi"]);
+
+    Route::post("follow", [CompanyController::class, "putFollow"]);
+
+    Route::post("/browse", [CompanyController::class, "browse"]);
+
+    Route::post("add-comment", [CompanyController::class, "addComment"]);
+
 });

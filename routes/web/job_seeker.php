@@ -40,6 +40,7 @@ Route::group(["middleware" => "check:web-job_seeker"], function () {
 
   Route::post("follow" , [JobSeekerController::class , "putFollow"]);
 
+  Route::post("add-comment", [JobSeekerController::class, "addComment"]);
 
 });
 

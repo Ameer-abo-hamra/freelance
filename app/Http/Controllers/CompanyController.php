@@ -208,7 +208,7 @@ class CompanyController extends Controller
     public function getOffers($company_id)
     {
 
-        $company = getAuth("web-company");
+        $company = Company::find($company_id);
 
         if ($company) {
             return $this->returnData("", "offers", $company->offers);
@@ -229,7 +229,7 @@ class CompanyController extends Controller
 
     }
 
-    public function ChangeOfferState(Request $request)
+    public function ChangeOfferStateWeb(Request $request)
     {
 
         $validator = validator::make($request->all(), [
@@ -240,36 +240,22 @@ class CompanyController extends Controller
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        ;
-        if ($offer = Offer::findOrFail($request->offer_id)) {
-            foreach ($offer->jobSeekers as $jobseeker) {
-                if ($jobseeker->id == $request->job_seeker_id) {
-                    $offer->jobSeekers()->update(
-                        [
-                            "isAccepted" => $request->state
-                        ]
-                    );
-                    $content = '';
-                    if ($request->state) {
-                        $content ="Your employment application has been accepted by " . getAuth("web-company")->name;
-                        broadcast(new RespondApplicants(getAuth("web-company")->name, $request->state, $content));
+        return ChangeOfferState($request, "web-company");
+    }
+    public function ChangeOfferStateApi(Request $request)
+    {
 
-                    } else {
-                        $content ="Your employment application has been rejected by " . getAuth("web-company")->name;
-                        broadcast(new RespondApplicants(getAuth("web-company")->name, $request->state, $content));
-                    }
 
-                    getAuth("web-company")->notificationSent()->create([
-                        "notfiReciver_type" => "app\Models\Job_seeker",
-                        "notfiReciver_id" => $request->job_seeker_id,
-                        "content" => $content
-                    ]);
-                    return $this->returnSuccess("this order is changed ");
-                }
-            }
-            return $this->returnError("this jobSeeker did not apply for this offer");
+        $validator = validator::make($request->all(), [
+            "state" => "required",
+            "offer_id" => "required ",
+            "job_seeker_id" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
         }
-        return $this->returnError("this offer does not exist");
+        return ChangeOfferState($request, "api-company");
+
     }
 
     public function browse(Request $request)
@@ -305,7 +291,23 @@ class CompanyController extends Controller
     public function addComment(Request $request)
     {
 
+        $validator = Validator::make($request->all(), [
+            "commentMaker_type" => "required",
+            "commentMaker_id" => "required",
+            "post_id" => "required",
+            "title" => "required",
+            "body" => "required",
+        ]);
+        if ($validator->fails())
+            return $this->returnError($validator->errors()->first());
 
+        return addComment(
+            $request->commentMaker_type,
+            $request->commentMaker_id,
+            $request->post_id,
+            $request->title,
+            $request->body
+        );
     }
 
     // public function test()

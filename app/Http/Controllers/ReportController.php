@@ -11,15 +11,5 @@ use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
-    public function report($reporter_id, $reported_id)
-    {
-        $company = Company::find($reporter_id);
-        $job_seeker = Job_seeker::find($reported_id);
-        $company->reportsMade()->create([
-            "reason" => "aa",
-            "reported_type"=>"ss",
-            "reported_id"=>1
-        ]);
 
-    }
 }
