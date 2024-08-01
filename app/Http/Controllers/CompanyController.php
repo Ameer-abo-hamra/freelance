@@ -24,9 +24,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserProfileResource;
 use App\Traits\StorePhotoTrait;
+
 class CompanyController extends Controller
 {
-    use ResponseTrait,StorePhotoTrait;
+    use ResponseTrait, StorePhotoTrait;
     public function register(Request $request)
     {
         $validator = validator::make($request->all(), [
@@ -50,9 +51,9 @@ class CompanyController extends Controller
             "profile_photo" => $request->profile_photo
             // "verificationCode" => makeCode("company", $request->email),
         ]);
-        $company->profile_photo =isset($request["profile_photo"])
-                                ?$this->store($request["profile_photo"],"profile_photos")
-                                :null;
+        $company->profile_photo = isset($request["profile_photo"])
+            ? $this->store($request["profile_photo"], "profile_photos")
+            : null;
 
         Auth::guard("web-company")->login($company);
         $credential = $request->only("name", "password");
@@ -274,7 +275,7 @@ class CompanyController extends Controller
     public function getOffers($company_id)
     {
 
-        $company = getAuth("web-company");
+        $company = Company::find($company_id);
 
         if ($company) {
             return $this->returnData("", "offers", $company->offers);
@@ -295,7 +296,7 @@ class CompanyController extends Controller
 
     }
 
-    public function ChangeOfferState(Request $request)
+    public function ChangeOfferStateWeb(Request $request)
     {
 
         $validator = validator::make($request->all(), [
@@ -306,6 +307,19 @@ class CompanyController extends Controller
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
+        return ChangeOfferState($request, "web-company");
+    }
+    public function ChangeOfferStateApi(Request $request)
+    {
+
+
+        $validator = validator::make($request->all(), [
+            "state" => "required",
+            "offer_id" => "required ",
+            "job_seeker_id" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
         ;
         if ($offer = Offer::findOrFail($request->offer_id)) {
             foreach ($offer->jobSeekers as $jobseeker) {
@@ -335,7 +349,8 @@ class CompanyController extends Controller
             }
             return $this->returnError("this jobSeeker did not apply for this offer");
         }
-        return $this->returnError("this offer does not exist");
+        return ChangeOfferState($request, "api-company");
+
     }
 
     public function browse(Request $request)
@@ -785,18 +800,19 @@ class CompanyController extends Controller
         }
 
         $posts = Post::where('postable_id', $id)
-                    ->where('postable_type', "App\\Models\\$type")
-                    ->with(['comments.likes', 'likes'])
-                    ->get();
-        $user->posts=$posts;
-        if($posts){
+            ->where('postable_type', "App\\Models\\$type")
+            ->with(['comments.likes', 'likes'])
+            ->get();
+        $user->posts = $posts;
+        if ($posts) {
             $user->load(['posts.comments.likes', 'posts.likes']);
         }
         return new UserProfileResource($user);
     }
 
-    public function updateProfile_web(Request $request){
-        return $this->updateProfile($request, "web-company" );
+    public function updateProfile_web(Request $request)
+    {
+        return $this->updateProfile($request, "web-company");
     }
 
 }

@@ -130,14 +130,16 @@ class CustomerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             "description" => "required",
-            "skill_id" => "array||required"
+            "skill_id" => "array||required",
+            "price" => "required"
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
         $service = Service::create([
             "description" => $request->description,
-            "customer_id" => Auth::guard("customer")->user()->id
+            "customer_id" => Auth::guard("customer")->user()->id,
+            "price" => $request->price
             // "customer_id" => $request->customer_id
         ]);
         $skill_ids = $request->skill_id;
@@ -155,14 +157,16 @@ class CustomerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             "description" => "required",
-            "skill_id" => "array||required"
+            "skill_id" => "array||required",
+            "price" => "required"
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
         $service = Service::create([
             "description" => $request->description,
-            "customer_id" => Auth::guard("api-customer")->user()->id
+            "customer_id" => Auth::guard("api-customer")->user()->id,
+            "price" => $request->price
             // "customer_id" => $request->customer_id
         ]);
         $skill_ids = $request->skill_id;
@@ -203,6 +207,7 @@ class CustomerController extends Controller
 
 
     }
+
 
     public function showCustomers()
     {

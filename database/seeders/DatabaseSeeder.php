@@ -195,7 +195,9 @@ class DatabaseSeeder extends Seeder
         ]);
         Service::create([
             "description" => "this is wg sd",
-            "customer_id" => 1
+            "customer_id" => 1,
+            "is_accepted" => false,
+            "price" => 1000
         ]);
 
         Follow::create([

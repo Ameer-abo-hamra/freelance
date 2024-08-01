@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post("register", [JobSeekerController::class, "register"]);
+
 Route::post("login", [JobSeekerController::class, "login_api"]);
 
 Route::group(["middleware" => "check:api-job_seeker"], function () {
@@ -29,6 +30,12 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
     Route::post("post", [JobSeekerController::class, "postApi"]);
 
     Route::get("getCategory", [JobSeekerController::class, "getCategory"]);
+
+    Route::post("browse", [JobSeekerController::class, "browse"]);
+
+    Route::post("follow", [JobSeekerController::class, "putFollow"]);
+
+    Route::post("add-comment", [JobSeekerController::class, "addComment"]);
 
     Route::post("add-comment/{post_id}", [JobSeekerController::class, "addComment_api"]);
 
