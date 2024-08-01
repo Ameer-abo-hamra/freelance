@@ -10,20 +10,19 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class RespondApplicants implements ShouldBroadcast
+class CommentNotification implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public $job_seeker_id, $isAccepted, $message;
 
-    public function __construct($job_seeker_id, $isAccepted, $message)
+    public $commentID, $whoInteracted;
+    public function __construct($commentID, $whoInteracted)
     {
-        $this->job_seeker_id = $job_seeker_id;
-        $this->message = $message;
-        $this->isAccepted = $isAccepted;
+        $this->commentID = $commentID;
+        $this->whoInteracted = $whoInteracted;
     }
 
     /**
@@ -34,17 +33,16 @@ class RespondApplicants implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('Respond' . $this->job_seeker_id),
+            new Channel('Comments' . $this->commentID),
         ];
     }
 
-    public function broadcastWith()
+    public function broadcatWith()
     {
-        return [
-            "job_seeker_id" => $this->job_seeker_id,
-            "isAccepted" => $this->isAccepted,
-            "message" => $this->message
-        ];
 
+        return [
+            "commentID" => $this->commentID,
+            "whoInteracted" => $this->whoInteracted,
+        ];
     }
 }
