@@ -24,9 +24,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserProfileResource;
 use App\Traits\StorePhotoTrait;
+
 class CompanyController extends Controller
 {
-    use ResponseTrait,StorePhotoTrait;
+    use ResponseTrait, StorePhotoTrait;
     public function register(Request $request)
     {
         $validator = validator::make($request->all(), [
@@ -50,9 +51,9 @@ class CompanyController extends Controller
             "profile_photo" => $request->profile_photo
             // "verificationCode" => makeCode("company", $request->email),
         ]);
-        $company->profile_photo =isset($request["profile_photo"])
-                                ?$this->store($request["profile_photo"],"profile_photos")
-                                :null;
+        $company->profile_photo = isset($request["profile_photo"])
+            ? $this->store($request["profile_photo"], "profile_photos")
+            : null;
 
         Auth::guard("web-company")->login($company);
         $credential = $request->only("name", "password");
@@ -785,18 +786,19 @@ class CompanyController extends Controller
         }
 
         $posts = Post::where('postable_id', $id)
-                    ->where('postable_type', "App\\Models\\$type")
-                    ->with(['comments.likes', 'likes'])
-                    ->get();
-        $user->posts=$posts;
-        if($posts){
+            ->where('postable_type', "App\\Models\\$type")
+            ->with(['comments.likes', 'likes'])
+            ->get();
+        $user->posts = $posts;
+        if ($posts) {
             $user->load(['posts.comments.likes', 'posts.likes']);
         }
         return new UserProfileResource($user);
     }
 
-    public function updateProfile_web(Request $request){
-        return $this->updateProfile($request, "web-company" );
+    public function updateProfile_web(Request $request)
+    {
+        return $this->updateProfile($request, "web-company");
     }
 
 }
