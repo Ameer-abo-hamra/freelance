@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId("company_id")->references("id")->on("companies")->nullable();
             $table->foreignId("job_seeker_id")->references("id")->on("job_seekers")->nullable();
-            $table->foreignId("customer_id")->references("id")->on("cutomers")->nullable();
+            $table->foreignId("customer_id")->references("id")->on("customers")->nullable();
             $table->unsignedBigInteger("balance");
             $table->timestamps();
         });
