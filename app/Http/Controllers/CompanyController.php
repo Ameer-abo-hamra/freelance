@@ -297,7 +297,7 @@ class CompanyController extends Controller
 
     public function ChangeOfferStateWeb(Request $request)
     {
-
+        
         $validator = validator::make($request->all(), [
             "state" => "required",
             "offer_id" => "required ",

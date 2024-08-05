@@ -86,6 +86,7 @@ trait ResponseTrait
             "body" => $request->body,
             "photo" => $this->localStore($request, "post", $disk),
             $who => getAuth($guard)->id,
+            
         ]);
         return $this->returnSuccess("your post is published successfully");
 
