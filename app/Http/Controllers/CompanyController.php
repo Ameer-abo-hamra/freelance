@@ -212,13 +212,13 @@ class CompanyController extends Controller
     public function postApi(Request $request)
     {
 
-        return $this->post($request, "api-company", "company_id", "company");
+        return $this->post($request, "api-company");
     }
 
-    public function postWeb(Request $request)
-    {
-        return $this->post($request, "company", "company_id", "company");
-    }
+    // public function postWeb(Request $request)
+    // {
+    //     return $this->post($request, "company", "company_id", "company");
+    // }
 
     public function updatePost(Request $request, $id, $guard, $who, $disk)
     {
@@ -813,6 +813,10 @@ class CompanyController extends Controller
     public function updateProfile_web(Request $request)
     {
         return $this->updateProfile($request, "web-company");
+    }
+
+    public function updateProfile_api(Request $request){
+        return $this->updateProfile($request,"api-company");
     }
 
 }

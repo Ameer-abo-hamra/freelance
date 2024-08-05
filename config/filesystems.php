@@ -70,6 +70,12 @@ return [
             'throw' => false,
         ],
 
+        'customer' => [
+        'driver' => 'local',
+        'root' => storage_path('app/public/customers'),
+        'url' => env('APP_URL') . '/storage/customers',
+        'visibility' => 'public',
+    ],
     ],
 
     /*
