@@ -13,6 +13,7 @@ use App\Models\Report;
 
 class ReportController extends Controller
 {
+
     use ResponseTrait;
     protected $adminController;
 

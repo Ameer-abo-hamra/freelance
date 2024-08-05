@@ -26,7 +26,6 @@ route::get("csrf", function () {
     return csrf_token();
 });
 
-Route::get("report/{reporter_id}/{reported_id}", [ReportController::class, "report"]);
 
 
 Route::get("testws", function () {
@@ -59,11 +58,11 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("update-offer", [CompanyController::class, "offerUpdate"]);
 
-    Route::get("get-offers", [CompanyController::class, "getOffers"]);
+    Route::get("get-offers/{Company_id}", [CompanyController::class, "getOffers"]);
 
     Route::get("get-job-applicants/{offer_id}", [CompanyController::class, "getJobApplicants"]);
 
-    Route::post("change-offer-state", [CompanyController::class, "ChangeOfferState"]);
+    Route::post("change-offer-state", [CompanyController::class, "ChangeOfferStateWeb"]);
 
     Route::post("post", [CompanyController::class, "postWeb"]);
 
@@ -75,6 +74,8 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("/browse", [CompanyController::class, "browse"]);
 
+    Route::post("add-comment", [CompanyController::class, "addComment"]);
+});
     Route::post("add-comment/{post_id}", [CompanyController::class, "addComment_web"]);
 
     Route::post("updateComment/{comment_id}", [CompanyController::class, "updateComment"]);

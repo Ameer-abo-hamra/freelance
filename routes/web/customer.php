@@ -52,4 +52,6 @@ Route::group(["middleware" => ["check:customer"]], function () {
     // Route::post("add-comment/{post_id}",[CustomerController::class,"addComment"]);
     // Route::post("updateComment/{comment_id}", [CustomerController::class, "updateComment"]);
 
+    Route::post("add-comment", [CustomerController::class, "addComment"]);
+
 });

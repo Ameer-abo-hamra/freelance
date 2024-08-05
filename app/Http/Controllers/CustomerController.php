@@ -385,6 +385,7 @@ class CustomerController extends Controller
 
     }
 
+
     public function showCustomers()
     {
         $customers = Customer::get();
