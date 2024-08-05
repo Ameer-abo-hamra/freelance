@@ -36,8 +36,7 @@ route::post("register", [CompanyController::class, "register"]);
 
 route::post("login", [CompanyController::class, "login"]);
 
-
-Route::get("delete-account/{id}",[CompanyController::class,"deleteAccount"]);
+Route::get("delete-account/{id}", [CompanyController::class, "deleteAccount"]);
 
 route::post("report", [ReportController::class, "report"]);
 
@@ -67,9 +66,9 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("post", [CompanyController::class, "postWeb"]);
 
-    Route::post("updatePost",[CompanyController::class,"updatePost"]);
+    Route::post("updatePost", [CompanyController::class, "updatePost"]);
 
-    Route::get("deletePost/{post_id}",[CompanyController::class,"deletePost"]);
+    Route::get("deletePost/{post_id}", [CompanyController::class, "deletePost"]);
 
     Route::post("follow", [CompanyController::class, "putFollow"]);
 
@@ -78,25 +77,25 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("updateComment/{comment_id}", [CompanyController::class, "updateComment"]);
 
-    Route::get("deleteComment/{comment_id}",[CompanyController::class,"deleteComment"]);
+    Route::get("deleteComment/{comment_id}", [CompanyController::class, "deleteComment"]);
 
-    Route::post("addLikeToPost",[CompanyController::class,"addLikeToPost_web"]);
+    Route::post("addLikeToPost", [CompanyController::class, "addLikeToPost_web"]);
 
-    Route::post("unlikePost",[CompanyController::class,"unlikePost_web"]);
+    Route::post("unlikePost", [CompanyController::class, "unlikePost_web"]);
 
-    Route::post("addLikeToComment",[CompanyController::class,"addLikeToComment_web"]);
+    Route::post("addLikeToComment", [CompanyController::class, "addLikeToComment_web"]);
 
-    Route::post("unlikeComment",[CompanyController::class,"unlikeComment_web"]);
+    Route::post("unlikeComment", [CompanyController::class, "unlikeComment_web"]);
 
-    Route::post("search",[CompanyController::class,"search"]);
+    Route::post("search", [CompanyController::class, "search"]);
 
-    Route::post("filter",[CompanyController::class,"searchWithFilter"]);
+    Route::post("filter", [CompanyController::class, "searchWithFilter"]);
 
-    Route::get("viewProfile/{type}/{id}",[CompanyController::class,"show"]);
+    Route::get("viewProfile/{type}/{id}", [CompanyController::class, "show"]);
 
-    Route::post("updateProfile",[CompanyController::class,'updateProfile_web']);
+    Route::post("updateProfile", [CompanyController::class, 'updateProfile_web']);
 
-    Route::get("deleteAccount/{id}",[CompanyController::class,"deleteAccount"]);
+    Route::get("deleteAccount/{id}", [CompanyController::class, "deleteAccount"]);
 });
 
 // Route::get("test", [CompanyController::class, "test"]);

@@ -40,3 +40,12 @@ Route::get("showCustomers", [CustomerController::class, "showCustomers"]);
 
 // Route::get("countReports/{post_id}",[ReportController::class,"countReports"]);
 
+Route::get("getReports", [AdminController::class, "showAllReports"]);
+
+Route::get("showAllServices",[AdminController::class,"showAllServices"]);
+
+Route::post("updateServiceState/{id}", [AdminController::class, "updateServiceStatus"]);
+
+Route::get("viewProfile/{id}",[AdminController::class,"profile"]);
+
+Route::post("updateProfile",[AdminController::class,"updateProfile"]);
