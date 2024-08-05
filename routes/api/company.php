@@ -3,6 +3,7 @@
 use App\Http\Controllers\CompanyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,7 +19,7 @@ Route::post("register",[CompanyController::class,"register"]);
 
 Route::post("login",[CompanyController::class,"login_api"]);
 
-Route::get("delete-account/{id}",[CompanyController::class,"deleteAccount"]);
+Route::get("report/{reporter_id}/{reported_id}", [ReportController::class, "report"]);
 
 Route::group(["middleware"=>"check:api-company"] , function (){
 
@@ -32,9 +33,23 @@ Route::group(["middleware"=>"check:api-company"] , function (){
 
     Route::get("get-offers/{company_id}" , [CompanyController::Class , "getOffers"]);
 
+    Route::post("change-offer-state", [CompanyController::class, "ChangeOfferState"]);
+
     Route::get("get-job-applicants/{offer_id}" , [CompanyController::class , "getJobApplicants"]);
 
     Route::post("post",[CompanyController::Class , "postApi"]);
+
+    Route::post("updatePost", [CompanyController::class, "updatePost"]);
+
+    Route::get("deletePost/{post_id}", [CompanyController::class, "deletePost"]);
+
+    Route::post("follow", [CompanyController::class, "putFollow"]);
+
+    Route::post("/browse", [CompanyController::class, "browse"]);
+
+    Route::post("search", [CompanyController::class, "search"]);
+
+    Route::post("filter", [CompanyController::class, "searchWithFilter"]);
 
     Route::post("add-comment/{post_id}", [CompanyController::class, "addComment_api"]);
 
@@ -49,4 +64,10 @@ Route::group(["middleware"=>"check:api-company"] , function (){
     Route::post("addLikeToComment",[CompanyController::class,"addLikeToComment_api"]);
 
     Route::post("unlikeComment",[CompanyController::class,"unlikeComment_api"]);
+
+    Route::get("viewProfile/{type}/{id}", [CompanyController::class, "show"]);
+
+    Route::post("updateProfile", [CompanyController::class, 'updateProfile_api']);
+
+    Route::get("delete-account/{id}",[CompanyController::class,"deleteAccount"]);
 });

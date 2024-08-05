@@ -26,7 +26,9 @@ Route::get("csrf", function () {
 });
 
 Route::post("register", [CustomerController::class, "register"])->name("register");
+
 route::post("login", [CustomerController::class, "login"])->name("login");
+
 route::post("report", [ReportController::class, "report"]);
 
 Route::group(["middleware" => ["check:customer"]], function () {

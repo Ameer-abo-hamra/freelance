@@ -3,6 +3,7 @@
 use App\Http\Controllers\JobSeekerController;
 use App\Models\Job_seeker;
 use Illuminate\Http\Request;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,7 +17,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post("register", [JobSeekerController::class, "register"]);
+
 Route::post("login", [JobSeekerController::class, "login_api"]);
+
+Route::get("report/{reporter_id}/{reported_id}", [ReportController::class, "report"]);
 
 Route::group(["middleware" => "check:api-job_seeker"], function () {
 
@@ -27,6 +31,24 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
     Route::post("apply", [JobSeekerController::class, "applyApi"]);
 
     Route::post("post", [JobSeekerController::class, "postApi"]);
+
+    Route::post("updatePost", [JobSeekerController::class, "updatePost"]);
+
+    Route::get("deletePost",[JobSeekerController::class,"deletePost"]);
+
+    Route::post("follow", [JobSeekerController::class, "putFollow"]);
+
+    Route::post("/browse", [JobSeekerController::class, "browse"]);
+
+    Route::post("search", [JobSeekerController::class, "search"]);
+
+    Route::post("filter", [JobSeekerController::class, "searchWithFilter"]);
+
+    Route::get("viewProfile/{type}/{id}", [JobSeekerController::class, "show"]);
+
+    Route::post("updateProfile", [JobSeekerController::class, 'updateProfile']);
+
+    Route::get("deleteAccount/{id}", [JobSeekerController::class, "deleteAccount"]);
 
     Route::get("getCategory", [JobSeekerController::class, "getCategory"]);
 
