@@ -817,6 +817,7 @@ class CompanyController extends Controller
 
     public function updateProfile_api(Request $request){
         return $this->updateProfile($request,"api-company");
+
     }
 
 }
