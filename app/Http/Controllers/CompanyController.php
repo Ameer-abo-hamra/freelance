@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserProfileResource;
 use App\Traits\StorePhotoTrait;
+use App\Events\Notifications ;
 
 class CompanyController extends Controller
 {
@@ -307,48 +308,8 @@ class CompanyController extends Controller
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        return ChangeOfferState($request, "web-company");
-    }
-    public function ChangeOfferStateApi(Request $request)
-    {
+        
 
-
-        $validator = validator::make($request->all(), [
-            "state" => "required",
-            "offer_id" => "required ",
-            "job_seeker_id" => "required",
-        ]);
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        ;
-        if ($offer = Offer::findOrFail($request->offer_id)) {
-            foreach ($offer->jobSeekers as $jobseeker) {
-                if ($jobseeker->id == $request->job_seeker_id) {
-                    $offer->jobSeekers()->update(
-                        [
-                            "isAccepted" => $request->state
-                        ]
-                    );
-                    $content = '';
-                    if ($request->state) {
-                        $content = "Your employment application has been accepted by " . getAuth("web-company")->name;
-                        broadcast(new RespondApplicants(getAuth("web-company")->name, $request->state, $content));
-
-                    } else {
-                        $content = "Your employment application has been rejected by " . getAuth("web-company")->name;
-                        broadcast(new RespondApplicants(getAuth("web-company")->name, $request->state, $content));
-                    }
-
-                    getAuth("web-company")->notificationSent()->create([
-                        "notfiReciver_type" => "app\Models\Job_seeker",
-                        "notfiReciver_id" => $request->job_seeker_id,
-                        "content" => $content
-                    ]);
-                    return $this->returnSuccess("this order is changed ");
-                }
-            }
-            return $this->returnError("this jobSeeker did not apply for this offer");
-        }
         return ChangeOfferState($request, "api-company");
 
     }
@@ -817,6 +778,7 @@ class CompanyController extends Controller
 
     public function updateProfile_api(Request $request){
         return $this->updateProfile($request,"api-company");
+
     }
 
 }
