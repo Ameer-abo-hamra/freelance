@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use App\Traits\ResponseTrait;
 use App\Models\Offer;
 use App\Events\RespondApplicants;
+use App\Events\Notifications;
 
 function makeCode($type, $email)
 {
@@ -217,11 +218,11 @@ function ChangeOfferState($request, $guard)
                         $content = '';
                         if ($request->state) {
                             $content = "Your employment application has been accepted by " . getAuth("web-company")->name;
-                            broadcast(new RespondApplicants($jobseeker->id, $request->state, $content));
+                            broadcast(new Notifications($content,"jobseeker",$jobseeker->id ));
 
                         } else {
                             $content = "Your employment application has been rejected by " . getAuth("web-company")->name;
-                            broadcast(new RespondApplicants($jobseeker->id, $request->state, $content));
+                            broadcast(new Notifications($content,"jobseeker",$jobseeker->id ));
                         }
 
                         getAuth($guard)->notificationSent()->create([

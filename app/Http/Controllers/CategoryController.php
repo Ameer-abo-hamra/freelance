@@ -14,6 +14,7 @@ class CategoryController extends Controller
     use ResponseTrait;
     public function addCategory(Request $request)
     {
+
         $validator = validator::make($request->all(), [
             "category_name" => "required",
             "type_ids" => "array",

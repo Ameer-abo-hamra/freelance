@@ -17,7 +17,7 @@ class RespondApplicants implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public $job_seeker_id, $isAccepted, $message;
+    public $job_seeker_id, $isAccepted, $message,$a;
 
     public function __construct($job_seeker_id, $isAccepted, $message)
     {
@@ -25,6 +25,7 @@ class RespondApplicants implements ShouldBroadcast
         $this->message = $message;
         $this->isAccepted = $isAccepted;
     }
+
 
     /**
      * Get the channels the event should broadcast on.
