@@ -69,28 +69,81 @@ trait ResponseTrait
     }
 
 
-    public function post($request, $guard, $who, $disk)
+    public function post($request, $guard)
     {
 
         $validator = Validator::make($request->all(), [
             "title" => "required",
             "body" => "required",
-            "file" => "required|file|max:50000"
+            "photo" => "nullable|image|mimes:jpeg,png,jpg,gif|max:2048"
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
+        $user = getAuth($guard);
+        $post = new Post();
+        $post->title = $request->title;
+        $post->body = $request->body;
 
-        Post::create([
-            "title" => $request->title,
-            "body" => $request->body,
-            "photo" => $this->localStore($request, "post", $disk),
-            $who => getAuth($guard)->id,
-            
-        ]);
+        if ($request->hasFile('photo')) {
+            $post->photo = $this->store($request->file('photo'), 'uploads');
+        }
+        $post->postable_type=get_class($user);
+        $post->postable_id=$user->id;
+        $post->save();
+        // $post->photo=isset($request["photo"])
+        // ? $this->store($request["photo"], "post_photos")
+        // : null;
+        // $post->save();
         return $this->returnSuccess("your post is published successfully");
-
+//image didn't add to database
     }
+
+    public function updatePost( $request, $id, $guard, $who, $disk)
+    {
+        $validator = Validator::make($request->all(), [
+            "title" => "sometimes|required",
+            "body" => "sometimes|required",
+            "file" => "sometimes|file|max:50000"
+        ]);
+
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+
+        $post = Post::find($id);
+
+        if (!$post) {
+            return $this->returnError("Post not found");
+        }
+
+        $user = getAuth($guard);
+
+        if ($post->$who != $user->id) {
+            return $this->returnError("You are not authorized to update this post");
+        }
+
+        if ($request->has('title')) {
+            $post->title = $request->title;
+        }
+
+        if ($request->has('body')) {
+            $post->body = $request->body;
+        }
+
+        if ($request->hasFile('file')) {
+            if ($post->photo) {
+                Storage::disk($disk)->delete($post->photo);
+            }
+
+            $post->photo = $this->localStore($request, "post", $disk);
+        }
+
+        $post->save();
+
+        return $this->returnSuccess("Your post has been updated successfully");
+    }
+
 
     public function comment($request, $guard, $post_id)
     {
@@ -123,9 +176,9 @@ trait ResponseTrait
             $comment->commentable_id = $company_id;
             $comment->save();
         } elseif ($guard == "api-job_seeker") {
-            $company_id = getAuth("api-job_seeker")->id;
-            $comment->commentable_type = Company::class;
-            $comment->commentable_id = $company_id;
+            $job_seeker_id = getAuth("api-job_seeker")->id;
+            $comment->commentable_type = Job_seeker::class;
+            $comment->commentable_id = $job_seeker_id;
             $comment->save();
         }
         return $this->returnSuccess("your comment created successfully");
@@ -175,7 +228,7 @@ trait ResponseTrait
         }
         $user->save();
 
-        return $this->returnData('Profile updated successfully',"profile",$user);
+        return $this->returnData('Profile updated successfully', "profile", $user);
     }
 
-    }
+}

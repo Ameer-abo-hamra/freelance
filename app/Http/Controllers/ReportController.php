@@ -17,8 +17,6 @@ class ReportController extends Controller
     use ResponseTrait;
     protected $adminController;
 
-
-
     public function report(Request $request)
     {
         $validator = validator::make($request->all(), [

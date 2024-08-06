@@ -8,9 +8,7 @@ trait StorePhotoTrait
     {
 
         $fileNameToStore = time() . '_' . uniqid() . '.' . $photo->extension();
-
         $photo->storeAs($location, $fileNameToStore, 'public');
-
-        return Storage::url($location.'/'.$fileNameToStore);
+        return Storage::url($location . '/' . $fileNameToStore);
     }
 }
