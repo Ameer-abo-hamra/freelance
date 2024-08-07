@@ -41,9 +41,9 @@ Route::group(["middleware" => "check:api-customer"], function () {
 
     Route::post("filter", [CustomerController::class, "searchWithFilter"]);
 
-    // Route::post("post",[CustomerController::class,"post_api"]);
+    Route::post("post",[CustomerController::class,"post_api"]);
 
-    // Route::post("updatePost/{post_id}", [CustomerController::class, "updatePost_api"]);
+    Route::post("updatePost/{post_id}", [CustomerController::class, "updatePost_api"]);
 
     Route::get("deletePost/{post_id}", [CustomerController::class, "deletePost"]);
 
@@ -53,18 +53,24 @@ Route::group(["middleware" => "check:api-customer"], function () {
 
     Route::get("deleteComment/{comment_id}", [CustomerController::class, "deleteComment"]);
 
-    Route::post("addLikeToPost", [CustomerController::class, "addLikeToPost"]);
+    Route::post("addLikeToPost", [CustomerController::class, "addLikeToPost_api"]);
 
-    Route::post("unlikePost", [CustomerController::class, "unlikePost"]);
+    Route::post("unlikePost", [CustomerController::class, "unlikePost_api"]);
 
-    Route::post("addLikeToComment", [CustomerController::class, "addLikeToComment"]);
+    Route::post("addLikeToComment", [CustomerController::class, "addLikeToComment_api"]);
 
-    Route::post("unlikeComment", [CustomerController::class, "unlikeComment"]);
+    Route::post("unlikeComment", [CustomerController::class, "unlikeComment_api"]);
 
     Route::get("viewProfile/{type}/{id}", [CustomerController::class, "show"]);
 
     Route::post("updateProfile", [CustomerController::class, 'updateProfile']);
 
     Route::get("deleteAccount/{id}", [CustomerController::class, "deleteAccount"]);
+
+    Route::get("showServiceAppliers/{serviceId}",[CustomerController::class,"showServiceAppliers"]);
+
+    Route::post("acceptServiceApplier/{serviceId}",[CustomerController::class,"acceptServiceApplier"]);
+
+    Route::get("markServiceAsDone/{serviceId}",[CustomerController::class,"markServiceAsDone"]);
 
 });

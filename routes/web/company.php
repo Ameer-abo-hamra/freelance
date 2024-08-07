@@ -99,7 +99,6 @@ Route::group(["middleware" => "check:web-company"], function () {
     Route::post("updateProfile", [CompanyController::class, 'updateProfile_web']);
 
     Route::get("deleteAccount/{id}", [CompanyController::class, "deleteAccount"]);
-});
 
 // Route::get("test", [CompanyController::class, "test"]);
 

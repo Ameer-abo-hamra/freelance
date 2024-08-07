@@ -41,24 +41,18 @@ Route::group(["middleware"=>"check:api-company"] , function (){
 
     Route::post("post",[CompanyController::Class , "postApi"]);
 
-<<<<<<< HEAD
     Route::post("updatePost", [CompanyController::class, "updatePost"]);
 
     Route::get("deletePost/{post_id}", [CompanyController::class, "deletePost"]);
 
-=======
->>>>>>> 9bcbcc774895340061468e3baeee93fccb1b8e8f
     Route::post("follow", [CompanyController::class, "putFollow"]);
 
     Route::post("/browse", [CompanyController::class, "browse"]);
 
-<<<<<<< HEAD
     Route::post("search", [CompanyController::class, "search"]);
 
     Route::post("filter", [CompanyController::class, "searchWithFilter"]);
-=======
     Route::post("add-comment", [CompanyController::class, "addComment"]);
->>>>>>> 9bcbcc774895340061468e3baeee93fccb1b8e8f
 
     Route::post("add-comment/{post_id}", [CompanyController::class, "addComment_api"]);
 
@@ -79,4 +73,6 @@ Route::group(["middleware"=>"check:api-company"] , function (){
     Route::post("updateProfile", [CompanyController::class, 'updateProfile_api']);
 
     Route::get("delete-account/{id}",[CompanyController::class,"deleteAccount"]);
+
+    Route::post("applyService/{serviceId}",[CompanyController::class,"applyService"]);
 });

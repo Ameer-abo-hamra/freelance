@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 use App\Traits\ResponseTrait;
 use App\Models\Offer;
 use App\Events\RespondApplicants;
+use App\Models\Like;
+
 
 function makeCode($type, $email)
 {
@@ -239,3 +241,76 @@ function ChangeOfferState($request, $guard)
     return ResponseTrait::returnError("you do not have a permission to change this employment aplicant");
 
 }
+
+function addLike($request, $guard, $likeableType)
+    {
+        $validator = Validator::make($request->all(), [
+            $likeableType . '_id' => 'required|integer|exists:' . str::plural($likeableType) . ',id'
+        ]);
+
+        if ($validator->fails()) {
+            return ResponseTrait::returnError($validator->errors()->first());
+        }
+
+        $likeableId = $request->input($likeableType . '_id');
+        $likeableClass = 'App\\Models\\' . ucfirst($likeableType);
+        $likeable = $likeableClass::find($likeableId);
+
+        $user= auth()->guard($guard)->user();
+
+        if (!$user) {
+            return ResponseTrait::returnError("invalid user");
+        }
+
+        $existingLike = Like::where('likeable_id', $likeable->id)
+            ->where('likeable_type', $likeableClass)
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
+
+        if ($existingLike) {
+            return ResponseTrait::returnError( "User has already liked this " . $likeableType);
+        }
+        $like = new Like();
+        $like->user()->associate($user);
+        $like->likeable()->associate($likeable);
+        $like->save();
+
+        return ResponseTrait::returnSuccess(ucfirst($likeableType) . " liked successfully");
+    }
+
+    function removeLike($request, $guard, $likeableType)
+    {
+        $validator = Validator::make($request->all(), [
+            $likeableType . '_id' => 'required|integer|exists:' . Str::plural($likeableType) . ',id'
+        ]);
+
+        if ($validator->fails()) {
+            return ResponseTrait::returnError($validator->errors()->first());
+        }
+
+        $likeableId = $request->input($likeableType . '_id');
+        $likeableClass = 'App\\Models\\' . ucfirst($likeableType);
+        $likeable = $likeableClass::find($likeableId);
+
+        $user = auth()->guard($guard)->user();
+
+        if (!$user) {
+            return ResponseTrait::returnError("invalid user");
+        }
+
+        $like = Like::where('likeable_id', $likeable->id)
+            ->where('likeable_type', $likeableClass)
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
+
+        if (!$like) {
+            return ResponseTrait::returnError("like not found");
+        }
+
+        $like->delete();
+
+        return ResponseTrait::returnSuccess(ucfirst($likeableType) . " unliked successfully");
+    }
+

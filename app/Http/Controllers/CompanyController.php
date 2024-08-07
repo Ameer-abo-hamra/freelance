@@ -7,6 +7,7 @@ use App\Models\Job_seeker;
 use App\Models\Notification;
 use App\Models\Offer;
 use App\Models\Report;
+use App\Models\Service;
 use App\Traits\ResponseTrait;
 use PHPUnit\Framework\Constraint\IsEmpty;
 use Validator;
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserProfileResource;
 use App\Traits\StorePhotoTrait;
+use App\Models\ServiceApply;
 
 class CompanyController extends Controller
 {
@@ -320,7 +322,7 @@ class CompanyController extends Controller
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
-        ;
+        }
         if ($offer = Offer::findOrFail($request->offer_id)) {
             foreach ($offer->jobSeekers as $jobseeker) {
                 if ($jobseeker->id == $request->job_seeker_id) {
@@ -352,6 +354,7 @@ class CompanyController extends Controller
         return ChangeOfferState($request, "api-company");
 
     }
+
 
     public function browse(Request $request)
     {
@@ -414,86 +417,21 @@ class CompanyController extends Controller
         return $companies;
     }
 
-
-    public function addLikeToPost_web(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'post_id' => 'required|integer|exists:posts,id',
-            'user_type' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $post = Post::find($request->post_id);
-
-        if ($request->user_type == "App\\Models\\Company") {
-            $user = auth()->guard('web-company')->user();
-        }
-
-        if (!$user) {
-            return $this->returnError("user is invalid");
-        }
-
-
-        $existingLike = Like::where('likeable_id', $post->id)
-            ->where('likeable_type', 'App\\Models\\Post')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if ($existingLike) {
-            return $this->returnError("User has already liked this post");
-        }
-        $like = new Like();
-        $like->user()->associate($user);
-        $like->likeable()->associate($post);
-        $like->save();
-
-        return $this->returnSuccess("post liked successfully");
+    public function addLikeToPost_web(Request $request){
+        return addLike($request,"web-company","post");
     }
 
-    public function addLikeToPost_api(Request $request)
-    {
-
-        $validator = Validator::make($request->all(), [
-            'post_id' => 'required|integer|exists:posts,id',
-            'user_type' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $post = Post::find($request->post_id);
-
-        if ($request->user_type == "App\\Models\\Company") {
-            $user = auth()->guard('api-company')->user();
-        }
-
-        if (!$user) {
-            return $this->returnError("user is invalid");
-        }
-
-
-        $existingLike = Like::where('likeable_id', $post->id)
-            ->where('likeable_type', 'App\\Models\\Post')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if ($existingLike) {
-            return $this->returnError("User has already liked this post");
-        }
-        $like = new Like();
-        $like->user()->associate($user);
-        $like->likeable()->associate($post);
-        $like->save();
-
-        return $this->returnSuccess("post liked successfully");
+    public function addLikeToComment_web(Request $request){
+        return addLike($request,"web-company","comment");
     }
 
+    public function addLikeToComment_api(Request $request){
+        return addLike($request,"api-company","comment");
+    }
+
+    public function addLikeToPost_api(Request $request){
+        return addLike($request,"api-company","post");
+    }
     public function unlikePost_web(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -569,83 +507,83 @@ class CompanyController extends Controller
 
     }
 
-    public function addLikeToComment_web(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'comment_id' => 'required|integer|exists:comments,id',
-            'user_type' => 'required|string',
-        ]);
+    // public function addLikeToComment_web(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'comment_id' => 'required|integer|exists:comments,id',
+    //         'user_type' => 'required|string',
+    //     ]);
 
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
+    //     if ($validator->fails()) {
+    //         return $this->returnError($validator->errors()->first());
+    //     }
 
-        $comment = Comment::find($request->comment_id);
+    //     $comment = Comment::find($request->comment_id);
 
-        if ($request->user_type == "App\\Models\\Company") {
-            $user = auth()->guard('web-company')->user();
-        }
+    //     if ($request->user_type == "App\\Models\\Company") {
+    //         $user = auth()->guard('web-company')->user();
+    //     }
 
-        if (!$user) {
-            return $this->returnError("invalid user");
-        }
+    //     if (!$user) {
+    //         return $this->returnError("invalid user");
+    //     }
 
-        $existingLike = Like::where('likeable_id', $comment->id)
-            ->where('likeable_type', 'App\\Models\\Comment')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
+    //     $existingLike = Like::where('likeable_id', $comment->id)
+    //         ->where('likeable_type', 'App\\Models\\Comment')
+    //         ->where('user_id', $user->id)
+    //         ->where('user_type', get_class($user))
+    //         ->first();
 
-        if ($existingLike) {
-            return $this->returnError("User has already liked this comment");
-        }
+    //     if ($existingLike) {
+    //         return $this->returnError("User has already liked this comment");
+    //     }
 
-        $like = new Like();
-        $like->user()->associate($user);
-        $like->likeable()->associate($comment);
-        $like->save();
+    //     $like = new Like();
+    //     $like->user()->associate($user);
+    //     $like->likeable()->associate($comment);
+    //     $like->save();
 
-        return $this->returnSuccess("Comment liked successfully");
-    }
+    //     return $this->returnSuccess("Comment liked successfully");
+    // }
 
-    public function addLikeToComment_api(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'comment_id' => 'required|integer|exists:comments,id',
-            'user_type' => 'required|string',
-        ]);
+    // public function addLikeToComment_api(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'comment_id' => 'required|integer|exists:comments,id',
+    //         'user_type' => 'required|string',
+    //     ]);
 
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
+    //     if ($validator->fails()) {
+    //         return $this->returnError($validator->errors()->first());
+    //     }
 
-        $comment = Comment::find($request->comment_id);
+    //     $comment = Comment::find($request->comment_id);
 
-        if ($request->user_type == "App\\Models\\Company") {
-            $user = auth()->guard('api-company')->user();
-        }
+    //     if ($request->user_type == "App\\Models\\Company") {
+    //         $user = auth()->guard('api-company')->user();
+    //     }
 
-        if (!$user) {
-            return $this->returnError("invalid user");
-        }
+    //     if (!$user) {
+    //         return $this->returnError("invalid user");
+    //     }
 
-        $existingLike = Like::where('likeable_id', $comment->id)
-            ->where('likeable_type', 'App\\Models\\Comment')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
+    //     $existingLike = Like::where('likeable_id', $comment->id)
+    //         ->where('likeable_type', 'App\\Models\\Comment')
+    //         ->where('user_id', $user->id)
+    //         ->where('user_type', get_class($user))
+    //         ->first();
 
-        if ($existingLike) {
-            return $this->returnError("User has already liked this comment");
-        }
+    //     if ($existingLike) {
+    //         return $this->returnError("User has already liked this comment");
+    //     }
 
-        $like = new Like();
-        $like->user()->associate($user);
-        $like->likeable()->associate($comment);
-        $like->save();
+    //     $like = new Like();
+    //     $like->user()->associate($user);
+    //     $like->likeable()->associate($comment);
+    //     $like->save();
 
-        return $this->returnSuccess("Comment liked successfully");
-    }
+    //     return $this->returnSuccess("Comment liked successfully");
+    // }
 
 
     public function unlikeComment_api(Request $request)
@@ -815,8 +753,48 @@ class CompanyController extends Controller
         return $this->updateProfile($request, "web-company");
     }
 
-    public function updateProfile_api(Request $request){
-        return $this->updateProfile($request,"api-company");
+    public function updateProfile_api(Request $request)
+    {
+        return $this->updateProfile($request, "api-company");
     }
 
+    public function applyService(Request $request, $service_id)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'offer' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+
+
+        $service = Service::find($service_id);
+
+        if (!$service) {
+            return $this->returnError("service not found");
+        }
+
+
+        if ($service->state == "processing") {
+            return $this->returnError("Service is not open for applications");
+        }
+
+
+        $company = Auth::guard("api-company")->user();
+
+        ServiceApply::create([
+            'applyable_type' => 'App\Models\Company',
+            'applyable_id' => $company->id,
+            'service_id' => $service->id,
+            'offer' => $request->offer,
+            'isAccepted' => false,
+        ]);
+
+        return $this->returnSuccess("You have successfully applied for the service");
+    }
 }
+
+
+

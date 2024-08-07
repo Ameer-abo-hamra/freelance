@@ -17,11 +17,13 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\Post;
 use App\Models\Comment;
 use App\Models\Company;
+use App\Models\Wallet;
 use App\Models\Job_seeker;
 use App\Helpers;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Like;
 use App\Http\Resources\UserProfileResource;
+use App\Models\ServiceApply;
 
 class CustomerController extends Controller
 {
@@ -136,7 +138,7 @@ class CustomerController extends Controller
         $validator = Validator::make($request->all(), [
             "description" => "required",
             "skill_id" => "array||required",
-            "price" => "required"
+            "price" => "required",
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
@@ -158,8 +160,9 @@ class CustomerController extends Controller
         return $this->returnSuccess("your service is added successfully , wait to find anyone to solve it");
     }
 
-    public function post_api(Request $request){
-        return $this->post($request,"api-customer");
+    public function post_api(Request $request)
+    {
+        return $this->post($request, "api-customer");
     }
 
     // public function updatePost(Request $request, $id, $guard, $who, $disk)
@@ -206,8 +209,9 @@ class CustomerController extends Controller
 
     //     return $this->returnSuccess("Your post has been updated successfully");
     // }
-    public function updatePost_api(Request $request,$post_id){
-        return $this->updatePost($request,$post_id,"api-customer","customer","customer");
+    public function updatePost_api(Request $request, $post_id)
+    {
+        return $this->updatePost($request, $post_id, "api-customer", "customer", "customer");
     }
 
     public function deletePost($post_id)
@@ -268,13 +272,13 @@ class CustomerController extends Controller
             return $this->returnError("You do not have permission to edit this service");
         }
 
-        if ($request->description){
+        if ($request->description) {
             $service->description = $request->description;
         }
-        if ($request->price){
+        if ($request->price) {
             $service->price = $request->price;
         }
-        if($request->skill_id){
+        if ($request->skill_id) {
             $skill_ids = $request->skill_id;
             if (!empty($skill_ids)) {
                 $service->skills()->sync($skill_ids);
@@ -285,7 +289,8 @@ class CustomerController extends Controller
         return $this->returnSuccess("Service updated successfully");
     }
 
-    public function deleteService($service_id){
+    public function deleteService($service_id)
+    {
         Service::find($service_id)->delete();
         return $this->returnSuccess("service deleted successfully");
     }
@@ -393,12 +398,14 @@ class CustomerController extends Controller
     }
 
 
-    public function addComment(Request $request,$post_id){
-        return $this->comment($request,"api-customer",$post_id);
+    public function addComment(Request $request, $post_id)
+    {
+        return $this->comment($request, "api-customer", $post_id);
     }
 
-    public function updateComment(Request $request,$comment_id){
-        return $this->update($request,$comment_id);
+    public function updateComment(Request $request, $comment_id)
+    {
+        return $this->update($request, $comment_id);
     }
 
     public function deleteComment($comment_id)
@@ -407,157 +414,44 @@ class CustomerController extends Controller
         return $this->returnSuccess("comment deleted successfully");
     }
 
-    public function addLikeToPost(Request $request)
+    public function addLikeToPost_web(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'post_id' => 'required|integer|exists:posts,id',
-            'user_type' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $post = Post::find($request->post_id);
-
-        if ($request->user_type == "App\\Models\\Customer") {
-            $user = auth()->guard('api-customer')->user();
-        }
-
-        if (!$user) {
-            return $this->returnError("user is invalid");
-        }
-
-
-        $existingLike = Like::where('likeable_id', $post->id)
-            ->where('likeable_type', 'App\\Models\\Post')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if ($existingLike) {
-            return $this->returnError("User has already liked this post");
-        }
-        $like = new Like();
-        $like->user()->associate($user);
-        $like->likeable()->associate($post);
-        $like->save();
-
-        return $this->returnSuccess("post liked successfully");
+        return addLike($request, "customer", "post");
     }
 
-    public function unlikePost(Request $request)
+    public function addLikeToComment_web(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'post_id' => 'required|integer|exists:posts,id',
-            'user_type' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $post = Post::find($request->post_id);
-
-        if ($request->user_type == "App\\Models\\Customer") {
-            $user = auth()->guard('api-customer')->user();
-        }
-
-        if (!$user) {
-            return $this->returnError("user is invalid");
-        }
-
-        $like = Like::where('likeable_id', $post->id)
-            ->where('likeable_type', 'App\\Models\\Post')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if (!$like) {
-            return $this->returnError("like not found");
-        }
-
-        $like->delete();
-
-        return $this->returnSuccess("Post unliked successfully");
-
+        return addLike($request, "customer", "comment");
     }
 
-    public function addLikeToComment(Request $request)
+    public function addLikeToPost_api(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'comment_id' => 'required|integer|exists:comments,id',
-            'user_type' => 'required|string',
-        ]);
+        return addLike($request, "api-customer", "post");
+    }
 
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
+    public function addLikeToComment_api(Request $request)
+    {
+        return addLike($request, "api-customer", "comment");
+    }
 
-        $comment = Comment::find($request->comment_id);
+    public function unlikePost_web(Request $request)
+    {
+        return removeLike($request, "customer", "post");
+    }
 
-        if ($request->user_type == "App\\Models\\Customer") {
-            $user = auth()->guard('api-customer')->user();
-        }
+    public function unlikeComment_web(Request $request)
+    {
+        return removeLike($request, "customer", "comment");
+    }
 
-        if (!$user) {
-            return $this->returnError("invalid user");
-        }
-
-        $existingLike = Like::where('likeable_id', $comment->id)
-            ->where('likeable_type', 'App\\Models\\Comment')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if ($existingLike) {
-            return $this->returnError("User has already liked this comment");
-        }
-
-        $like = new Like();
-        $like->user()->associate($user);
-        $like->likeable()->associate($comment);
-        $like->save();
-
-        return $this->returnSuccess("Comment liked successfully");
+    public function unlikePost_api(Request $request)
+    {
+        return removeLike($request, "api-customer", "post");
     }
 
     public function unlikeComment_api(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'comment_id' => 'required|integer|exists:comments,id',
-            'user_type' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $comment = Comment::find($request->comment_id);
-
-        $user = null;
-
-        if ($request->user_type == "App\\Models\\Customer") {
-            $user = auth()->guard('api-customer')->user();
-        }
-
-        if (!$user) {
-            return $this->returnError("Invalid user");
-        }
-
-        $existingLike = Like::where('likeable_id', $comment->id)
-            ->where('likeable_type', 'App\\Models\\Comment')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if (!$existingLike) {
-            return $this->returnError("Like not found");
-        }
-
-        $existingLike->delete();
-
-        return $this->returnSuccess("Comment unliked successfully");
+        return removeLike($request, "api-customer", "comment");
     }
 
     public function show($type, $id)
@@ -598,23 +492,23 @@ class CustomerController extends Controller
             "full_name" => "nullable|string|max:255",
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             "email" => "email|nullable",
-            'password' =>"nullable|max:255",
-            "birth_date" =>"date|nullable"
+            'password' => "nullable|max:255",
+            "birth_date" => "date|nullable"
         ]);
 
         if ($request->has('username')) {
             $user->username = $request->input('username');
         }
 
-        if($request->has("full_name")){
+        if ($request->has("full_name")) {
             $user->full_name = $request->input("full_name");
         }
 
-        if($request->has("email")){
+        if ($request->has("email")) {
             $user->email = $request->input("email");
         }
 
-        if($request->has("password")){
+        if ($request->has("password")) {
             $user->password = Hash::make($request->password);
         }
 
@@ -626,8 +520,8 @@ class CustomerController extends Controller
             $user->profile_photo = $path;
         }
 
-        if($request->has("birth_date")){
-            $user->birth_date=$request->input("birth_date");
+        if ($request->has("birth_date")) {
+            $user->birth_date = $request->input("birth_date");
         }
         $user->save();
 
@@ -640,6 +534,110 @@ class CustomerController extends Controller
         return $this->returnSuccess("account deleted successfully");
     }
 
+    public function showServiceAppliers($serviceId)
+    {
+        $service = Service::with('appliers')->find($serviceId);
+
+        if (!$service) {
+            return $this->returnError("Service not found.");
+        }
+
+        return $this->returnSuccess("Service appliers fetched successfully.", $service->appliers);
+    }
+
+    public function acceptServiceApplier(Request $request, $serviceId)
+    {
+        $customer = Auth::guard('api-customer')->user();
+        $service = Service::where('customer_id', $customer->id)->find($serviceId);
+
+        if (!$service) {
+            return $this->returnError("Service not found or you do not have permission to accept this service.");
+        }
+
+
+        $applier = ServiceApply::where('service_id', $serviceId)
+            ->where('applyable_id', $request->applierId)
+            ->where('applyable_type', "App\\Models\\" . ucfirst($request->applierType))
+            ->where('isAccepted', false)
+            ->first();
+
+        if (!$applier) {
+            return $this->returnError("Applier not found");
+        }
+        $customerWallet = Wallet::where('customer_id', $customer->id)->first();
+
+        if ($customerWallet->balance < $service->price) {
+            return $this->returnError("you can't accept any applier because you haven't money");
+        } elseif ($customerWallet->balance >= $service->price) {
+            $applier->isAccepted = true;
+            $applier->save();
+
+            $service->state = 'processing';
+            $service->save();
+
+            if (!$customerWallet) {
+                \Log::error("Customer wallet not found for customer ID: " . $customer->id);
+                return $this->returnError("Customer wallet not found.");
+            }
+
+            \Log::info("Customer wallet found: " . json_encode($customerWallet));
+
+            $customerWallet->reserved = $customerWallet->reserved + $service->price;
+            $customerWallet->save();
+            return $this->returnSuccess("Applier accepted and service status updated successfully.");
+        }
+    }
+    public function markServiceAsDone(Request $request, $serviceId)
+    {
+        $customer = Auth::guard('api-customer')->user();
+        $service = Service::where('customer_id', $customer->id)->find($serviceId);
+
+        if (!$service) {
+            return $this->returnError("Service not found or you do not have permission to mark this service as done.");
+        }
+
+        $acceptedApplier = ServiceApply::where('service_id', $serviceId)
+            ->where('isAccepted', true)
+            ->first();
+
+        if (!$acceptedApplier) {
+            return $this->returnError("No accepted applier found for this service.");
+        }
+        $service->state = 'done';
+        $service->save();
+        $customerWallet = Wallet::where('customer_id', $customer->id)->first();
+
+        if (!$customerWallet) {
+            return $this->returnError("Customer wallet not found.");
+        }
+
+        $customerWallet->reserved = $customerWallet->reserved - $service->price;
+        $customerWallet->balance = $customerWallet->balance - $service->price;
+        $customerWallet->save();
+
+        $applier = $acceptedApplier->applyable;
+
+        if (!$applier) {
+            return $this->returnError("Applier not found.");
+        }
+
+        \Log::info("Applier found: " . json_encode($applier));
+
+        if ($applier instanceof Job_seeker) {
+            $applierWallet = Wallet::where("job_seeker_id", $applier->id)->first();
+        } elseif ($applier instanceof Company) {
+            $applierWallet = Wallet::where("company_id", $applier->id)->first();
+        } else {
+            return $this->returnError("Invalid applier type.");
+        }
+
+        if (!$applierWallet) {
+            return $this->returnError("Applier wallet not found.");
+        }
+        $applierWallet->balance += $service->price;
+        $applierWallet->save();
+        return $this->returnSuccess("Service marked as done and payment transferred successfully.");
+    }
 
 }
 
