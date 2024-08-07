@@ -9,11 +9,20 @@ class ServiceApply extends Model
 {
     use HasFactory;
 
-    public function applyable(){
+    protected $fillable = [
+        'applyable_type',
+        'applyable_id',
+        'service_id',
+        'offer',
+        'isAccepted',
+    ];
+    public function applyable()
+    {
         return $this->morphTo();
     }
 
-    public function services(){
-        return $this->belongsToMany(Service::class,"services_applied","serviceApplied_id","service_id");
+    public function services()
+    {
+        return $this->belongsTo(Service::class, "service_id");
     }
 }

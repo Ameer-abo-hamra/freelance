@@ -49,15 +49,15 @@ Route::group(["middleware" => "check:web-job_seeker"], function () {
 
     Route::get("deleteComment/{comment_id}", [JobSeekerController::class, "deleteComment"]);
 
-    Route::post("addLikeToPost", [JobSeekerController::class, "addLikeToPost"]);
+    Route::post("addLikeToPost",[JobSeekerController::class,"addLikeToPost_web"]);
 
-    Route::post("unlikePost", [JobSeekerController::class, "unlikePost"]);
+    Route::post("unlikePost",[JobSeekerController::class,"unlikePost_web"]);
 
-    Route::post("addLikeToComment", [JobSeekerController::class, "addLikeToComment"]);
+    Route::post("addLikeToComment",[JobSeekerController::class,"addLikeToComment_web"]);
 
     Route::post("add-comment", [JobSeekerController::class, "addComment"]);
 
-    Route::post("unlikeComment", [JobSeekerController::class, "unlikeComment"]);
+    Route::post("unlikeComment",[JobSeekerController::class,"unlikeComment_web"]);
 
 });
 

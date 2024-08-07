@@ -71,4 +71,6 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
     Route::post("addLikeToComment", [JobSeekerController::class, "addLikeToComment_api"]);
 
     Route::post("unlikeComment", [JobSeekerController::class, "unlikeComment_api"]);
+
+    Route::post("applyService/{serviceId}",[JobSeekerController::class,"applyService"]);
 });
