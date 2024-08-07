@@ -6,6 +6,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ReportController;
 use App\Models\Company;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,11 +28,6 @@ route::get("csrf", function () {
 });
 
 
-
-Route::get("testws", function () {
-
-    broadcast(new ForTesting("hi there "));
-});
 route::post("register", [CompanyController::class, "register"]);
 
 route::post("login", [CompanyController::class, "login"]);
@@ -74,8 +70,6 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("/browse", [CompanyController::class, "browse"]);
 
-    Route::post("add-comment", [CompanyController::class, "addComment"]);
-});
     Route::post("add-comment/{post_id}", [CompanyController::class, "addComment_web"]);
 
     Route::post("updateComment/{comment_id}", [CompanyController::class, "updateComment"]);
@@ -102,6 +96,9 @@ Route::group(["middleware" => "check:web-company"], function () {
 
 // Route::get("test", [CompanyController::class, "test"]);
 
-Route::get("vist", function () {
-    return view("test");
+Route::post("vist", function (Request $request) {
+    // fillNotification("customer", 1, "company", 1, "welcome to our website");
+
+
+
 });

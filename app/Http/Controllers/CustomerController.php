@@ -31,30 +31,42 @@ class CustomerController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "usrename" => "min:3||max:10",
+            "username" => "unique:customers|min:3||max:10",
             "full_name" => "min:3||max:20",
             "email" => "required | email |unique:customers",
-            "password" => "required |min:8 | max:20"
+            "password" => "required |min:8 | max:20",
+            "file" => "required|image|max:5048"
+
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
-        } else {
+        }
+        $id = Customer::latest("id")->first() ;
+        if($id){
+        $customer = Customer::create([
+            "username" => $request->username,
+            "full_name" => $request->full_name,
+            "email" => $request->email,
+            "password" => Hash::make($request->password),
+            "birth_date" => $request->birth_date,
+            "profile_photo" => photo($request, "customer", "profile", Customer::latest("id")->first()->id + 1),
+            "verificationCode" => makeCode("customer", $request->email),
+        ]);}else {
             $customer = Customer::create([
                 "username" => $request->username,
                 "full_name" => $request->full_name,
                 "email" => $request->email,
                 "password" => Hash::make($request->password),
                 "birth_date" => $request->birth_date,
+                "profile_photo" => photo($request, "customer", "profile", 1),
                 "verificationCode" => makeCode("customer", $request->email),
             ]);
-            Auth::guard('customer')->login($customer);
-            $credential = $request->only("username", "password");
-            Auth::guard("api-customer")->attempt($credential);
-            Customer::where("username", $request->username)->update([
-                "verificationCode" => makeCode("customer", $request->email),
-            ]);
-            return $this->returnSuccess("your account created successfully");
         }
+        Auth::guard('customer')->login($customer);
+        $credential = $request->only("username", "password");
+        Auth::guard("api-customer")->attempt($credential);
+        return $this->returnSuccess("your account created successfully");
+
     }
 
     public function login(Request $request)
@@ -162,7 +174,13 @@ class CustomerController extends Controller
 
     public function post_api(Request $request)
     {
-        return $this->post($request, "api-customer");
+
+        return $this->post($request, "api-customer", "post", "customer");
+    }
+
+    public function postWeb(Request $request)
+    {
+        return $this->post($request, "web-company", "post", "company");
     }
 
     // public function updatePost(Request $request, $id, $guard, $who, $disk)

@@ -43,11 +43,11 @@ Route::group(["middleware" => "check:web-job_seeker"], function () {
 
     Route::post("follow", [JobSeekerController::class, "putFollow"]);
 
-    Route::post("add-comment/{post_id}",[JobSeekerController::class,"addComment_web"]);
+    Route::post("add-comment/{post_id}", [JobSeekerController::class, "addComment_web"]);
 
     Route::post("updateComment/{comment_id}", [JobSeekerController::class, "updateComment"]);
 
-    Route::get("deleteComment/{comment_id}",[JobSeekerController::class,"deleteComment"]);
+    Route::get("deleteComment/{comment_id}", [JobSeekerController::class, "deleteComment"]);
 
     Route::post("addLikeToPost",[JobSeekerController::class,"addLikeToPost_web"]);
 

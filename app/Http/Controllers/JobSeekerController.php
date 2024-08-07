@@ -32,18 +32,31 @@ class JobSeekerController extends Controller
             "password" => "required",
             "birth_date" => "required | date",
             "email" => "required |unique:job_seekers",
-
+            "file" => "image|required|max:5048"
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        $job_seeker = Job_seeker::create([
-            "username" => $request->username,
-            "full_name" => $request->full_name,
-            "email" => $request->email,
-            "password" => Hash::make($request->password),
-            "birth_date" => $request->birth_date,
-        ]);
+        $id = Job_seeker::latest("id")->first();
+        if ($id) {
+            $job_seeker = Job_seeker::create([
+                "username" => $request->username,
+                "full_name" => $request->full_name,
+                "email" => $request->email,
+                "password" => Hash::make($request->password),
+                "birth_date" => $request->birth_date,
+                "profile_photo" => photo($request, "job_seeker", "jobseeker", Job_seeker::latest("id")->first()->id + 1),
+            ]);
+        } else {
+            $job_seeker = Job_seeker::create([
+                "username" => $request->username,
+                "full_name" => $request->full_name,
+                "email" => $request->email,
+                "password" => Hash::make($request->password),
+                "birth_date" => $request->birth_date,
+                "profile_photo" => photo($request, "job_seeker", "jobseeker", 1),
+            ]);
+        }
         $credential = $request->only("username", "password");
         Auth::guard("api-job_seeker")->attempt($credential);
         Auth::guard("web-job_seeker")->login($job_seeker);
@@ -135,13 +148,13 @@ class JobSeekerController extends Controller
     }
     public function postApi(Request $request)
     {
-        return $this->post($request, "api-job_seeker");
+        return $this->post($request, "api-job_seeker", "post", "job_seeker");
     }
 
-    // public function postWeb(Request $request)
-    // {
-    //     return $this->post($request, "job_seeker", "job_seeker_id", "job_seeker");
-    // }
+    public function postWeb(Request $request)
+    {
+        return $this->post($request, "job_seeker", "post", "job_seeker");
+    }
 
     public function getCategory()
     {

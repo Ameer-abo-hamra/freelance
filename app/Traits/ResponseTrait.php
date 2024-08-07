@@ -52,7 +52,7 @@ trait ResponseTrait
     public function apply($request, $guard)
     {
         $validator = Validator::make($request->all(), [
-            "file" => "required|file| max:2000",
+            "file" => "required|file| max:5000",
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
@@ -61,7 +61,7 @@ trait ResponseTrait
         $job_seeker = Auth::guard($guard)->user();
         $job_seeker->offers()->sync([
             $request->offer_id => [
-                "CV" => $this->localStore($request, "CV", "job_seeker"),
+                "CV" => photo($request, "job_seeker", "CVs" , $job_seeker->id),
                 "additionalInfo" => $request->additionalInfo
             ]
         ]);
@@ -69,7 +69,7 @@ trait ResponseTrait
     }
 
 
-    public function post($request, $guard)
+    public function post($request, $guard, $folderName, $diskName)
     {
 
         $validator = Validator::make($request->all(), [
@@ -81,25 +81,16 @@ trait ResponseTrait
             return $this->returnError($validator->errors()->first());
         }
         $user = getAuth($guard);
-        $post = new Post();
-        $post->title = $request->title;
-        $post->body = $request->body;
+        $user->posts()->create([
+            "photo" => photo($request, $diskName, $folderName,$user->id),
+            "title" => $request->title,
+            "body" => $request->body
+        ]);
 
-        if ($request->hasFile('photo')) {
-            $post->photo = $this->store($request->file('photo'), 'uploads');
-        }
-        $post->postable_type=get_class($user);
-        $post->postable_id=$user->id;
-        $post->save();
-        // $post->photo=isset($request["photo"])
-        // ? $this->store($request["photo"], "post_photos")
-        // : null;
-        // $post->save();
         return $this->returnSuccess("your post is published successfully");
-//image didn't add to database
     }
 
-    public function updatePost( $request, $id, $guard, $who, $disk)
+    public function updatePost($request, $id, $guard, $who, $disk)
     {
         $validator = Validator::make($request->all(), [
             "title" => "sometimes|required",
