@@ -35,9 +35,6 @@ class Job_seeker extends Authenticatable implements JWTSubject
     public function wallet()
     {
         return $this->hasOne(Wallet::class);
-    public function wallet()
-    {
-        return $this->belongsTo(Wallet::class, "job_seeker_id");
     }
     public function makeApply()
     {

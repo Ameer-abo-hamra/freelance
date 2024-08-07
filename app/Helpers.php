@@ -8,7 +8,6 @@ use App\Traits\ResponseTrait;
 use App\Models\Offer;
 use App\Events\RespondApplicants;
 use App\Models\Like;
-
 use App\Events\Notifications;
 use App\Models\Notification;
 use Illuminate\Http\Request;
