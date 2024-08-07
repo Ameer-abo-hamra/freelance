@@ -30,7 +30,7 @@ class Customer extends Authenticatable implements JWTSubject
     }
 
     public function wallet(){
-        return $this->belongsTo(Wallet::class,"customer_id");
+        return $this->hasOne(Wallet::class);
     }
     public function likes()
     {

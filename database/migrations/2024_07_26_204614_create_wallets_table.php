@@ -13,11 +13,16 @@ return new class extends Migration
     {
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("company_id")->references("id")->on("companies")->nullable();
-            $table->foreignId("job_seeker_id")->references("id")->on("job_seekers")->nullable();
-            $table->foreignId("customer_id")->references("id")->on("customers")->nullable();
-            $table->unsignedBigInteger("balance");
+            $table->unsignedBigInteger('customer_id')->nullable();
+            $table->unsignedBigInteger('job_seeker_id')->nullable();
+            $table->unsignedBigInteger('company_id')->nullable();
+            $table->unsignedBigInteger('reserved')->default(0);
+            $table->unsignedBigInteger('balance')->default(0);
             $table->timestamps();
+
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
+            $table->foreign('job_seeker_id')->references('id')->on('job_seekers')->onDelete('cascade');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
         });
     }
 

@@ -8,15 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Wallet extends Model
 {
     use HasFactory;
-    public function job_seekers(){
-        return $this->hasMany(Job_seeker::class,"job_seeker_id");
+    protected $fillable = ["balance","reserved","customer_id","company_id","job_seeker_id"];
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
     }
 
-    public function companies(){
-        return $this->hasMany(Company::class,"company_id");
+    public function jobSeeker()
+    {
+        return $this->belongsTo(Job_seeker::class);
     }
 
-    public function customers(){
-        return $this->hasMany(Customer::class,"customer_id");
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 }

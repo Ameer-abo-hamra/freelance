@@ -57,7 +57,7 @@ return [
             "provider" => "customers"
         ],
         "api-company" => [
-            "driver" => "jwt" ,
+            "driver" => "jwt",
             "provider" => "companies"
         ],
         "api-job_seeker" => [
