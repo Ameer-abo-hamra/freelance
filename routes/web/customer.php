@@ -45,6 +45,8 @@ Route::group(["middleware" => ["check:customer"]], function () {
 
     });
 
+    Route::post("post" , [CustomerController::class , "postWeb"]);
+
     Route::post("browse", [CustomerController::class, "browse"]);
 
     Route::post("follow", [CustomerController::class, "putFollow"]);

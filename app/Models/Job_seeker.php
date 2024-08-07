@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Job_seeker extends Authenticatable implements JWTSubject
 {
     use HasFactory;
-    protected $fillable = ["username", "full_name", "birth_date", "password", "email", "verificationCode", "isActive", "CV", "additionalInfo", "isAccepted","type"];
+    protected $fillable = ["username", "full_name", "birth_date", "password", "email", "verificationCode", "isActive", "CV", "additionalInfo", "isAccepted", "type", "profile_photo"];
     protected $hidden = ["created_at", "updated_at"];
     public function getJWTIdentifier()
     {
@@ -32,8 +32,9 @@ class Job_seeker extends Authenticatable implements JWTSubject
     //     return $this->morphMany(Service::class, "serviceable");
     // }
 
-    public function wallet(){
-        return $this->belongsTo(Wallet::class,"job_seeker_id");
+    public function wallet()
+    {
+        return $this->belongsTo(Wallet::class, "job_seeker_id");
     }
     public function makeApply()
     {
@@ -116,8 +117,8 @@ class Job_seeker extends Authenticatable implements JWTSubject
     public function scopeSearch($query, $term)
     {
         return $query->where('username', 'like', '%' . $term . '%')
-                    ->orWhere('full_name','like','%' . $term . '%')
-                    ->orWhere('email', 'like', '%' . $term . '%');
+            ->orWhere('full_name', 'like', '%' . $term . '%')
+            ->orWhere('email', 'like', '%' . $term . '%');
     }
 
 }
