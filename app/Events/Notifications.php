@@ -33,7 +33,7 @@ class Notifications implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel("$this->channelName " . $this->id),
+            new Channel($this->channelName . $this->id),
         ];
     }
 
