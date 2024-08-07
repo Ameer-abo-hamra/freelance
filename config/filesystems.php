@@ -39,23 +39,35 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
         ],
         'job_seeker' => [
             'driver' => 'local',
             'root' => public_path('job_seeker'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
         ],
         'company' => [
             'driver' => 'local',
             'root' => public_path('company'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
+        ],
+        'customer' => [
+            'driver' => 'local',
+            'root' => public_path('customer'),
+            'url' => env('APP_URL') . '/storage/customers',
+            'visibility' => 'public',
+        ],
+        'admin' => [
+            'driver' => 'local',
+            'root' =>public_path('admin'),
+            'url' => env('APP_URL') . '/storage/customers',
+            'visibility' => 'public',
         ],
 
         's3' => [
@@ -70,12 +82,7 @@ return [
             'throw' => false,
         ],
 
-        'customer' => [
-        'driver' => 'local',
-        'root' => storage_path('app/public/customers'),
-        'url' => env('APP_URL') . '/storage/customers',
-        'visibility' => 'public',
-    ],
+
     ],
 
     /*

@@ -33,6 +33,8 @@ Route::group(["middleware" => "check:api-customer"], function () {
 
     Route::get("deleteService/{service_id}",[CustomerController::class,"deleteService"]);
 
+    Route::post("post" , [CustomerController::class , "post_api"]);
+
     Route::post("browse", [CustomerController::class, "browse"]);
 
     Route::post("follow", [CustomerController::class, "putFollow"]);

@@ -30,18 +30,31 @@ class JobSeekerController extends Controller
             "password" => "required",
             "birth_date" => "required | date",
             "email" => "required |unique:job_seekers",
-
+            "file" => "image|required|max:5048"
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        $job_seeker = Job_seeker::create([
-            "username" => $request->username,
-            "full_name" => $request->full_name,
-            "email" => $request->email,
-            "password" => Hash::make($request->password),
-            "birth_date" => $request->birth_date,
-        ]);
+        $id = Job_seeker::latest("id")->first();
+        if ($id) {
+            $job_seeker = Job_seeker::create([
+                "username" => $request->username,
+                "full_name" => $request->full_name,
+                "email" => $request->email,
+                "password" => Hash::make($request->password),
+                "birth_date" => $request->birth_date,
+                "profile_photo" => photo($request, "job_seeker", "jobseeker", Job_seeker::latest("id")->first()->id + 1),
+            ]);
+        } else {
+            $job_seeker = Job_seeker::create([
+                "username" => $request->username,
+                "full_name" => $request->full_name,
+                "email" => $request->email,
+                "password" => Hash::make($request->password),
+                "birth_date" => $request->birth_date,
+                "profile_photo" => photo($request, "job_seeker", "jobseeker", 1),
+            ]);
+        }
         $credential = $request->only("username", "password");
         Auth::guard("api-job_seeker")->attempt($credential);
         Auth::guard("web-job_seeker")->login($job_seeker);
@@ -133,13 +146,13 @@ class JobSeekerController extends Controller
     }
     public function postApi(Request $request)
     {
-        return $this->post($request, "api-job_seeker");
+        return $this->post($request, "api-job_seeker", "post", "job_seeker");
     }
 
-    // public function postWeb(Request $request)
-    // {
-    //     return $this->post($request, "job_seeker", "job_seeker_id", "job_seeker");
-    // }
+    public function postWeb(Request $request)
+    {
+        return $this->post($request, "job_seeker", "post", "job_seeker");
+    }
 
     public function getCategory()
     {
@@ -187,15 +200,17 @@ class JobSeekerController extends Controller
 
     public function addComment_web(Request $request, $post_id)
     {
-        return $this->comment($request, "web-job_seeker",$post_id);
+        return $this->comment($request, "web-job_seeker", $post_id);
     }
 
-    public function addComment_api(Request $request,$post_id){
-        return $this->comment($request,"api-job_seeker",$post_id);
+    public function addComment_api(Request $request, $post_id)
+    {
+        return $this->comment($request, "api-job_seeker", $post_id);
     }
 
-    public function updateComment(Request $request,$comment_id){
-        return $this->update($request,$comment_id);
+    public function updateComment(Request $request, $comment_id)
+    {
+        return $this->update($request, $comment_id);
     }
 
 
@@ -227,10 +242,10 @@ class JobSeekerController extends Controller
         }
 
         $existingLike = Like::where('likeable_id', $comment->id)
-                            ->where('likeable_type', 'App\\Models\\Comment')
-                            ->where('user_id', $user->id)
-                            ->where('user_type', get_class($user))
-                            ->first();
+            ->where('likeable_type', 'App\\Models\\Comment')
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
 
         if ($existingLike) {
             return $this->returnError("User has already liked this comment");
@@ -265,10 +280,10 @@ class JobSeekerController extends Controller
         }
 
         $existingLike = Like::where('likeable_id', $comment->id)
-                            ->where('likeable_type', 'App\\Models\\Comment')
-                            ->where('user_id', $user->id)
-                            ->where('user_type', get_class($user))
-                            ->first();
+            ->where('likeable_type', 'App\\Models\\Comment')
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
 
         if ($existingLike) {
             return $this->returnError("User has already liked this comment");
@@ -306,10 +321,10 @@ class JobSeekerController extends Controller
         }
 
         $existingLike = Like::where('likeable_id', $comment->id)
-                            ->where('likeable_type', 'App\\Models\\Comment')
-                            ->where('user_id', $user->id)
-                            ->where('user_type', get_class($user))
-                            ->first();
+            ->where('likeable_type', 'App\\Models\\Comment')
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
 
         if (!$existingLike) {
             return $this->returnError("Like not found");
@@ -343,10 +358,10 @@ class JobSeekerController extends Controller
         }
 
         $existingLike = Like::where('likeable_id', $comment->id)
-                            ->where('likeable_type', 'App\\Models\\Comment')
-                            ->where('user_id', $user->id)
-                            ->where('user_type', get_class($user))
-                            ->first();
+            ->where('likeable_type', 'App\\Models\\Comment')
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
 
         if (!$existingLike) {
             return $this->returnError("Like not found");
@@ -456,10 +471,10 @@ class JobSeekerController extends Controller
         }
 
         $like = Like::where('likeable_id', $post->id)
-                    ->where('likeable_type', 'App\\Models\\Post')
-                    ->where('user_id', $user->id)
-                    ->where('user_type', get_class($user))
-                    ->first();
+            ->where('likeable_type', 'App\\Models\\Post')
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
 
         if (!$like) {
             return $this->returnError("like not found");
@@ -492,10 +507,10 @@ class JobSeekerController extends Controller
         }
 
         $like = Like::where('likeable_id', $post->id)
-                    ->where('likeable_type', 'App\\Models\\Post')
-                    ->where('user_id', $user->id)
-                    ->where('user_type', get_class($user))
-                    ->first();
+            ->where('likeable_type', 'App\\Models\\Post')
+            ->where('user_id', $user->id)
+            ->where('user_type', get_class($user))
+            ->first();
 
         if (!$like) {
             return $this->returnError("like not found");
@@ -662,23 +677,23 @@ class JobSeekerController extends Controller
             "full_name" => "nullable|string|max:255",
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             "email" => "email|nullable",
-            'password' =>"nullable|max:255",
-            "birth_date" =>"date|nullable"
+            'password' => "nullable|max:255",
+            "birth_date" => "date|nullable"
         ]);
 
         if ($request->has('username')) {
             $user->username = $request->input('username');
         }
 
-        if($request->has("full_name")){
+        if ($request->has("full_name")) {
             $user->full_name = $request->input("full_name");
         }
 
-        if($request->has("email")){
+        if ($request->has("email")) {
             $user->email = $request->input("email");
         }
 
-        if($request->has("password")){
+        if ($request->has("password")) {
             $user->password = Hash::make($request->password);
         }
 
@@ -690,8 +705,8 @@ class JobSeekerController extends Controller
             $user->profile_photo = $path;
         }
 
-        if($request->has("birth_date")){
-            $user->birth_date=$request->input("birth_date");
+        if ($request->has("birth_date")) {
+            $user->birth_date = $request->input("birth_date");
         }
         $user->save();
 
