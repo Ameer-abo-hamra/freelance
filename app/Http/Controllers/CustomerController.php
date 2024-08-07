@@ -29,30 +29,42 @@ class CustomerController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "usrename" => "min:3||max:10",
+            "username" => "unique:customers|min:3||max:10",
             "full_name" => "min:3||max:20",
             "email" => "required | email |unique:customers",
-            "password" => "required |min:8 | max:20"
+            "password" => "required |min:8 | max:20",
+            "file" => "required|image|max:5048"
+
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
-        } else {
+        }
+        $id = Customer::latest("id")->first() ;
+        if($id){
+        $customer = Customer::create([
+            "username" => $request->username,
+            "full_name" => $request->full_name,
+            "email" => $request->email,
+            "password" => Hash::make($request->password),
+            "birth_date" => $request->birth_date,
+            "profile_photo" => photo($request, "customer", "profile", Customer::latest("id")->first()->id + 1),
+            "verificationCode" => makeCode("customer", $request->email),
+        ]);}else {
             $customer = Customer::create([
                 "username" => $request->username,
                 "full_name" => $request->full_name,
                 "email" => $request->email,
                 "password" => Hash::make($request->password),
                 "birth_date" => $request->birth_date,
+                "profile_photo" => photo($request, "customer", "profile", 1),
                 "verificationCode" => makeCode("customer", $request->email),
             ]);
-            Auth::guard('customer')->login($customer);
-            $credential = $request->only("username", "password");
-            Auth::guard("api-customer")->attempt($credential);
-            Customer::where("username", $request->username)->update([
-                "verificationCode" => makeCode("customer", $request->email),
-            ]);
-            return $this->returnSuccess("your account created successfully");
         }
+        Auth::guard('customer')->login($customer);
+        $credential = $request->only("username", "password");
+        Auth::guard("api-customer")->attempt($credential);
+        return $this->returnSuccess("your account created successfully");
+
     }
 
     public function login(Request $request)
@@ -158,8 +170,15 @@ class CustomerController extends Controller
         return $this->returnSuccess("your service is added successfully , wait to find anyone to solve it");
     }
 
-    public function post_api(Request $request){
-        return $this->post($request,"api-customer");
+    public function post_api(Request $request)
+    {
+        return $this->post($request, "api-customer", "post", "customer");
+    }
+
+    public function postWeb(Request $request)
+    {
+        return $this->post($request, "web-company", "post", "company");
+
     }
 
     // public function updatePost(Request $request, $id, $guard, $who, $disk)
@@ -206,8 +225,9 @@ class CustomerController extends Controller
 
     //     return $this->returnSuccess("Your post has been updated successfully");
     // }
-    public function updatePost_api(Request $request,$post_id){
-        return $this->updatePost($request,$post_id,"api-customer","customer","customer");
+    public function updatePost_api(Request $request, $post_id)
+    {
+        return $this->updatePost($request, $post_id, "api-customer", "customer", "customer");
     }
 
     public function deletePost($post_id)
@@ -268,13 +288,13 @@ class CustomerController extends Controller
             return $this->returnError("You do not have permission to edit this service");
         }
 
-        if ($request->description){
+        if ($request->description) {
             $service->description = $request->description;
         }
-        if ($request->price){
+        if ($request->price) {
             $service->price = $request->price;
         }
-        if($request->skill_id){
+        if ($request->skill_id) {
             $skill_ids = $request->skill_id;
             if (!empty($skill_ids)) {
                 $service->skills()->sync($skill_ids);
@@ -285,7 +305,8 @@ class CustomerController extends Controller
         return $this->returnSuccess("Service updated successfully");
     }
 
-    public function deleteService($service_id){
+    public function deleteService($service_id)
+    {
         Service::find($service_id)->delete();
         return $this->returnSuccess("service deleted successfully");
     }
@@ -393,12 +414,14 @@ class CustomerController extends Controller
     }
 
 
-    public function addComment(Request $request,$post_id){
-        return $this->comment($request,"api-customer",$post_id);
+    public function addComment(Request $request, $post_id)
+    {
+        return $this->comment($request, "api-customer", $post_id);
     }
 
-    public function updateComment(Request $request,$comment_id){
-        return $this->update($request,$comment_id);
+    public function updateComment(Request $request, $comment_id)
+    {
+        return $this->update($request, $comment_id);
     }
 
     public function deleteComment($comment_id)
@@ -598,23 +621,23 @@ class CustomerController extends Controller
             "full_name" => "nullable|string|max:255",
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             "email" => "email|nullable",
-            'password' =>"nullable|max:255",
-            "birth_date" =>"date|nullable"
+            'password' => "nullable|max:255",
+            "birth_date" => "date|nullable"
         ]);
 
         if ($request->has('username')) {
             $user->username = $request->input('username');
         }
 
-        if($request->has("full_name")){
+        if ($request->has("full_name")) {
             $user->full_name = $request->input("full_name");
         }
 
-        if($request->has("email")){
+        if ($request->has("email")) {
             $user->email = $request->input("email");
         }
 
-        if($request->has("password")){
+        if ($request->has("password")) {
             $user->password = Hash::make($request->password);
         }
 
@@ -626,8 +649,8 @@ class CustomerController extends Controller
             $user->profile_photo = $path;
         }
 
-        if($request->has("birth_date")){
-            $user->birth_date=$request->input("birth_date");
+        if ($request->has("birth_date")) {
+            $user->birth_date = $request->input("birth_date");
         }
         $user->save();
 

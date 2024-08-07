@@ -8,6 +8,8 @@ use App\Traits\ResponseTrait;
 use App\Models\Offer;
 use App\Events\RespondApplicants;
 use App\Events\Notifications;
+use App\Models\Notification;
+use Illuminate\Http\Request;
 
 function makeCode($type, $email)
 {
@@ -218,11 +220,13 @@ function ChangeOfferState($request, $guard)
                         $content = '';
                         if ($request->state) {
                             $content = "Your employment application has been accepted by " . getAuth("web-company")->name;
-                            broadcast(new Notifications($content,"jobseeker",$jobseeker->id ));
-
+                            broadcast(new Notifications($content, "jobseeker", $jobseeker->id));
+                            fillNotification("company", $company->id, "jobseeker", $request->job_seeker_id, $content);
                         } else {
                             $content = "Your employment application has been rejected by " . getAuth("web-company")->name;
-                            broadcast(new Notifications($content,"jobseeker",$jobseeker->id ));
+                            broadcast(new Notifications($content, "jobseeker", $jobseeker->id));
+                            fillNotification("company", $company->id, "jobseeker", $request->job_seeker_id, $content);
+
                         }
 
                         getAuth($guard)->notificationSent()->create([
@@ -238,5 +242,50 @@ function ChangeOfferState($request, $guard)
         }
     }
     return ResponseTrait::returnError("you do not have a permission to change this employment aplicant");
+
+}
+
+function fillNotification($senderType, $senderId, $reciverType, $reciverId, $content)
+{
+
+    $sender = '';
+    $reciver = '';
+
+    if ($senderType == "customer") {
+
+        $sender = App\Models\Customer::find($senderId);
+    } elseif ($senderType == "jobseeker") {
+        $sender = App\Models\Job_seeker::find($senderId);
+    } else {
+        $sender = App\Models\Company::find($senderId);
+    }
+    if ($reciverType == "customer") {
+
+        $reciver = 'App\Models\Customer';
+    } elseif ($senderType == "jobseeker") {
+        $reciver = "App\Models\Jobseeker";
+    } else {
+        $reciver = 'App\Models\Company';
+    }
+
+    $sender->notificationSent()->create([
+
+        "notfiReciver_id" => $reciverId,
+        "notfiReciver_type" => $reciver,
+        "content" => $content
+
+    ]);
+
+
+
+}
+
+
+function photo(Request $request, $diskName, $folderName,$id)
+{
+
+    $name = $id.$request->file("file")->getClientOriginalName();
+    $path = $request->file("file")->storeAs($folderName, $name, $diskName);
+    return $path ;
 
 }

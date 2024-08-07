@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserProfileResource;
 use App\Traits\StorePhotoTrait;
-use App\Events\Notifications ;
+use App\Events\Notifications;
 
 class CompanyController extends Controller
 {
@@ -37,31 +37,42 @@ class CompanyController extends Controller
             "employee_number" => "required |integer | min:10 | max:500000",
             "establishment_date" => "required | date",
             "email" => "required | unique:companies| email",
-            "profile_photo" => "image||mimes:jpeg,png,jpg,gif|max:2048"
+            "file" => "required|image|max:5048"
         ]);
 
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        $company = Company::create([
-            "name" => $request->name,
-            "password" => Hash::make($request->password),
-            "establishment_date" => $request->establishment_date,
-            "employee_number" => $request->employee_number,
-            "email" => $request->email,
-            "profile_photo" => $request->profile_photo
-            // "verificationCode" => makeCode("company", $request->email),
-        ]);
-        $company->profile_photo = isset($request["profile_photo"])
-            ? $this->store($request["profile_photo"], "profile_photos")
-            : null;
+        $id = Company::latest("id")->first();
+        if ($id) {
+            # code...
+
+            $company = Company::create([
+                "name" => $request->name,
+                "password" => Hash::make($request->password),
+                "establishment_date" => $request->establishment_date,
+                "employee_number" => $request->employee_number,
+                "email" => $request->email,
+                "profile_photo" => photo($request, "company", "profile", Company::latest("id")->first()->id + 1),
+                "verificationCode" => makeCode("company", $request->email),
+            ]);
+        } else {
+            $company = Company::create([
+                "name" => $request->name,
+                "password" => Hash::make($request->password),
+                "establishment_date" => $request->establishment_date,
+                "employee_number" => $request->employee_number,
+                "email" => $request->email,
+                "profile_photo" => photo($request, "company", "profile", 1),
+                "verificationCode" => makeCode("company", $request->email),
+            ]);
+        }
+
 
         Auth::guard("web-company")->login($company);
         $credential = $request->only("name", "password");
         Auth::guard("api-company")->attempt($credential);
-        Company::where("name", $request->name)->update([
-            "verificationCode" => makeCode("company", $request->email),
-        ]);
+
         return $this->returnSuccess("your account created successfully");
     }
 
@@ -213,13 +224,13 @@ class CompanyController extends Controller
     public function postApi(Request $request)
     {
 
-        return $this->post($request, "api-company");
+        return $this->post($request, "api-company", "post", "company");
     }
 
-    // public function postWeb(Request $request)
-    // {
-    //     return $this->post($request, "company", "company_id", "company");
-    // }
+    public function postWeb(Request $request)
+    {
+        return $this->post($request, "company", "post", "company");
+    }
 
     public function updatePost(Request $request, $id, $guard, $who, $disk)
     {
@@ -308,8 +319,22 @@ class CompanyController extends Controller
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        
 
+
+        return ChangeOfferState($request, "web-company");
+
+    }
+
+    public function ChangeOfferStateApi(Request $request)
+    {
+        $validator = validator::make($request->all(), [
+            "state" => "required",
+            "offer_id" => "required ",
+            "job_seeker_id" => "required",
+        ]);
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
         return ChangeOfferState($request, "api-company");
 
     }
@@ -776,8 +801,9 @@ class CompanyController extends Controller
         return $this->updateProfile($request, "web-company");
     }
 
-    public function updateProfile_api(Request $request){
-        return $this->updateProfile($request,"api-company");
+    public function updateProfile_api(Request $request)
+    {
+        return $this->updateProfile($request, "api-company");
 
     }
 
