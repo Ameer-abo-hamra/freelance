@@ -294,6 +294,15 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+        for ($i = 11; $i <= 13; $i++) {
+            Follow::create([
+                "followMaker_type" => "App\Models\Job_seeker",
+                "followMaker_id" => $i,
+                "followReciver_type" => "App\Models\Company",
+                "followReciver_id" => 11,
+            ]);
+        }
+
     }
 
 }

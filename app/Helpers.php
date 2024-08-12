@@ -2,6 +2,7 @@
 use App\Mail\Customer;
 use App\Mail\JobseekerMail;
 use App\Mail\Company;
+use App\Models\Follow;
 use App\Models\Job_seeker;
 use Illuminate\Support\Str;
 use App\Traits\ResponseTrait;
@@ -9,8 +10,10 @@ use App\Models\Offer;
 use App\Events\RespondApplicants;
 use App\Models\Like;
 use App\Events\Notifications;
+use App\Models\ServiceApply;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use App\Models\Service;
 
 function makeCode($type, $email)
 {
@@ -75,6 +78,8 @@ function addOffer($request, $guard)
         "details" => $request->details,
         "company_id" => Auth::guard($guard)->user()->id,
     ]);
+    // return ResponseTrait::returnData("","",getAllFollowRecived(Auth::guard($guard)->user()));
+
     $skill_ids = $request->skill_ids;
     if (!empty($skill_ids)) {
 
@@ -84,6 +89,14 @@ function addOffer($request, $guard)
     } else {
         return ResponseTrait::returnError("you have to enter skills");
     }
+
+    $follwers_ids = getFollowRecivedJobSeekers(Auth::guard($guard)->user());
+    foreach ($follwers_ids as $f) {
+        broadcast(new Notifications(Auth::guard($guard)->user()->name . " Company has posted a job opportunity that you may be interested in", "jobseeker", $f->id));
+        fillNotification("company", Auth::guard($guard)->user()->id, "jobseeker", $f->id, Auth::guard($guard)->user()->name . " Company has posted a job opportunity that you may be interested in");
+    }
+
+    // return ResponseTrait::returnData("", "", $follwers_ids);
     return ResponseTrait::returnSuccess("your offer is saved");
 }
 
@@ -247,76 +260,86 @@ function ChangeOfferState($request, $guard)
 }
 
 function addLike($request, $guard, $likeableType)
-    {
-        $validator = Validator::make($request->all(), [
-            $likeableType . '_id' => 'required|integer|exists:' . str::plural($likeableType) . ',id'
-        ]);
+{
+    $validator = Validator::make($request->all(), [
+        $likeableType . '_id' => 'required|integer|exists:' . str::plural($likeableType) . ',id'
+    ]);
 
-        if ($validator->fails()) {
-            return ResponseTrait::returnError($validator->errors()->first());
-        }
-
-        $likeableId = $request->input($likeableType . '_id');
-        $likeableClass = 'App\\Models\\' . ucfirst($likeableType);
-        $likeable = $likeableClass::find($likeableId);
-
-        $user= auth()->guard($guard)->user();
-
-        if (!$user) {
-            return ResponseTrait::returnError("invalid user");
-        }
-
-        $existingLike = Like::where('likeable_id', $likeable->id)
-            ->where('likeable_type', $likeableClass)
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if ($existingLike) {
-            return ResponseTrait::returnError( "User has already liked this " . $likeableType);
-        }
-        $like = new Like();
-        $like->user()->associate($user);
-        $like->likeable()->associate($likeable);
-        $like->save();
-
-        return ResponseTrait::returnSuccess(ucfirst($likeableType) . " liked successfully");
+    if ($validator->fails()) {
+        return ResponseTrait::returnError($validator->errors()->first());
     }
 
-    function removeLike($request, $guard, $likeableType)
-    {
-        $validator = Validator::make($request->all(), [
-            $likeableType . '_id' => 'required|integer|exists:' . Str::plural($likeableType) . ',id'
-        ]);
+    $likeableId = $request->input($likeableType . '_id');
+    $likeableClass = 'App\\Models\\' . ucfirst($likeableType);
+    $likeable = $likeableClass::find($likeableId);
 
-        if ($validator->fails()) {
-            return ResponseTrait::returnError($validator->errors()->first());
-        }
+    $user = auth()->guard($guard)->user();
 
-        $likeableId = $request->input($likeableType . '_id');
-        $likeableClass = 'App\\Models\\' . ucfirst($likeableType);
-        $likeable = $likeableClass::find($likeableId);
 
-        $user = auth()->guard($guard)->user();
-
-        if (!$user) {
-            return ResponseTrait::returnError("invalid user");
-        }
-
-        $like = Like::where('likeable_id', $likeable->id)
-            ->where('likeable_type', $likeableClass)
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if (!$like) {
-            return ResponseTrait::returnError("like not found");
-        }
-
-        $like->delete();
-
-        return ResponseTrait::returnSuccess(ucfirst($likeableType) . " unliked successfully");
+    if (!$user) {
+        return ResponseTrait::returnError("invalid user");
     }
+
+    $existingLike = Like::where('likeable_id', $likeable->id)
+        ->where('likeable_type', $likeableClass)
+        ->where('user_id', $user->id)
+        ->where('user_type', get_class($user))
+        ->first();
+
+    if ($existingLike) {
+        return ResponseTrait::returnError("User has already liked this " . $likeableType);
+    }
+    // return ResponseTrait::returnData("","",$owner);
+    $like = new Like();
+    $like->user()->associate($user);
+    $like->likeable()->associate($likeable);
+    $like->save();
+    $channel_name = class_basename($likeable->postable);
+    $name = $user->username;
+    if (!$name) {
+        $name = $user->name;
+    }
+
+    $owner = $likeableType . 'able';
+    broadcast(new Notifications($name . " reacted to your " . $likeableType, $channel_name, $likeable->$owner->id))->toOthers();
+    fillNotification(class_basename($user), $user->id, class_basename($likeable->postable), $likeable->$owner->id, $name . " reacted to your " . $likeableType);
+    return ResponseTrait::returnSuccess(ucfirst($likeableType) . " liked successfully");
+}
+
+function removeLike($request, $guard, $likeableType)
+{
+    $validator = Validator::make($request->all(), [
+        $likeableType . '_id' => 'required|integer|exists:' . Str::plural($likeableType) . ',id'
+    ]);
+
+    if ($validator->fails()) {
+        return ResponseTrait::returnError($validator->errors()->first());
+    }
+
+    $likeableId = $request->input($likeableType . '_id');
+    $likeableClass = 'App\\Models\\' . ucfirst($likeableType);
+    $likeable = $likeableClass::find($likeableId);
+
+    $user = auth()->guard($guard)->user();
+
+    if (!$user) {
+        return ResponseTrait::returnError("invalid user");
+    }
+
+    $like = Like::where('likeable_id', $likeable->id)
+        ->where('likeable_type', $likeableClass)
+        ->where('user_id', $user->id)
+        ->where('user_type', get_class($user))
+        ->first();
+
+    if (!$like) {
+        return ResponseTrait::returnError("like not found");
+    }
+
+    $like->delete();
+
+    return ResponseTrait::returnSuccess(ucfirst($likeableType) . " unliked successfully");
+}
 
 function fillNotification($senderType, $senderId, $reciverType, $reciverId, $content)
 {
@@ -324,18 +347,18 @@ function fillNotification($senderType, $senderId, $reciverType, $reciverId, $con
     $sender = '';
     $reciver = '';
 
-    if ($senderType == "customer") {
+    if ($senderType == "customer" || $senderType == "Customer") {
 
         $sender = App\Models\Customer::find($senderId);
-    } elseif ($senderType == "jobseeker") {
+    } elseif ($senderType == "jobseeker" || $senderType == "Job_seeker") {
         $sender = App\Models\Job_seeker::find($senderId);
     } else {
         $sender = App\Models\Company::find($senderId);
     }
-    if ($reciverType == "customer") {
+    if ($reciverType == "customer" || $reciverType == "Customer") {
 
         $reciver = 'App\Models\Customer';
-    } elseif ($senderType == "jobseeker") {
+    } elseif ($reciverType == "jobseeker" || $reciverType == "Job_seeker") {
         $reciver = "App\Models\Jobseeker";
     } else {
         $reciver = 'App\Models\Company';
@@ -354,11 +377,50 @@ function fillNotification($senderType, $senderId, $reciverType, $reciverId, $con
 }
 
 
-function photo(Request $request, $diskName, $folderName,$id)
+function photo(Request $request, $diskName, $folderName, $id)
 {
 
-    $name = $id.$request->file("file")->getClientOriginalName();
+    $name = $id . $request->file("file")->getClientOriginalName();
     $path = $request->file("file")->storeAs($folderName, $name, $diskName);
-    return $path ;
+    return $path;
 
 }
+
+function getFollowRecivedJobSeekers($user)
+{
+    $followers = Follow::where("followMaker_type", "App\Models\Job_seeker")
+        ->where("followReciver_id", $user->id)->get("id");
+    // $f = $user->followRecived;
+
+
+
+    return $followers;
+}
+function applyService(Request $request, $guard)
+{
+
+
+    $service = Service::find($request->service_id);
+
+    if (!$service) {
+        return ResponseTrait::returnError("service not found");
+    }
+
+
+    if ($service->state == "processing") {
+        return ResponseTrait::returnError("Service is not open for applications");
+    }
+
+
+    $user = Auth::guard($guard)->user();
+
+    $user->makeApply()->create([
+        'service_id' => $service->id,
+        'offer' => $request->offer,
+        'isAccepted' => false,
+    ]);
+
+    return ResponseTrait::returnSuccess("You have successfully applied for the service");
+}
+
+;

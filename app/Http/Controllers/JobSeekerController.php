@@ -392,6 +392,8 @@ class JobSeekerController extends Controller
         return new UserProfileResource($user);
     }
 
+
+
     public function updateProfile(Request $request)
     {
         $user = getAuth("api-job_seeker");
