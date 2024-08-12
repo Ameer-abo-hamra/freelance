@@ -2,6 +2,7 @@
 use App\Mail\Customer;
 use App\Mail\JobseekerMail;
 use App\Mail\Company;
+use App\Models\Follow;
 use App\Models\Job_seeker;
 use Illuminate\Support\Str;
 use App\Traits\ResponseTrait;
@@ -9,8 +10,10 @@ use App\Models\Offer;
 use App\Events\RespondApplicants;
 use App\Models\Like;
 use App\Events\Notifications;
+use App\Models\ServiceApply;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use App\Models\Service;
 
 function makeCode($type, $email)
 {
@@ -87,9 +90,14 @@ function addOffer($request, $guard)
         return ResponseTrait::returnError("you have to enter skills");
     }
 
-    $follwers = getAllFollowRecived(Auth::guard($guard)->user());
-    return ResponseTrait::returnData("","",$follwers);
-    // return ResponseTrait::returnSuccess("your offer is saved");
+    $follwers_ids = getFollowRecivedJobSeekers(Auth::guard($guard)->user());
+    foreach ($follwers_ids as $f) {
+        broadcast(new Notifications(Auth::guard($guard)->user()->name . " Company has posted a job opportunity that you may be interested in", "jobseeker", $f->id));
+        fillNotification("company", Auth::guard($guard)->user()->id, "jobseeker", $f->id, Auth::guard($guard)->user()->name . " Company has posted a job opportunity that you may be interested in");
+    }
+
+    // return ResponseTrait::returnData("", "", $follwers_ids);
+    return ResponseTrait::returnSuccess("your offer is saved");
 }
 
 
@@ -378,11 +386,41 @@ function photo(Request $request, $diskName, $folderName, $id)
 
 }
 
-function getAllFollowRecived($user)
+function getFollowRecivedJobSeekers($user)
 {
-    $followers = Job_seeker::find($user->id)->followRecived;
+    $followers = Follow::where("followMaker_type", "App\Models\Job_seeker")
+        ->where("followReciver_id", $user->id)->get("id");
+    // $f = $user->followRecived;
+
+
+
     return $followers;
 }
+function applyService(Request $request, $guard)
+{
 
+
+    $service = Service::find($request->service_id);
+
+    if (!$service) {
+        return ResponseTrait::returnError("service not found");
+    }
+
+
+    if ($service->state == "processing") {
+        return ResponseTrait::returnError("Service is not open for applications");
+    }
+
+
+    $user = Auth::guard($guard)->user();
+
+    $user->makeApply()->create([
+        'service_id' => $service->id,
+        'offer' => $request->offer,
+        'isAccepted' => false,
+    ]);
+
+    return ResponseTrait::returnSuccess("You have successfully applied for the service");
+}
 
 ;
