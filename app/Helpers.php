@@ -89,7 +89,7 @@ function addOffer($request, $guard)
 
     $follwers = getAllFollowRecived(Auth::guard($guard)->user());
     return ResponseTrait::returnData("","",$follwers);
-    return ResponseTrait::returnSuccess("your offer is saved");
+    // return ResponseTrait::returnSuccess("your offer is saved");
 }
 
 
