@@ -25,4 +25,8 @@ class Skill extends Model
     {
         return $this->belongsToMany(Job_seeker::class, "job_seekers_skills", "skill_id", "job_seeker_id");
     }
+
+    public function job_seekers(){
+        return $this->belongsToMany(Job_seeker::class,"job_seekers_skills","skill_id","job_seeker_id");
+    }
 }
