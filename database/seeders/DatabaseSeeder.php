@@ -18,6 +18,8 @@ use App\Models\Skill;
 use Database\Factories\CustomerFactory;
 use Illuminate\Database\Seeder;
 use Hash;
+use App\Models\Category;
+use App\Models\Type;
 
 class DatabaseSeeder extends Seeder
 {
@@ -74,7 +76,7 @@ class DatabaseSeeder extends Seeder
                     "title" => "fsgd",
                     "body" => "gsd",
                     "postable_type" => "App\Models\Job_seeker",
-                    "postable_id" => $i+10
+                    "postable_id" => $i + 10
                 ]);
             }
         }
@@ -85,7 +87,7 @@ class DatabaseSeeder extends Seeder
                     "title" => "fsgd",
                     "body" => "gsd",
                     "postable_type" => "App\Models\Company",
-                    "postable_id" => $i+10
+                    "postable_id" => $i + 10
                 ]);
             }
         }
@@ -132,7 +134,41 @@ class DatabaseSeeder extends Seeder
         //     "address" => "AL-sweida",
         //     "company_id" => 1
         // ]);
-        Job_seeker::create([
+
+        $category = Category::create([
+            "category_name" => "programming"
+        ]);
+
+        $bakendType = Type::create([
+            "type_name" => "back-end",
+            "category_id" => 1
+        ]);
+
+        $frontendType = Type::create([
+            "type_name" => "front-end",
+            "category_id" => 1
+        ]);
+
+        $skills1 = ['php', 'html', 'laravel', 'java', '.Net', 'git'];
+        $skills2 = ['html', 'css', 'dart', 'flutter', 'git'];
+
+        foreach ($skills1 as $skillName) {
+            $skill = Skill::firstOrCreate([
+                'skill_name' => $skillName,
+                'category_id' => $category->id,
+            ]);
+            $bakendType->skills()->attach($skill->id);
+        }
+        foreach ($skills2 as $skillName) {
+            $skill = Skill::firstOrCreate([
+                'skill_name' => $skillName,
+                'category_id' => $category->id,
+            ]);
+            $frontendType->skills()->attach($skill->id);
+        }
+
+        $skills3 = ["php", "laravel", "git"];
+        $job_seeker1 = Job_seeker::create([
             "username" => "Ameer314314",
             "password" => Hash::make("123456789"),
             "full_name" => "Ameer Abo Hamra",
@@ -140,7 +176,17 @@ class DatabaseSeeder extends Seeder
             "verificationCode" => "test01",
             "email" => "jobseeker@h.com"
         ]);
-        Job_seeker::create([
+
+        foreach ($skills3 as $skillName) {
+            $skill = Skill::firstOrCreate([
+                'skill_name' => $skillName,
+                "category_id" => $category->id
+            ]);
+            $job_seeker1->skills()->attach($skill->id);
+        }
+
+        $skills4 = ["html", "css", "js"];
+        $job_seeker2 = Job_seeker::create([
             "username" => "Ameer31431",
             "password" => Hash::make("123456789"),
             "full_name" => "Ameer Abo Hamra",
@@ -148,7 +194,17 @@ class DatabaseSeeder extends Seeder
             "verificationCode" => "test01",
             "email" => "jobseeker2@h.com"
         ]);
-        Job_seeker::create([
+
+        foreach ($skills4 as $skillName) {
+            $skill = Skill::firstOrCreate([
+                'skill_name' => $skillName,
+                "category_id" => $category->id
+            ]);
+            $job_seeker2->skills()->attach($skill->id);
+        }
+
+        $skill4 = ["git", "html"];
+        $job_seeker4 = Job_seeker::create([
             "username" => "Ameer3143",
             "password" => Hash::make("123456789"),
             "full_name" => "Ameer Abo Hamra",
@@ -156,6 +212,14 @@ class DatabaseSeeder extends Seeder
             "verificationCode" => "test01",
             "email" => "jobseeker3@h.com"
         ]);
+        foreach ($skill4 as $skillName) {
+            $skill = Skill::firstOrCreate([
+                'skill_name' => $skillName,
+                "category_id" => $category->id
+            ]);
+            $job_seeker4->skills()->attach($skill->id);
+        }
+
         Certificate::create([
             "certificate_name" => "IT",
             "graduation_date" => "2022-10-10",
@@ -223,15 +287,13 @@ class DatabaseSeeder extends Seeder
             for ($j = 1; $j <= 3; $j++) {
                 Follow::create([
                     "followMaker_type" => "app\Models\Company",
-                    "followMaker_id" => $i+10,
+                    "followMaker_id" => $i + 10,
                     "followReciver_type" => "app\Models\Job_seeker",
-                    "followReciver_id" => $j+10
+                    "followReciver_id" => $j + 10
                 ]);
             }
         }
 
-
-    
-
     }
+
 }

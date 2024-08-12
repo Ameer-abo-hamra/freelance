@@ -121,4 +121,8 @@ class Job_seeker extends Authenticatable implements JWTSubject
             ->orWhere('email', 'like', '%' . $term . '%');
     }
 
+    // public function skills(){
+
+    // }
+
 }

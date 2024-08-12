@@ -31,8 +31,6 @@ class Service extends Model
     public function skills()
     {
         return $this->belongsToMany(Skill::class, "skills_services", "service_id", "skill_id");
-
-
     }
 }
 

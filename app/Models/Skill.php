@@ -18,4 +18,8 @@ class Skill extends Model
     public function types(){
         return $this->belongsToMany(Type::class,"skills_types","skill_id","type_id");
     }
+
+    public function job_seekers(){
+        return $this->belongsToMany(Job_seeker::class,"job_seekers_skills","skill_id","job_seeker_id");
+    }
 }
