@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\UserProfileResource;
 use App\Models\Company;
 use App\Models\Customer;
+use App\Models\Service;
+use App\Models\ServiceApply;
 
 class JobSeekerController extends Controller
 {
@@ -220,308 +222,29 @@ class JobSeekerController extends Controller
         return $this->returnSuccess("comment deleted successfully");
     }
 
-    public function addLikeToComment(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'comment_id' => 'required|integer|exists:comments,id',
-            'user_type' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $comment = Comment::find($request->comment_id);
-
-        if ($request->user_type == "App\\Models\\Job_seeker") {
-            $user = auth()->guard('web-job_seeker')->user();
-        }
-
-        if (!$user) {
-            return $this->returnError("invalid user");
-        }
-
-        $existingLike = Like::where('likeable_id', $comment->id)
-            ->where('likeable_type', 'App\\Models\\Comment')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if ($existingLike) {
-            return $this->returnError("User has already liked this comment");
-        }
-
-        $like = new Like();
-        $like->user()->associate($user);
-        $like->likeable()->associate($comment);
-        $like->save();
-
-        return $this->returnSuccess("Comment liked successfully");
-    }
-    public function addLikeToComment_api(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'comment_id' => 'required|integer|exists:comments,id',
-            'user_type' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $comment = Comment::find($request->comment_id);
-
-        if ($request->user_type == "App\\Models\\Job_seeker") {
-            $user = auth()->guard('api-job_seeker')->user();
-        }
-
-        if (!$user) {
-            return $this->returnError("invalid user");
-        }
-
-        $existingLike = Like::where('likeable_id', $comment->id)
-            ->where('likeable_type', 'App\\Models\\Comment')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if ($existingLike) {
-            return $this->returnError("User has already liked this comment");
-        }
-
-        $like = new Like();
-        $like->user()->associate($user);
-        $like->likeable()->associate($comment);
-        $like->save();
-
-        return $this->returnSuccess("Comment liked successfully");
+    public function addLikeToComment_api(Request $request){
+        return addLike($request,"api-job_seeker","comment");
     }
 
-    public function unlikeComment(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'comment_id' => 'required|integer|exists:comments,id',
-            'user_type' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $comment = Comment::find($request->comment_id);
-
-        $user = null;
-
-        if ($request->user_type == "App\\Models\\Job_seeker") {
-            $user = auth()->guard('web-job_seeker')->user();
-        }
-
-        if (!$user) {
-            return $this->returnError("Invalid user");
-        }
-
-        $existingLike = Like::where('likeable_id', $comment->id)
-            ->where('likeable_type', 'App\\Models\\Comment')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if (!$existingLike) {
-            return $this->returnError("Like not found");
-        }
-
-        $existingLike->delete();
-
-        return $this->returnSuccess("Comment unliked successfully");
-    }
-    public function unlikeComment_api(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'comment_id' => 'required|integer|exists:comments,id',
-            'user_type' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $comment = Comment::find($request->comment_id);
-
-        $user = null;
-
-        if ($request->user_type == "App\\Models\\Job_seeker") {
-            $user = auth()->guard('api-job_seeker')->user();
-        }
-
-        if (!$user) {
-            return $this->returnError("Invalid user");
-        }
-
-        $existingLike = Like::where('likeable_id', $comment->id)
-            ->where('likeable_type', 'App\\Models\\Comment')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if (!$existingLike) {
-            return $this->returnError("Like not found");
-        }
-
-        $existingLike->delete();
-
-        return $this->returnSuccess("Comment unliked successfully");
+    public function addLikeToPost_api(Request $request){
+        return addLike($request,"api-job_seeker","post");
     }
 
-    public function addLikeToPost(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'post_id' => 'required|integer|exists:posts,id',
-            'user_type' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $post = Post::find($request->post_id);
-
-        if ($request->user_type == "App\\Models\\Job_seeker") {
-            $user = auth()->guard('web-job_seeker')->user();
-        }
-
-        if (!$user) {
-            return $this->returnError("user is invalid");
-        }
-
-
-        $existingLike = Like::where('likeable_id', $post->id)
-            ->where('likeable_type', 'App\\Models\\Post')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if ($existingLike) {
-            return $this->returnError("User has already liked this post");
-        }
-        $like = new Like();
-        $like->user()->associate($user);
-        $like->likeable()->associate($post);
-        $like->save();
-
-        return $this->returnSuccess("post liked successfully");
-    }
-    public function addLikeToPost_api(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'post_id' => 'required|integer|exists:posts,id',
-            'user_type' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $post = Post::find($request->post_id);
-
-        if ($request->user_type == "App\\Models\\Job_seeker") {
-            $user = auth()->guard('api-job_seeker')->user();
-        }
-
-        if (!$user) {
-            return $this->returnError("user is invalid");
-        }
-
-
-        $existingLike = Like::where('likeable_id', $post->id)
-            ->where('likeable_type', 'App\\Models\\Post')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if ($existingLike) {
-            return $this->returnError("User has already liked this post");
-        }
-        $like = new Like();
-        $like->user()->associate($user);
-        $like->likeable()->associate($post);
-        $like->save();
-
-        return $this->returnSuccess("post liked successfully");
+    public function unlikePost_web(Request $request){
+        return removeLike($request,"web-job_seeker","post");
     }
 
-    public function unlikePost(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'post_id' => 'required|integer|exists:posts,id',
-            'user_type' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $post = Post::find($request->post_id);
-
-        if ($request->user_type == "App\\Models\\Job_seeker") {
-            $user = auth()->guard('web-job_seeker')->user();
-        }
-
-        if (!$user) {
-            return $this->returnError("user is invalid");
-        }
-
-        $like = Like::where('likeable_id', $post->id)
-            ->where('likeable_type', 'App\\Models\\Post')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if (!$like) {
-            return $this->returnError("like not found");
-        }
-
-        $like->delete();
-
-        return $this->returnSuccess("Post unliked successfully");
-
-    }
-    public function unlikePost_api(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'post_id' => 'required|integer|exists:posts,id',
-            'user_type' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $post = Post::find($request->post_id);
-
-        if ($request->user_type == "App\\Models\\Job_seeker") {
-            $user = auth()->guard('api-job_seeker')->user();
-        }
-
-        if (!$user) {
-            return $this->returnError("user is invalid");
-        }
-
-        $like = Like::where('likeable_id', $post->id)
-            ->where('likeable_type', 'App\\Models\\Post')
-            ->where('user_id', $user->id)
-            ->where('user_type', get_class($user))
-            ->first();
-
-        if (!$like) {
-            return $this->returnError("like not found");
-        }
-
-        $like->delete();
-
-        return $this->returnSuccess("Post unliked successfully");
-
+    public function unlikeComment_web(Request $request){
+        return removeLike($request,"web-job_seeker","comment");
     }
 
+    public function unlikePost_api(Request $request){
+        return removeLike($request,"api-job_seeker","post");
+    }
+
+    public function unlikeComment_api(Request $request){
+        return removeLike($request,"api-job_seeker","comment");
+    }
     public function updatePost(Request $request, $id, $guard, $who, $disk)
     {
         $validator = Validator::make($request->all(), [
@@ -565,6 +288,14 @@ class JobSeekerController extends Controller
         $post->save();
 
         return $this->returnSuccess("Your post has been updated successfully");
+    }
+
+    public function addLikeToPost_web(Request $request){
+        return addLike($request,"web-job_seeker","post");
+    }
+
+    public function addLikeToComment_web(Request $request){
+        return addLike($request,"web-job_seeker","comment");
     }
 
     public function deletePost($post_id)
@@ -662,7 +393,8 @@ class JobSeekerController extends Controller
     }
 
 
-        public function updateProfile(Request $request)
+
+    public function updateProfile(Request $request)
     {
         $user = getAuth("api-job_seeker");
 
@@ -717,6 +449,42 @@ class JobSeekerController extends Controller
         $company->delete();
     }
 
+    public function applyService(Request $request, $service_id)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'offer' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+
+
+        $service = Service::find($service_id);
+
+        if (!$service) {
+            return $this->returnError("service not found");
+        }
+
+
+        if ($service->state == "processing") {
+            return $this->returnError("Service is not open for applications");
+        }
+
+
+        $job_seeker = Auth::guard("api-job_seeker")->user();
+
+        ServiceApply::create([
+            'applyable_type' => 'App\Models\Job_seeker',
+            'applyable_id' => $job_seeker->id,
+            'service_id' => $service->id,
+            'offer' => $request->offer,
+            'isAccepted' => false,
+        ]);
+
+        return $this->returnSuccess("You have successfully applied for the service");
+    }
 
 
 }
