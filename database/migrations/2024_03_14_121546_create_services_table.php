@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->unsignedInteger("price")->default(1000);
             $table->foreignId("customer_id")->references("id")->on("customers");
             $table->boolean("is_accepted")->default(false);
+            $table->string("state")->default("open");
             $table->timestamps();
         });
     }

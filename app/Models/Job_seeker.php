@@ -34,7 +34,7 @@ class Job_seeker extends Authenticatable implements JWTSubject
 
     public function wallet()
     {
-        return $this->belongsTo(Wallet::class, "job_seeker_id");
+        return $this->hasOne(Wallet::class);
     }
     public function makeApply()
     {
@@ -120,5 +120,9 @@ class Job_seeker extends Authenticatable implements JWTSubject
             ->orWhere('full_name', 'like', '%' . $term . '%')
             ->orWhere('email', 'like', '%' . $term . '%');
     }
+
+    // public function skills(){
+
+    // }
 
 }

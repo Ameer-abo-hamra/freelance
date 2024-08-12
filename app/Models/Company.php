@@ -20,7 +20,7 @@ class Company extends Authenticatable implements JWTSubject
     }
 
     public function wallet(){
-        return $this->belongsTo(Wallet::class,"company_id");
+        return $this->hasOne(Wallet::class);
     }
 
     // public function services()

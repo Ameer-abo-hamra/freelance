@@ -14,7 +14,7 @@
     <script>
 
             window.onload = ()=> {
-                Echo.channel("Respondcompany1").listen("RespondApplicants", (e) => {
+                Echo.channel("Company11").listen("Notifications", (e) => {
                 console.log(e);
                 console.log("hi");
             })

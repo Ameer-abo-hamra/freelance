@@ -2,6 +2,7 @@
 namespace App\Traits;
 
 use App\Models\Job_seeker;
+use App\Models\Offer;
 use Auth;
 use Validator;
 use App\Models\Post;
@@ -65,6 +66,7 @@ trait ResponseTrait
                 "additionalInfo" => $request->additionalInfo
             ]
         ]);
+        $company = Offer::find($request->offer_id)->company;
         return $this->returnSuccess("Successfully applied");
     }
 
