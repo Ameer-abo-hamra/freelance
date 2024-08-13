@@ -96,7 +96,7 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("applyService", [CompanyController::class, "applyServiceWeb"]);
 
-
+    Route::post("message" , [CompanyController::class , "messageWeb"]);
 });
 
 Route::get("test", function () {

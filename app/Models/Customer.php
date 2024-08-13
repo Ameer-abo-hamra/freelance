@@ -75,6 +75,14 @@ class Customer extends Authenticatable implements JWTSubject
         return $this->morphMany(Follow::class , "followReciver");
 
     }
+    public function sender()
+    {
+        return $this->morphMany(Message::class, "sender");
+    }
+    public function reciver()
+    {
+        return $this->morphMany(Message::class, "reciver");
+    }
 
     public function scopeSearch($query, $term)
     {

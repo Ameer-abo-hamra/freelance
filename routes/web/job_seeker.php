@@ -59,6 +59,11 @@ Route::group(["middleware" => "check:web-job_seeker"], function () {
 
     Route::post("unlikeComment", [JobSeekerController::class, "unlikeComment_web"]);
 
+    Route::post("service-apply", [JobSeekerController::class, "applyServiceWeb"]);
+    
+    Route::post("message", [JobSeekerController::class, "messageWeb"]);
+
+
 });
 
 // Route::get("test", function(){
