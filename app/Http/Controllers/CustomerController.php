@@ -41,17 +41,18 @@ class CustomerController extends Controller
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        $id = Customer::latest("id")->first() ;
-        if($id){
-        $customer = Customer::create([
-            "username" => $request->username,
-            "full_name" => $request->full_name,
-            "email" => $request->email,
-            "password" => Hash::make($request->password),
-            "birth_date" => $request->birth_date,
-            "profile_photo" => photo($request, "customer", "profile", Customer::latest("id")->first()->id + 1),
-            "verificationCode" => makeCode("customer", $request->email),
-        ]);}else {
+        $id = Customer::latest("id")->first();
+        if ($id) {
+            $customer = Customer::create([
+                "username" => $request->username,
+                "full_name" => $request->full_name,
+                "email" => $request->email,
+                "password" => Hash::make($request->password),
+                "birth_date" => $request->birth_date,
+                "profile_photo" => photo($request, "customer", "profile", Customer::latest("id")->first()->id + 1),
+                "verificationCode" => makeCode("customer", $request->email),
+            ]);
+        } else {
             $customer = Customer::create([
                 "username" => $request->username,
                 "full_name" => $request->full_name,
@@ -171,6 +172,39 @@ class CustomerController extends Controller
         }
         return $this->returnSuccess("your service is added successfully , wait to find anyone to solve it");
     }
+
+    public function getApplicants($serviceId)
+    {
+        $service = Service::find($serviceId);
+
+        if (!$service) {
+            return $this->returnError("Service not found.");
+        }
+
+        $applicants = $service->appliers->map(function ($apply) {
+            $applicant = $apply->applyable;
+
+            switch (class_basename($applicant)) {
+                case 'Company':
+                    $name = $applicant->name;
+                    break;
+                case 'JobSeeker':
+                    $name = $applicant->username;
+                    break;
+                default:
+                    $name = 'Unknown';
+                    break;
+            }
+
+            return [
+                'name' => $name,
+                'offer' => $apply->offer
+            ];
+        });
+
+        return $this->returnData("", "applicants", $applicants);
+    }
+
 
     public function post_api(Request $request)
     {
@@ -656,7 +690,15 @@ class CustomerController extends Controller
         $applierWallet->save();
         return $this->returnSuccess("Service marked as done and payment transferred successfully.");
     }
+    public function messageWeb(Request $request)
+    {
+        return message($request, "web-customer");
+    }
 
+    public function messageApi(Request $request)
+    {
+        return message($request, "api-customer");
+    }
 }
 
 

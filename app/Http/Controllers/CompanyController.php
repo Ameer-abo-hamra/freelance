@@ -570,6 +570,23 @@ class CompanyController extends Controller
 
         return applyService($request, "api-company");
     }
+    public function messageWeb(Request $request)
+    {
+        return message($request, "web-company");
+    }
+    public function messageApi(Request $request)
+    {
+        return message($request, "api-company");
+    }
+    public function getMessages(Request $request)
+    {
+        return getMessages($request, "api-company");
+    }
+
+    public function getNotifications(Request $request)
+    {
+        return getNotifications($request, "api-company");
+    }
 }
 
 

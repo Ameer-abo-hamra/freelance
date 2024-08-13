@@ -14,6 +14,7 @@ use App\Models\ServiceApply;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\Service;
+use App\Models\Message;
 
 function makeCode($type, $email)
 {
@@ -419,8 +420,105 @@ function applyService(Request $request, $guard)
         'offer' => $request->offer,
         'isAccepted' => false,
     ]);
-
+    broadcast(new Notifications("You have a new offer", "customer", $service->customer->id))->toOthers();
+    fillNotification(class_basename($user), $user->id, "customer", $service->customer->id, "You have a new offer");
     return ResponseTrait::returnSuccess("You have successfully applied for the service");
 }
+
+function message(Request $request, $guard)
+{
+
+    $validator = Validator::make($request->all(), [
+        "reciver_type" => "required",
+        "reciver_id" => "required",
+        "content" => "required",
+    ]);
+    if ($validator->fails()) {
+        return ResponseTrait::returnError($validator->errors()->first());
+    }
+    $sender = Auth::guard($guard)->user();
+    $reciverClass = 'App\\Models\\' . ucfirst($request->reciver_type);
+    $reciver = $reciverClass::find($request->reciver_id);
+    // return ResponseTrait::returnData("", "", get_class($reciver));
+    broadcast(new Notifications($request->content, strtolower(class_basename($reciver)), $reciver->id))->toOthers();
+    $sender->sender()->create([
+        "reciver_type" => get_class($reciver),
+        "reciver_id" => $request->reciver_id,
+        "content" => $request->content,
+    ]);
+    return ResponseTrait::returnSuccess("ok", 200);
+}
+function getMessages(Request $request, $guard)
+{
+    $validator = Validator::make($request->all(), [
+        "reciver_type" => "required",
+        "reciver_id" => "required",
+    ]);
+
+    if ($validator->fails()) {
+        return ResponseTrait::returnError($validator->errors()->first());
+    }
+
+    $sender = Auth::guard($guard)->user();
+    $reciverClass = 'App\\Models\\' . ucfirst($request->reciver_type);
+    $reciver = $reciverClass::find($request->reciver_id);
+
+    if (!$reciver) {
+        return ResponseTrait::returnError("Receiver not found.");
+    }
+
+    $messages = Message::where(function ($query) use ($sender, $reciver) {
+        $query->where('sender_id', $sender->id)
+            ->where('reciver_id', $reciver->id);
+    })
+        ->orWhere(function ($query) use ($sender, $reciver) {
+            $query->where('sender_id', $reciver->id)
+                ->where('reciver_id', $sender->id);
+        })
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+    // Format the messages for the response
+    $formattedMessages = $messages->map(function ($message) use ($sender) {
+        return [
+            "id" => $message->id,
+            "reciver_type" => $message->reciver_type,
+            "reciver_id" => $message->reciver_id,
+            "sender_type" => $message->sender_type,
+            "sender_id" => $message->sender_id,
+            "content" => $message->content,
+            "created_at" => $message->created_at,
+            "updated_at" => $message->updated_at,
+            "sent_by_user" => $message->sender_id === $sender->id // Check if the message was sent by the authenticated user
+        ];
+    });
+
+    return ResponseTrait::returnData("", "messages", $formattedMessages);
+}
+function getNotifications(Request $request, $guard)
+{
+    $validator = Validator::make($request->all(), [
+        "reciver_type" => "required",
+        "reciver_id" => "required",
+    ]);
+
+    if ($validator->fails()) {
+        return ResponseTrait::returnError($validator->errors()->first());
+    }
+
+    $reciverClass = 'App\\Models\\' . ucfirst($request->reciver_type);
+    $reciver = $reciverClass::find($request->reciver_id);
+
+    if (!$reciver) {
+        return ResponseTrait::returnError("Receiver not found.");
+    }
+
+    // Fetch only the 'content' field of notifications
+    $notifications = $reciver->notificationReciver()->orderBy('created_at', 'desc')->pluck('content');
+
+    return ResponseTrait::returnData("","notifications", $notifications);
+}
+
+
 
 ;
