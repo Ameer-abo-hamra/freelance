@@ -1,7 +1,9 @@
 <?php
 namespace App\Traits;
 
+use App\Events\Notifications;
 use App\Models\Job_seeker;
+use App\Models\Offer;
 use Auth;
 use Validator;
 use App\Models\Post;
@@ -52,21 +54,33 @@ trait ResponseTrait
     public function apply($request, $guard)
     {
         $validator = Validator::make($request->all(), [
-            "file" => "required|file| max:5000",
+            "file" => "required|file|max:5000",
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
 
         $job_seeker = Auth::guard($guard)->user();
+
+        $existingApplication = $job_seeker->offers()->where('offer_id', $request->offer_id)->exists();
+        if ($existingApplication) {
+            return $this->returnError("You have already applied for this job opportunity.");
+        }
+
         $job_seeker->offers()->sync([
             $request->offer_id => [
-                "CV" => photo($request, "job_seeker", "CVs" , $job_seeker->id),
+                "CV" => photo($request, "job_seeker", "CVs", $job_seeker->id),
                 "additionalInfo" => $request->additionalInfo
             ]
         ]);
+
+        $company = Offer::find($request->offer_id)->company;
+        broadcast(new Notifications($job_seeker->username . ' applied to your job opportunity', "company", $company->id));
+        fillNotification("jobseeker", $job_seeker->id, "company", $company->id, $job_seeker->username . ' applied to your job opportunity');
+
         return $this->returnSuccess("Successfully applied");
     }
+
 
 
     public function post($request, $guard, $folderName, $diskName)
@@ -82,7 +96,7 @@ trait ResponseTrait
         }
         $user = getAuth($guard);
         $user->posts()->create([
-            "photo" => photo($request, $diskName, $folderName,$user->id),
+            "photo" => photo($request, $diskName, $folderName, $user->id),
             "title" => $request->title,
             "body" => $request->body
         ]);

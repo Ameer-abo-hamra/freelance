@@ -49,15 +49,24 @@ Route::group(["middleware" => "check:web-job_seeker"], function () {
 
     Route::get("deleteComment/{comment_id}", [JobSeekerController::class, "deleteComment"]);
 
-    Route::post("addLikeToPost",[JobSeekerController::class,"addLikeToPost_web"]);
+    Route::post("addLikeToPost", [JobSeekerController::class, "addLikeToPost_web"]);
 
-    Route::post("unlikePost",[JobSeekerController::class,"unlikePost_web"]);
+    Route::post("unlikePost", [JobSeekerController::class, "unlikePost_web"]);
 
-    Route::post("addLikeToComment",[JobSeekerController::class,"addLikeToComment_web"]);
+    Route::post("addLikeToComment", [JobSeekerController::class, "addLikeToComment_web"]);
 
     Route::post("add-comment", [JobSeekerController::class, "addComment"]);
 
-    Route::post("unlikeComment",[JobSeekerController::class,"unlikeComment_web"]);
+    Route::post("unlikeComment", [JobSeekerController::class, "unlikeComment_web"]);
+
+    Route::post("service-apply", [JobSeekerController::class, "applyServiceWeb"]);
+    
+    Route::post("message", [JobSeekerController::class, "messageWeb"]);
+
 
 });
 
+// Route::get("test", function(){
+//     return getAllFollowRecived();
+// });
+;

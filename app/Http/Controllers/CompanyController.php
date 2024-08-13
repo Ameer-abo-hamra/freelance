@@ -403,36 +403,44 @@ class CompanyController extends Controller
         return $companies;
     }
 
-    public function addLikeToPost_web(Request $request){
-        return addLike($request,"web-company","post");
+    public function addLikeToPost_web(Request $request)
+    {
+        return addLike($request, "web-company", "post");
     }
 
-    public function addLikeToComment_web(Request $request){
-        return addLike($request,"web-company","comment");
+    public function addLikeToComment_web(Request $request)
+    {
+        return addLike($request, "web-company", "comment");
     }
 
-    public function addLikeToComment_api(Request $request){
-        return addLike($request,"api-company","comment");
+    public function addLikeToComment_api(Request $request)
+    {
+        return addLike($request, "api-company", "comment");
     }
 
-    public function addLikeToPost_api(Request $request){
-        return addLike($request,"api-company","post");
+    public function addLikeToPost_api(Request $request)
+    {
+        return addLike($request, "api-company", "post");
     }
 
-    public function unlikePost_web(Request $request){
-        return removeLike($request,"web-company","post");
+    public function unlikePost_web(Request $request)
+    {
+        return removeLike($request, "web-company", "post");
     }
 
-    public function unlikePost_api(Request $request){
-        return removeLike($request,"api-company","post");
+    public function unlikePost_api(Request $request)
+    {
+        return removeLike($request, "api-company", "post");
     }
 
-    public function unlikeComment_web(Request $request){
-        return removeLike($request,"web-company","comment");
+    public function unlikeComment_web(Request $request)
+    {
+        return removeLike($request, "web-company", "comment");
     }
 
-    public function unlikeComment_api(Request $request){
-        return removeLike($request,"api-company","comment");
+    public function unlikeComment_api(Request $request)
+    {
+        return removeLike($request, "api-company", "comment");
     }
 
     public function search(Request $request)
@@ -532,11 +540,12 @@ class CompanyController extends Controller
 
     }
 
-    public function applyService(Request $request, $service_id)
+    public function applyServiceWeb(Request $request)
     {
 
         $validator = Validator::make($request->all(), [
             'offer' => 'required|string',
+            "service_id" => "required"
         ]);
 
         if ($validator->fails()) {
@@ -544,29 +553,39 @@ class CompanyController extends Controller
         }
 
 
-        $service = Service::find($service_id);
+        return applyService($request, "web-company");
+    }
+    public function applyServiceApi(Request $request)
+    {
 
-        if (!$service) {
-            return $this->returnError("service not found");
-        }
-
-
-        if ($service->state == "processing") {
-            return $this->returnError("Service is not open for applications");
-        }
-
-
-        $company = Auth::guard("api-company")->user();
-
-        ServiceApply::create([
-            'applyable_type' => 'App\Models\Company',
-            'applyable_id' => $company->id,
-            'service_id' => $service->id,
-            'offer' => $request->offer,
-            'isAccepted' => false,
+        $validator = Validator::make($request->all(), [
+            'offer' => 'required|string',
+            "service_id" => "required"
         ]);
 
-        return $this->returnSuccess("You have successfully applied for the service");
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+
+
+        return applyService($request, "api-company");
+    }
+    public function messageWeb(Request $request)
+    {
+        return message($request, "web-company");
+    }
+    public function messageApi(Request $request)
+    {
+        return message($request, "api-company");
+    }
+    public function getMessages(Request $request)
+    {
+        return getMessages($request, "api-company");
+    }
+
+    public function getNotifications(Request $request)
+    {
+        return getNotifications($request, "api-company");
     }
 }
 

@@ -29,6 +29,8 @@ Route::group(["middleware" => "check:api-customer"], function () {
 
     Route::post("service",[CustomerController::class,"addService_api"]);
 
+    Route::get("get-applicants/{service_id}" , [CustomerController::Class , "getApplicants"]);
+
     Route::post("updateService",[CustomerController::class,"updateService"]);
 
     Route::get("deleteService/{service_id}",[CustomerController::class,"deleteService"]);
@@ -74,5 +76,8 @@ Route::group(["middleware" => "check:api-customer"], function () {
     Route::post("acceptServiceApplier/{serviceId}",[CustomerController::class,"acceptServiceApplier"]);
 
     Route::get("markServiceAsDone/{serviceId}",[CustomerController::class,"markServiceAsDone"]);
+
+    Route::post("message" , [CustomerController::class , "messageApi"]);
+
 
 });

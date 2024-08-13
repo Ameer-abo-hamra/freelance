@@ -94,11 +94,12 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::get("deleteAccount/{id}", [CompanyController::class, "deleteAccount"]);
 
-    Route::post("vist", function (Request $request) {
-        // fillNotification("customer", 1, "company", 1, "welcome to our website");
-    });
+    Route::post("applyService", [CompanyController::class, "applyServiceWeb"]);
 
+    Route::post("message" , [CompanyController::class , "messageWeb"]);
 });
 
-// Route::get("test", [CompanyController::class, "test"]);
+Route::get("test", function () {
+    return view("test");
+});
 
