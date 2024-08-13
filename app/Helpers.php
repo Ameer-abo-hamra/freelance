@@ -516,9 +516,27 @@ function getNotifications(Request $request, $guard)
     // Fetch only the 'content' field of notifications
     $notifications = $reciver->notificationReciver()->orderBy('created_at', 'desc')->pluck('content');
 
-    return ResponseTrait::returnData("","notifications", $notifications);
+    return ResponseTrait::returnData("", "notifications", $notifications);
 }
 
+function showProfile(Request $request)
+{
 
+    $validator = Validator::make($request->all(), [
+        "type" => "required",
+        "id" => "required",
+    ]);
+
+    if ($validator->fails()) {
+        return ResponseTrait::returnError($validator->errors()->first());
+    }
+
+    $user = ResponseTrait::getUserByTypeAndId($request->type, $request->id);
+    $posts = $user->posts;
+    $user->posts = $posts;
+
+    return ResponseTrait::returnData("", "profile", $user->makeHidden(["password","verificationCode"]));
+
+}
 
 ;

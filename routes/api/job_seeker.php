@@ -76,4 +76,5 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
 
     Route::post("message", [JobSeekerController::class, "messageApi"]);
 
+    Route::post("viewProfile", [JobSeekerController::class, "showProfile"]);
 });

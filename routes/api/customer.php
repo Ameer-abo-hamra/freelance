@@ -79,5 +79,5 @@ Route::group(["middleware" => "check:api-customer"], function () {
 
     Route::post("message" , [CustomerController::class , "messageApi"]);
 
-
+    Route::post("viewProfile" , [CustomerController::class , "showProfile"]);
 });

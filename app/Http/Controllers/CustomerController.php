@@ -699,6 +699,13 @@ class CustomerController extends Controller
     {
         return message($request, "api-customer");
     }
+
+    public function showProfile(Request $request)
+    {
+
+        return showProfile($request);
+
+    }
 }
 
 

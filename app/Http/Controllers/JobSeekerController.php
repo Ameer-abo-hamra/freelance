@@ -533,4 +533,10 @@ class JobSeekerController extends Controller
         return message($request, "api-job_seeker");
     }
 
+    public function showProfile(Request $request)
+    {
+
+        return showProfile($request);
+
+    }
 }

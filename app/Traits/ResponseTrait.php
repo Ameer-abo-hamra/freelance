@@ -9,6 +9,7 @@ use Validator;
 use App\Models\Post;
 use App\Models\Comment;
 use App\Models\Company;
+use App\Models\Customer;
 use Illuminate\Support\Facades\Storage;
 
 trait ResponseTrait
@@ -234,6 +235,23 @@ trait ResponseTrait
         $user->save();
 
         return $this->returnData('Profile updated successfully', "profile", $user);
+    }
+
+    public static function getUserByTypeAndId($type, $id)
+    {
+        // تحويل القيمة إلى أحرف صغيرة
+        $type = strtolower($type);
+
+        switch ($type) {
+            case 'job_seeker':
+                return Job_seeker::find($id);
+            case 'company':
+                return Company::find($id);
+            case 'customer':
+                return Customer::find($id);
+            default:
+                return null;
+        }
     }
 
 }
