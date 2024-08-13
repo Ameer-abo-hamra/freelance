@@ -76,4 +76,10 @@ Route::group(["middleware" => "check:api-company"], function () {
     Route::get("delete-account/{id}", [CompanyController::class, "deleteAccount"]);
 
     Route::post("applyService", [CompanyController::class, "applyServiceApi"]);
+
+    Route::post("message" , [CompanyController::class , "messageApi"]);
+
+    Route::post("get-message" , [CompanyController::class , "getMessages"]);
+
+    Route::post("get-notifications" , [CompanyController::class , "getNotifications"]);
 });

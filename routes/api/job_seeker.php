@@ -34,7 +34,7 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
 
     Route::post("updatePost", [JobSeekerController::class, "updatePost"]);
 
-    Route::get("deletePost",[JobSeekerController::class,"deletePost"]);
+    Route::get("deletePost", [JobSeekerController::class, "deletePost"]);
 
     Route::post("follow", [JobSeekerController::class, "putFollow"]);
 
@@ -72,5 +72,8 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
 
     Route::post("unlikeComment", [JobSeekerController::class, "unlikeComment_api"]);
 
-    Route::post("applyService/{serviceId}",[JobSeekerController::class,"applyService"]);
+    Route::post("applyService", [JobSeekerController::class, "applyServiceApi"]);
+
+    Route::post("message", [JobSeekerController::class, "messageApi"]);
+
 });

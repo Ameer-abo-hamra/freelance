@@ -40,6 +40,7 @@ class Job_seeker extends Authenticatable implements JWTSubject
     {
         return $this->morphMany(ServiceApply::class, "applyable");
     }
+
     public function certificates()
     {
         return $this->hasMany(Certificate::class, "job_seeker_id");
@@ -105,13 +106,19 @@ class Job_seeker extends Authenticatable implements JWTSubject
     public function followMade()
     {
         return $this->morphMany(Follow::class, "followMaker");
-
     }
 
     public function followRecived()
     {
         return $this->morphMany(Follow::class, "followReciver");
-
+    }
+    public function sender()
+    {
+        return $this->morphMany(Message::class, "sender");
+    }
+    public function reciver()
+    {
+        return $this->morphMany(Message::class, "reciver");
     }
 
     public function scopeSearch($query, $term)
@@ -121,6 +128,17 @@ class Job_seeker extends Authenticatable implements JWTSubject
             ->orWhere('email', 'like', '%' . $term . '%');
     }
 
+    public function notificationSent()
+    {
+
+        return $this->morphMany(Notification::class, "notfiSender");
+    }
+
+
+    public function notificationReciver()
+    {
+        return $this->morphMany(Notification::class, "notfiReciver");
+    }
     // public function skills(){
 
     // }

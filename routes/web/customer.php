@@ -41,9 +41,7 @@ Route::group(["middleware" => ["check:customer"]], function () {
 
     Route::post("service", [CustomerController::class, "addService"]);
 
-    Route::group(["middleware" => "active:customer"], function () {
 
-    });
 
     Route::post("post" , [CustomerController::class , "postWeb"]);
 
@@ -55,5 +53,7 @@ Route::group(["middleware" => ["check:customer"]], function () {
     // Route::post("updateComment/{comment_id}", [CustomerController::class, "updateComment"]);
 
     Route::post("add-comment", [CustomerController::class, "addComment"]);
+    Route::post("message" , [CustomerController::class , "messageWeb"]);
+
 
 });

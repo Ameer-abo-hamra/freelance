@@ -26,4 +26,5 @@ class Follow extends Model
     public function followReciver() {
         return $this->morphTo();
     }
+
 }

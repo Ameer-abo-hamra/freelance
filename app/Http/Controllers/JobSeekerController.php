@@ -222,28 +222,34 @@ class JobSeekerController extends Controller
         return $this->returnSuccess("comment deleted successfully");
     }
 
-    public function addLikeToComment_api(Request $request){
-        return addLike($request,"api-job_seeker","comment");
+    public function addLikeToComment_api(Request $request)
+    {
+        return addLike($request, "api-job_seeker", "comment");
     }
 
-    public function addLikeToPost_api(Request $request){
-        return addLike($request,"api-job_seeker","post");
+    public function addLikeToPost_api(Request $request)
+    {
+        return addLike($request, "api-job_seeker", "post");
     }
 
-    public function unlikePost_web(Request $request){
-        return removeLike($request,"web-job_seeker","post");
+    public function unlikePost_web(Request $request)
+    {
+        return removeLike($request, "web-job_seeker", "post");
     }
 
-    public function unlikeComment_web(Request $request){
-        return removeLike($request,"web-job_seeker","comment");
+    public function unlikeComment_web(Request $request)
+    {
+        return removeLike($request, "web-job_seeker", "comment");
     }
 
-    public function unlikePost_api(Request $request){
-        return removeLike($request,"api-job_seeker","post");
+    public function unlikePost_api(Request $request)
+    {
+        return removeLike($request, "api-job_seeker", "post");
     }
 
-    public function unlikeComment_api(Request $request){
-        return removeLike($request,"api-job_seeker","comment");
+    public function unlikeComment_api(Request $request)
+    {
+        return removeLike($request, "api-job_seeker", "comment");
     }
     public function updatePost(Request $request, $id, $guard, $who, $disk)
     {
@@ -290,12 +296,14 @@ class JobSeekerController extends Controller
         return $this->returnSuccess("Your post has been updated successfully");
     }
 
-    public function addLikeToPost_web(Request $request){
-        return addLike($request,"web-job_seeker","post");
+    public function addLikeToPost_web(Request $request)
+    {
+        return addLike($request, "web-job_seeker", "post");
     }
 
-    public function addLikeToComment_web(Request $request){
-        return addLike($request,"web-job_seeker","comment");
+    public function addLikeToComment_web(Request $request)
+    {
+        return addLike($request, "web-job_seeker", "comment");
     }
 
     public function deletePost($post_id)
@@ -486,5 +494,43 @@ class JobSeekerController extends Controller
         return $this->returnSuccess("You have successfully applied for the service");
     }
 
+    public function applyServiceWeb(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'offer' => 'required|string',
+            "service_id" => "required"
+        ]);
+
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+
+
+        return applyService($request, "web-job_seeker");
+    }
+    public function applyServiceApi(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'offer' => 'required|string',
+            "service_id" => "required"
+        ]);
+
+        if ($validator->fails()) {
+            return $this->returnError($validator->errors()->first());
+        }
+
+
+        return applyService($request, "api-job_seeker");
+    }
+    public function messageWeb(Request $request)
+    {
+        return message($request, "web-job_seeker");
+    }
+    public function messageApi(Request $request)
+    {
+        return message($request, "api-job_seeker");
+    }
 
 }

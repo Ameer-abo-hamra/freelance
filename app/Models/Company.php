@@ -12,14 +12,15 @@ class Company extends Authenticatable implements JWTSubject
     use HasFactory;
 
 
-    protected $fillable = ["id", "name", "establishment_date", "employee_number", "password", "verificationCode", "isActive", "email","type","profile_photo"];
+    protected $fillable = ["id", "name", "establishment_date", "employee_number", "password", "verificationCode", "isActive", "email", "type", "profile_photo"];
     protected $hidden = ["created_at", "updated_at"];
     public function offers()
     {
         return $this->hasMany(Offer::class, "company_id");
     }
 
-    public function wallet(){
+    public function wallet()
+    {
         return $this->hasOne(Wallet::class);
     }
 
@@ -85,24 +86,35 @@ class Company extends Authenticatable implements JWTSubject
         return $this->morphMany(Report::class, "reported");
     }
 
-    public function followMade() {
-        return $this->morphMany(Follow::class , "followMaker");
+    public function followMade()
+    {
+        return $this->morphMany(Follow::class, "followMaker");
 
     }
 
-    public function followRecived() {
-        return $this->morphMany(Follow::class , "followReciver");
+    public function followRecived()
+    {
+        return $this->morphMany(Follow::class, "followReciver");
 
     }
 
-    public function notificationSent() {
+    public function notificationSent()
+    {
 
-        return $this->morphMany(Notification::class ,"notfiSender" );
+        return $this->morphMany(Notification::class, "notfiSender");
+    }
+    public function sender()
+    {
+        return $this->morphMany(Message::class, "sender");
+    }
+    public function reciver()
+    {
+        return $this->morphMany(Message::class, "reciver");
     }
 
-    public function notificationReciver() {
-
-        return $this->morphMany(Notification::class ,"notfiReciver" );
+    public function notificationReciver()
+    {
+        return $this->morphMany(Notification::class, "notfiReciver");
     }
 
     public function getJWTIdentifier()
@@ -125,7 +137,7 @@ class Company extends Authenticatable implements JWTSubject
     public function scopeSearch($query, $term)
     {
         return $query->where('name', 'like', '%' . $term . '%')
-                    ->orWhere('email', 'like', '%' . $term . '%');
+            ->orWhere('email', 'like', '%' . $term . '%');
     }
 
 }
