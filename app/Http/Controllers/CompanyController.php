@@ -454,37 +454,27 @@ class CompanyController extends Controller
         return response()->json($results[$filter]);
     }
 
-    private function getUserByTypeAndId($type, $id)
+
+
+    public function show(Request $request)
     {
-        switch ($type) {
-            case 'Job_seeker':
-                return Job_seeker::find($id);
-            case 'Company':
-                return Company::find($id);
-            case 'Customer':
-                return Customer::find($id);
-            default:
-                return null;
-        }
-    }
+        // $user = $this->getUserByTypeAndId($type, $id);
 
-    public function show($type, $id)
-    {
-        $user = $this->getUserByTypeAndId($type, $id);
+        // if (!$user) {
+        //     return $this->returnError("User not found");
+        // }
 
-        if (!$user) {
-            return $this->returnError("User not found");
-        }
+        // $posts = Post::where('postable_id', $id)
+        //     ->where('postable_type', "App\\Models\\$type")
+        //     ->with(['comments.likes', 'likes'])
+        //     ->get();
+        // $user->posts = $posts;
+        // if ($posts) {
+        //     $user->load(['posts.comments.likes', 'posts.likes']);
+        // }
+        // return new UserProfileResource($user);
 
-        $posts = Post::where('postable_id', $id)
-            ->where('postable_type', "App\\Models\\$type")
-            ->with(['comments.likes', 'likes'])
-            ->get();
-        $user->posts = $posts;
-        if ($posts) {
-            $user->load(['posts.comments.likes', 'posts.likes']);
-        }
-        return new UserProfileResource($user);
+        return showProfile($request);
     }
 
     public function updateProfile_web(Request $request)

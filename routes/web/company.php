@@ -87,7 +87,7 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("filter", [CompanyController::class, "searchWithFilter"]);
 
-    Route::get("viewProfile/{type}/{id}", [CompanyController::class, "show"]);
+    Route::post("viewProfile", [CompanyController::class, "show"]);
 
     Route::post("updateProfile", [CompanyController::class, 'updateProfile_web']);
 
@@ -95,7 +95,7 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("applyService", [CompanyController::class, "applyServiceWeb"]);
 
-    Route::post("message" , [CompanyController::class , "messageWeb"]);
+    Route::post("message", [CompanyController::class, "messageWeb"]);
 });
 
 Route::get("test", function () {

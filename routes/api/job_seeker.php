@@ -82,4 +82,6 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
 
     Route::get("commentslist/{post_id}",[JobSeekerController::class,"commentslist"]);
 
+    Route::post("viewProfile", [JobSeekerController::class, "showProfile"]);
+
 });

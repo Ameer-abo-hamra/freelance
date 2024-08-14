@@ -83,4 +83,6 @@ Route::group(["middleware" => "check:api-customer"], function () {
 
     Route::get("commentslist/{post_id}",[CustomerController::class,"commentslist"]);
 
+    Route::post("viewProfile" , [CustomerController::class , "showProfile"]);
+
 });

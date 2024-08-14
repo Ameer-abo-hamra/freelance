@@ -181,28 +181,31 @@ class CustomerController extends Controller
             return $this->returnError("Service not found.");
         }
 
-        $applicants = $service->appliers->map(function ($apply) {
-            $applicant = $apply->applyable;
+        $applicants = $service->appliers;
 
-            switch (class_basename($applicant)) {
-                case 'Company':
-                    $name = $applicant->name;
-                    break;
-                case 'JobSeeker':
-                    $name = $applicant->username;
-                    break;
-                default:
-                    $name = 'Unknown';
-                    break;
-            }
 
-            return [
-                'name' => $name,
-                'offer' => $apply->offer
-            ];
-        });
+        // ->map(function ($apply) {
+        //     $applicant = $apply->applyable;
 
-        return $this->returnData("", "applicants", $applicants);
+        //     switch (class_basename($applicant)) {
+        //         case 'Company':
+        //             $name = $applicant->name;
+        //             break;
+        //         case 'JobSeeker':
+        //             $name = $applicant->username;
+        //             break;
+        //         default:
+        //             $name = 'Unknown';
+        //             break;
+        //     }
+
+        //     return [
+        //         'name' => $name,
+        //         'offer' => $apply->offer
+        //     ];
+        // });
+
+        return $this->returnData("", "applicants", $applicants->makeHidden("created_at"));
     }
 
 
@@ -698,6 +701,7 @@ class CustomerController extends Controller
         return message($request, "api-customer");
     }
 
+
     public function commentsCount($post_id){
         return $this->CountOfComments($post_id);
     }
@@ -708,6 +712,13 @@ class CustomerController extends Controller
 
     public function commentslist($post_id){
         return $this->commentsOnPost($post_id);
+    }
+    public function showProfile(Request $request)
+    {
+
+        return showProfile($request);
+
+
     }
 }
 

@@ -251,51 +251,7 @@ class JobSeekerController extends Controller
     {
         return removeLike($request, "api-job_seeker", "comment");
     }
-    // public function updatePost(Request $request, $id, $guard, $who, $disk)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         "title" => "sometimes|required",
-    //         "body" => "sometimes|required",
-    //         "file" => "sometimes|file|max:50000"
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return $this->returnError($validator->errors()->first());
-    //     }
-
-    //     $post = Post::find($id);
-
-    //     if (!$post) {
-    //         return $this->returnError("Post not found");
-    //     }
-
-    //     $user = getAuth($guard);
-
-    //     if ($post->$who != $user->id) {
-    //         return $this->returnError("You are not authorized to update this post");
-    //     }
-
-    //     if ($request->has('title')) {
-    //         $post->title = $request->title;
-    //     }
-
-    //     if ($request->has('body')) {
-    //         $post->body = $request->body;
-    //     }
-
-    //     if ($request->hasFile('file')) {
-    //         if ($post->photo) {
-    //             Storage::disk($disk)->delete($post->photo);
-    //         }
-
-    //         $post->photo = $this->localStore($request, "post", $disk);
-    //     }
-
-    //     $post->save();
-
-    //     return $this->returnSuccess("Your post has been updated successfully");
-    // }
-    public function updatePost_web(Request $request, $post_id)
+       public function updatePost_web(Request $request, $post_id)
     {
         return $this->updatePost($request, $post_id, "web_job_seeker", "post", "job_seeker");
     }
@@ -552,6 +508,14 @@ class JobSeekerController extends Controller
 
     public function commentslist($post_id){
         return $this->commentsOnPost($post_id);
+    }
+
+
+    public function showProfile(Request $request)
+    {
+
+        return showProfile($request);
+
     }
 
 }
