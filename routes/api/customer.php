@@ -35,7 +35,7 @@ Route::group(["middleware" => "check:api-customer"], function () {
 
     Route::get("deleteService/{service_id}",[CustomerController::class,"deleteService"]);
 
-    Route::post("post" , [CustomerController::class , "post_api"]);
+    Route::post("add_post" , [CustomerController::class , "post_api"]);
 
     Route::post("browse", [CustomerController::class, "browse"]);
 
@@ -44,8 +44,6 @@ Route::group(["middleware" => "check:api-customer"], function () {
     Route::post("search", [CustomerController::class, "search"]);
 
     Route::post("filter", [CustomerController::class, "searchWithFilter"]);
-
-    Route::post("post",[CustomerController::class,"post_api"]);
 
     Route::post("updatePost/{post_id}", [CustomerController::class, "updatePost_api"]);
 
@@ -79,5 +77,10 @@ Route::group(["middleware" => "check:api-customer"], function () {
 
     Route::post("message" , [CustomerController::class , "messageApi"]);
 
+    Route::get("countOfComments/{post_id}",[CustomerController::class,"commentsCount"]);
+
+    Route::get("countOfLikes/{post_id}",[CustomerController::class,"likesCount"]);
+
+    Route::get("commentslist/{post_id}",[CustomerController::class,"commentslist"]);
 
 });

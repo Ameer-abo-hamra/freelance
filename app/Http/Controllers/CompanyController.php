@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Company;
 use App\Models\Job_seeker;
 use App\Models\Notification;
@@ -13,6 +14,7 @@ use PHPUnit\Framework\Constraint\IsEmpty;
 use Validator;
 use Auth;
 use Hash;
+use App\Models\Type;
 use App\Events\RespondApplicants;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\Skill;
@@ -141,6 +143,7 @@ class CompanyController extends Controller
     {
         $company = Company::findOrFail($id);
         $company->delete();
+        return $this->returnSuccess("your account deleted successfully");
     }
 
 
@@ -159,34 +162,23 @@ class CompanyController extends Controller
 
     public function getCategory()
     {
-        $categories = Skill::distinct()->get("category");
-        $arr = [];
-        foreach ($categories as $cat) {
-            array_push($arr, $cat["category"]);
-        }
-        return $this->returnData("", "categories", $arr);
+        $categories = Category::get();
+        return $this->returnData("", "categories", $categories);
     }
 
-    public function getTypesSkills($category)
+    public function getTypesSkills($categoryy_id)
     {
-        $types = Skill::where("category", $category)->distinct()->get("type");
-        $arr = [];
-        foreach ($types as $cat) {
-            array_push($arr, $cat["type"]);
-        }
-        return $this->returnData("", "types", $arr);
+        $category=Category::findOrFail($categoryy_id);
+        $types = $category->types()->get();
+        return $this->returnData("types due category :","types",$types);
     }
 
 
-    public function getSkillName($type)
+    public function getSkillName($type_name)
     {
-        $skills = Skill::where("type", $type)->get("skill_name");
-        $arr = [];
-        foreach ($skills as $cat) {
-            array_push($arr, $cat["skill_name"]);
-        }
-        return $this->returnData("", "skill_names", $arr);
-
+        $type=Type::where("type_name",$type_name)->firstOrFail();
+        $skills = $type->skills()->get();
+        return $this->returnData("", "skills", $skills);
     }
 
     public function addOfferWeb(Request $request)
@@ -202,20 +194,25 @@ class CompanyController extends Controller
     {
 
         $offer = Offer::find($request->offer_id);
-        if ($offer) {
-            $offer->update([
-                "title" => $request->title,
-                "body" => $request->body,
-                "position" => $request->position,
-                "type" => $request->type,
-                "details" => $request->details,
-            ]);
 
-            $offer->skills()->sync($request->skill_ids);
-            return $this->returnSuccess("your data is updated");
+        if($request->has("title")){
+            $offer->title = $request->title;
         }
+        if($request->has("body")){
+            $offer->body = $request->body;
+        }
+        if($request->has("position")){
+            $offer->position = $request->position;
+        }
+        if($request->has("type")){
+            $offer->type = $request->type;
+        }
+        if($request->has("details")){
+            $offer->details = $request->details;
+        }
+        $offer->save();
 
-        return $this->returnError("the offer id is not correct ");
+        return $this->returnSuccess("the offer updated successfully");
     }
     public function log_out()
     {
@@ -231,54 +228,17 @@ class CompanyController extends Controller
 
     public function postWeb(Request $request)
     {
-        return $this->post($request, "company", "post", "company");
+        return $this->post($request, "web-company", "post", "company");
     }
 
-    public function updatePost(Request $request, $id, $guard, $who, $disk)
+    public function updatePost_web(Request $request, $post_id)
     {
-        $validator = Validator::make($request->all(), [
-            "title" => "sometimes|required",
-            "body" => "sometimes|required",
-            "file" => "sometimes|file|max:50000"
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnError($validator->errors()->first());
-        }
-
-        $post = Post::find($id);
-
-        if (!$post) {
-            return $this->returnError("Post not found");
-        }
-
-        $user = getAuth($guard);
-
-        if ($post->$who != $user->id) {
-            return $this->returnError("You are not authorized to update this post");
-        }
-
-        if ($request->has('title')) {
-            $post->title = $request->title;
-        }
-
-        if ($request->has('body')) {
-            $post->body = $request->body;
-        }
-
-        if ($request->hasFile('file')) {
-            if ($post->photo) {
-                Storage::disk($disk)->delete($post->photo);
-            }
-
-            $post->photo = $this->localStore($request, "post", $disk);
-        }
-
-        $post->save();
-
-        return $this->returnSuccess("Your post has been updated successfully");
+        return $this->updatePost($request, $post_id, "web-company", "post", "company");
     }
-
+    public function updatePost_api(Request $request, $post_id)
+    {
+        return $this->updatePost($request, $post_id, "api-company", "post", "company");
+    }
     public function deletePost($post_id)
     {
         $post = Post::find($post_id);
@@ -344,8 +304,6 @@ class CompanyController extends Controller
 
     public function browse(Request $request)
     {
-
-
         $validator = validator::make($request->all(), [
             "type" => "required",
             "id" => "required",
@@ -362,13 +320,13 @@ class CompanyController extends Controller
         $validator = validator::make($request->all(), [
             "followMakerType" => "required",
             "followMakerid" => "required",
-            "followReciverType" => "required",
-            "followReciverid" => "required",
+            "followReceiverType" => "required",
+            "followReceiverid" => "required",
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
         }
-        return putFollow($request->followMakerType, $request->followMakerid, $request->followReciverType, $request->followReciverid);
+        return putFollow($request->followMakerType, $request->followMakerid, $request->followReceiverType, $request->followReceiverid);
 
 
     }
@@ -538,6 +496,18 @@ class CompanyController extends Controller
     {
         return $this->updateProfile($request, "api-company");
 
+    }
+
+    public function commentsCount($post_id){
+        return $this->CountOfComments($post_id);
+    }
+
+    public function likesCount($post_id){
+        return $this->CountOfLikes($post_id);
+    }
+
+    public function commentslist($post_id){
+        return $this->commentsOnPost($post_id);
     }
 
     public function applyServiceWeb(Request $request)

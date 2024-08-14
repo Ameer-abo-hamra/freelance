@@ -20,7 +20,7 @@ Route::post("register", [JobSeekerController::class, "register"]);
 
 Route::post("login", [JobSeekerController::class, "login_api"]);
 
-Route::get("report/{reporter_id}/{reported_id}", [ReportController::class, "report"]);
+Route::post("report", [ReportController::class, "report"]);
 
 Route::group(["middleware" => "check:api-job_seeker"], function () {
 
@@ -32,7 +32,7 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
 
     Route::post("post", [JobSeekerController::class, "postApi"]);
 
-    Route::post("updatePost", [JobSeekerController::class, "updatePost"]);
+    Route::post("updatePost/{post_id}", [JobSeekerController::class, "updatePost_api"]);
 
     Route::get("deletePost", [JobSeekerController::class, "deletePost"]);
 
@@ -75,5 +75,11 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
     Route::post("applyService", [JobSeekerController::class, "applyServiceApi"]);
 
     Route::post("message", [JobSeekerController::class, "messageApi"]);
+
+    Route::get("countOfComments/{post_id}",[JobSeekerController::class,"commentsCount"]);
+
+    Route::get("countOfLikes/{post_id}",[JobSeekerController::class,"likesCount"]);
+
+    Route::get("commentslist/{post_id}",[JobSeekerController::class,"commentslist"]);
 
 });
