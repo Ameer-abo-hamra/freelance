@@ -115,7 +115,7 @@ function category()
 function getCategoryApi($guard)
 {
     $job_seeker = Auth::guard($guard)->user();
-    $skills = $job_seeker->skills();
+    $skills = $job_seeker->skills()->get();
     return $skills;
     // $type =$skills->type;
     // return $job_seeker_id;
@@ -155,7 +155,7 @@ function browse($type, $id)
     return ResponseTrait::returnData("", "posts", $posts);
 }
 
-function putFollow($followMakerType, $followMakerid, $followReciverType, $followReciverid)
+function putFollow($followMakerType, $followMakerid, $followReceiverType, $followReceiverid)
 {
     $followMaker = '';
     $follwReciver = '';
@@ -171,14 +171,14 @@ function putFollow($followMakerType, $followMakerid, $followReciverType, $follow
     } else {
         return ResponseTrait::returnError("check the followMakerType or followMakerid ");
     }
-    if ($followReciverType == "company") {
+    if ($followReceiverType == "company") {
 
         $follwReciver = " App\Models\Company";
 
-    } elseif ($followReciverType == "job_seeker") {
+    } elseif ($followReceiverType == "job_seeker") {
         $follwReciver = "App\Models\Job_seeker";
 
-    } elseif ($followReciverType == "customer") {
+    } elseif ($followReceiverType == "customer") {
         $follwReciver = "App\Models\Customer";
     } else {
         return ResponseTrait::returnError("check the followReciverType");
@@ -186,7 +186,7 @@ function putFollow($followMakerType, $followMakerid, $followReciverType, $follow
     $followMaker->followMade()->create([
 
         "followReciver_type" => $follwReciver,
-        "followReciver_id" => $followReciverid,
+        "followReciver_id" => $followReceiverid,
     ]);
 
     return ResponseTrait::returnSuccess("done");
@@ -380,7 +380,6 @@ function fillNotification($senderType, $senderId, $reciverType, $reciverId, $con
 
 function photo(Request $request, $diskName, $folderName, $id)
 {
-
     $name = $id . $request->file("file")->getClientOriginalName();
     $path = $request->file("file")->storeAs($folderName, $name, $diskName);
     return $path;
@@ -399,31 +398,37 @@ function getFollowRecivedJobSeekers($user)
 }
 function applyService(Request $request, $guard)
 {
-
-
     $service = Service::find($request->service_id);
 
     if (!$service) {
         return ResponseTrait::returnError("service not found");
     }
 
-
     if ($service->state == "processing") {
         return ResponseTrait::returnError("Service is not open for applications");
     }
 
-
     $user = Auth::guard($guard)->user();
 
+    // تحقق مما إذا كان المستخدم قد تقدم بالفعل لهذه الخدمة
+    $existingApplication = $user->makeApply()->where('service_id', $service->id)->first();
+    if ($existingApplication) {
+        return ResponseTrait::returnError("You have already applied for this service");
+    }
+
+    // إنشاء سجل جديد للتقديم على الخدمة
     $user->makeApply()->create([
         'service_id' => $service->id,
         'offer' => $request->offer,
         'isAccepted' => false,
     ]);
+
     broadcast(new Notifications("You have a new offer", "customer", $service->customer->id))->toOthers();
     fillNotification(class_basename($user), $user->id, "customer", $service->customer->id, "You have a new offer");
+
     return ResponseTrait::returnSuccess("You have successfully applied for the service");
 }
+
 
 function message(Request $request, $guard)
 {
@@ -516,9 +521,27 @@ function getNotifications(Request $request, $guard)
     // Fetch only the 'content' field of notifications
     $notifications = $reciver->notificationReciver()->orderBy('created_at', 'desc')->pluck('content');
 
-    return ResponseTrait::returnData("","notifications", $notifications);
+    return ResponseTrait::returnData("", "notifications", $notifications);
 }
 
+function showProfile(Request $request)
+{
 
+    $validator = Validator::make($request->all(), [
+        "type" => "required",
+        "id" => "required",
+    ]);
+
+    if ($validator->fails()) {
+        return ResponseTrait::returnError($validator->errors()->first());
+    }
+
+    $user = ResponseTrait::getUserByTypeAndId($request->type, $request->id);
+    $posts = $user->posts;
+    $user->posts = $posts;
+
+    return ResponseTrait::returnData("", "profile", $user->makeHidden(["password", "verificationCode"]));
+
+}
 
 ;

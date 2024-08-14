@@ -41,9 +41,9 @@ Route::group(["middleware" => ["check:customer"]], function () {
 
     Route::post("service", [CustomerController::class, "addService"]);
 
-
-
     Route::post("post" , [CustomerController::class , "postWeb"]);
+
+    Route::post("updatePost/{post_id}",[CustomerController::class,"updatePost_web"]);
 
     Route::post("browse", [CustomerController::class, "browse"]);
 

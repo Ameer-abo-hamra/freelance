@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Traits\ResponseTrait;
 
 class PostController extends Controller
 {
+    use ResponseTrait;
     public function deletePostDirectly($post_id)
     {
         $post = Post::find($post_id);

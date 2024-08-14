@@ -181,28 +181,31 @@ class CustomerController extends Controller
             return $this->returnError("Service not found.");
         }
 
-        $applicants = $service->appliers->map(function ($apply) {
-            $applicant = $apply->applyable;
+        $applicants = $service->appliers;
 
-            switch (class_basename($applicant)) {
-                case 'Company':
-                    $name = $applicant->name;
-                    break;
-                case 'JobSeeker':
-                    $name = $applicant->username;
-                    break;
-                default:
-                    $name = 'Unknown';
-                    break;
-            }
 
-            return [
-                'name' => $name,
-                'offer' => $apply->offer
-            ];
-        });
+        // ->map(function ($apply) {
+        //     $applicant = $apply->applyable;
 
-        return $this->returnData("", "applicants", $applicants);
+        //     switch (class_basename($applicant)) {
+        //         case 'Company':
+        //             $name = $applicant->name;
+        //             break;
+        //         case 'JobSeeker':
+        //             $name = $applicant->username;
+        //             break;
+        //         default:
+        //             $name = 'Unknown';
+        //             break;
+        //     }
+
+        //     return [
+        //         'name' => $name,
+        //         'offer' => $apply->offer
+        //     ];
+        // });
+
+        return $this->returnData("", "applicants", $applicants->makeHidden("created_at"));
     }
 
 
@@ -263,7 +266,7 @@ class CustomerController extends Controller
     // }
     public function updatePost_api(Request $request, $post_id)
     {
-        return $this->updatePost($request, $post_id, "api-customer", "customer", "customer");
+        return $this->updatePost($request, $post_id, "api-customer", "post", "customer");
     }
 
     public function deletePost($post_id)
@@ -438,8 +441,6 @@ class CustomerController extends Controller
             return $this->returnError($validator->errors()->first());
         }
         return putFollow($request->followMakerType, $request->followMakerid, $request->followReciverType, $request->followReciverid);
-
-
     }
 
 
@@ -505,31 +506,6 @@ class CustomerController extends Controller
     {
         return removeLike($request, "api-customer", "comment");
     }
-
-    public function show($type, $id)
-    {
-        $user = $this->getUserByTypeAndId($type, $id);
-
-        if (!$user) {
-            return $this->returnError("User not found");
-        }
-
-        $posts = Post::where('postable_id', $id)
-            ->where('postable_type', "App\\Models\\$type")
-            ->with(['comments.likes', 'likes'])
-            ->get();
-        $user->posts = $posts;
-        if ($posts) {
-            $user->load(['posts.comments.likes', 'posts.likes']);
-        }
-        return new UserProfileResource($user);
-    }
-
-    // public function updateProfile_api(Request $request)
-    // {
-    //     return $this->updateProfile($request,"api-customer");
-    // }
-
 
     public function updateProfile(Request $request)
     {
@@ -698,6 +674,23 @@ class CustomerController extends Controller
     public function messageApi(Request $request)
     {
         return message($request, "api-customer");
+    }
+
+
+    public function commentsCount($post_id){
+        return $this->CountOfComments($post_id);
+    }
+
+    public function likesCount($post_id){
+        return $this->CountOfLikes($post_id);
+    }
+
+    public function commentslist($post_id){
+        return $this->commentsOnPost($post_id);
+    }
+    public function showProfile(Request $request)
+    {
+        return showProfile($request);
     }
 }
 

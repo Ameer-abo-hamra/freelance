@@ -10,6 +10,7 @@ class Skill extends Model
     use HasFactory;
 
     protected $fillable = ["skill_name", "category_id"];
+    protected $hidden = ["created_at","updated_at","pivot"];
 
     public function category()
     {
