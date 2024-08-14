@@ -115,7 +115,7 @@ function category()
 function getCategoryApi($guard)
 {
     $job_seeker = Auth::guard($guard)->user();
-    $skills = $job_seeker->skills();
+    $skills = $job_seeker->skills()->get();
     return $skills;
     // $type =$skills->type;
     // return $job_seeker_id;
@@ -155,7 +155,7 @@ function browse($type, $id)
     return ResponseTrait::returnData("", "posts", $posts);
 }
 
-function putFollow($followMakerType, $followMakerid, $followReciverType, $followReciverid)
+function putFollow($followMakerType, $followMakerid, $followReceiverType, $followReceiverid)
 {
     $followMaker = '';
     $follwReciver = '';
@@ -171,14 +171,14 @@ function putFollow($followMakerType, $followMakerid, $followReciverType, $follow
     } else {
         return ResponseTrait::returnError("check the followMakerType or followMakerid ");
     }
-    if ($followReciverType == "company") {
+    if ($followReceiverType == "company") {
 
         $follwReciver = " App\Models\Company";
 
-    } elseif ($followReciverType == "job_seeker") {
+    } elseif ($followReceiverType == "job_seeker") {
         $follwReciver = "App\Models\Job_seeker";
 
-    } elseif ($followReciverType == "customer") {
+    } elseif ($followReceiverType == "customer") {
         $follwReciver = "App\Models\Customer";
     } else {
         return ResponseTrait::returnError("check the followReciverType");
@@ -186,7 +186,7 @@ function putFollow($followMakerType, $followMakerid, $followReciverType, $follow
     $followMaker->followMade()->create([
 
         "followReciver_type" => $follwReciver,
-        "followReciver_id" => $followReciverid,
+        "followReciver_id" => $followReceiverid,
     ]);
 
     return ResponseTrait::returnSuccess("done");
@@ -380,7 +380,6 @@ function fillNotification($senderType, $senderId, $reciverType, $reciverId, $con
 
 function photo(Request $request, $diskName, $folderName, $id)
 {
-
     $name = $id . $request->file("file")->getClientOriginalName();
     $path = $request->file("file")->storeAs($folderName, $name, $diskName);
     return $path;

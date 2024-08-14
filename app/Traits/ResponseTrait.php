@@ -90,7 +90,7 @@ trait ResponseTrait
         $validator = Validator::make($request->all(), [
             "title" => "required",
             "body" => "required",
-            "photo" => "nullable|image|mimes:jpeg,png,jpg,gif|max:2048"
+            "file" => "nullable|image|mimes:jpeg,png,jpg,gif|max:2048"
         ]);
         if ($validator->fails()) {
             return $this->returnError($validator->errors()->first());
@@ -105,12 +105,12 @@ trait ResponseTrait
         return $this->returnSuccess("your post is published successfully");
     }
 
-    public function updatePost($request, $id, $guard, $who, $disk)
+    public function updatePost($request, $id, $guard, $folderName, $diskName)
     {
         $validator = Validator::make($request->all(), [
             "title" => "sometimes|required",
             "body" => "sometimes|required",
-            "file" => "sometimes|file|max:50000"
+            "photo" => "nullable|image|mimes:jpeg,png,jpg,gif|max:2048"
         ]);
 
         if ($validator->fails()) {
@@ -125,7 +125,7 @@ trait ResponseTrait
 
         $user = getAuth($guard);
 
-        if ($post->$who != $user->id) {
+        if ($post->postable_id != $user->id) {
             return $this->returnError("You are not authorized to update this post");
         }
 
@@ -139,10 +139,10 @@ trait ResponseTrait
 
         if ($request->hasFile('file')) {
             if ($post->photo) {
-                Storage::disk($disk)->delete($post->photo);
+                Storage::disk($diskName)->delete($post->photo);
             }
 
-            $post->photo = $this->localStore($request, "post", $disk);
+            $post->photo = photo($request, $diskName, $folderName, $user->id);
         }
 
         $post->save();
@@ -235,6 +235,25 @@ trait ResponseTrait
         $user->save();
 
         return $this->returnData('Profile updated successfully', "profile", $user);
+    }
+
+
+    public function CountOfComments($post_id){
+        $post = Post::find($post_id);
+        $count= $post->comments()->count();
+        return $this->returnData("","number of comments:",$count);
+    }
+
+    public function CountOfLikes($post_id){
+        $post = Post::find($post_id);
+        $count= $post->likes()->count();
+        return $this->returnData("","number of likes:",$count);
+    }
+
+    public function commentsOnPost($post_id){
+        $post = Post::find($post_id);
+        $comments = $post->comments();
+        return $this->returnData("","comments : ",$comments);
     }
 
     public static function getUserByTypeAndId($type, $id)
