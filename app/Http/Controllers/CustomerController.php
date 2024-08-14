@@ -181,28 +181,31 @@ class CustomerController extends Controller
             return $this->returnError("Service not found.");
         }
 
-        $applicants = $service->appliers->map(function ($apply) {
-            $applicant = $apply->applyable;
+        $applicants = $service->appliers;
 
-            switch (class_basename($applicant)) {
-                case 'Company':
-                    $name = $applicant->name;
-                    break;
-                case 'JobSeeker':
-                    $name = $applicant->username;
-                    break;
-                default:
-                    $name = 'Unknown';
-                    break;
-            }
 
-            return [
-                'name' => $name,
-                'offer' => $apply->offer
-            ];
-        });
+        // ->map(function ($apply) {
+        //     $applicant = $apply->applyable;
 
-        return $this->returnData("", "applicants", $applicants);
+        //     switch (class_basename($applicant)) {
+        //         case 'Company':
+        //             $name = $applicant->name;
+        //             break;
+        //         case 'JobSeeker':
+        //             $name = $applicant->username;
+        //             break;
+        //         default:
+        //             $name = 'Unknown';
+        //             break;
+        //     }
+
+        //     return [
+        //         'name' => $name,
+        //         'offer' => $apply->offer
+        //     ];
+        // });
+
+        return $this->returnData("", "applicants", $applicants->makeHidden("created_at"));
     }
 
 
@@ -698,6 +701,13 @@ class CustomerController extends Controller
     public function messageApi(Request $request)
     {
         return message($request, "api-customer");
+    }
+
+    public function showProfile(Request $request)
+    {
+
+        return showProfile($request);
+
     }
 }
 
