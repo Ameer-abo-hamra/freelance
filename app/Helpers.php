@@ -399,31 +399,37 @@ function getFollowRecivedJobSeekers($user)
 }
 function applyService(Request $request, $guard)
 {
-
-
     $service = Service::find($request->service_id);
 
     if (!$service) {
         return ResponseTrait::returnError("service not found");
     }
 
-
     if ($service->state == "processing") {
         return ResponseTrait::returnError("Service is not open for applications");
     }
 
-
     $user = Auth::guard($guard)->user();
 
+    // تحقق مما إذا كان المستخدم قد تقدم بالفعل لهذه الخدمة
+    $existingApplication = $user->makeApply()->where('service_id', $service->id)->first();
+    if ($existingApplication) {
+        return ResponseTrait::returnError("You have already applied for this service");
+    }
+
+    // إنشاء سجل جديد للتقديم على الخدمة
     $user->makeApply()->create([
         'service_id' => $service->id,
         'offer' => $request->offer,
         'isAccepted' => false,
     ]);
+
     broadcast(new Notifications("You have a new offer", "customer", $service->customer->id))->toOthers();
     fillNotification(class_basename($user), $user->id, "customer", $service->customer->id, "You have a new offer");
+
     return ResponseTrait::returnSuccess("You have successfully applied for the service");
 }
+
 
 function message(Request $request, $guard)
 {
@@ -535,7 +541,7 @@ function showProfile(Request $request)
     $posts = $user->posts;
     $user->posts = $posts;
 
-    return ResponseTrait::returnData("", "profile", $user->makeHidden(["password","verificationCode"]));
+    return ResponseTrait::returnData("", "profile", $user->makeHidden(["password", "verificationCode"]));
 
 }
 
