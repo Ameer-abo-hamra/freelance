@@ -458,22 +458,6 @@ class CompanyController extends Controller
 
     public function show(Request $request)
     {
-        // $user = $this->getUserByTypeAndId($type, $id);
-
-        // if (!$user) {
-        //     return $this->returnError("User not found");
-        // }
-
-        // $posts = Post::where('postable_id', $id)
-        //     ->where('postable_type', "App\\Models\\$type")
-        //     ->with(['comments.likes', 'likes'])
-        //     ->get();
-        // $user->posts = $posts;
-        // if ($posts) {
-        //     $user->load(['posts.comments.likes', 'posts.likes']);
-        // }
-        // return new UserProfileResource($user);
-
         return showProfile($request);
     }
 

@@ -507,31 +507,6 @@ class CustomerController extends Controller
         return removeLike($request, "api-customer", "comment");
     }
 
-    public function show($type, $id)
-    {
-        $user = $this->getUserByTypeAndId($type, $id);
-
-        if (!$user) {
-            return $this->returnError("User not found");
-        }
-
-        $posts = Post::where('postable_id', $id)
-            ->where('postable_type', "App\\Models\\$type")
-            ->with(['comments.likes', 'likes'])
-            ->get();
-        $user->posts = $posts;
-        if ($posts) {
-            $user->load(['posts.comments.likes', 'posts.likes']);
-        }
-        return new UserProfileResource($user);
-    }
-
-    // public function updateProfile_api(Request $request)
-    // {
-    //     return $this->updateProfile($request,"api-customer");
-    // }
-
-
     public function updateProfile(Request $request)
     {
         $user = getAuth("api-customer");
@@ -715,10 +690,7 @@ class CustomerController extends Controller
     }
     public function showProfile(Request $request)
     {
-
         return showProfile($request);
-
-
     }
 }
 

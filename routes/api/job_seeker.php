@@ -44,8 +44,6 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
 
     Route::post("filter", [JobSeekerController::class, "searchWithFilter"]);
 
-    Route::get("viewProfile/{type}/{id}", [JobSeekerController::class, "show"]);
-
     Route::post("updateProfile", [JobSeekerController::class, 'updateProfile']);
 
     Route::get("deleteAccount/{id}", [JobSeekerController::class, "deleteAccount"]);
