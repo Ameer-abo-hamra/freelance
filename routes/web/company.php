@@ -27,12 +27,11 @@ route::get("csrf", function () {
     return csrf_token();
 });
 
-
 route::post("register", [CompanyController::class, "register"]);
 
 route::post("login", [CompanyController::class, "login"]);
 
-Route::get("delete-account/{id}", [CompanyController::class, "deleteAccount"]);
+// Route::get("delete-account/{id}", [CompanyController::class, "deleteAccount"]);
 
 route::post("report", [ReportController::class, "report"]);
 
@@ -46,9 +45,9 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::get("category", [CompanyController::class, "getCategory"]);
 
-    Route::get("types/{category}", [CompanyController::class, "getTypesSkills"]);
+    Route::get("types/{categoryy_id}", [CompanyController::class, "getTypesSkills"]);
 
-    Route::get("skills/{types}", [CompanyController::class, "getSkillName"]);
+    Route::get("skills/{type_name}", [CompanyController::class, "getSkillName"]);
 
     Route::post("addoffer", [CompanyController::class, "addOfferWeb"]);
 
@@ -60,9 +59,9 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("change-offer-state", [CompanyController::class, "ChangeOfferStateWeb"]);
 
-    Route::post("post", [CompanyController::class, "postWeb"]);
+    Route::post("add_post", [CompanyController::class, "postWeb"]);
 
-    Route::post("updatePost", [CompanyController::class, "updatePost"]);
+    Route::post("updatePost/{post_id}", [CompanyController::class, "updatePost_web"]);
 
     Route::get("deletePost/{post_id}", [CompanyController::class, "deletePost"]);
 

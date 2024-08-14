@@ -9,6 +9,7 @@ class Category extends Model
 {
     use HasFactory;
     protected $fillable = ["category_name"];
+    protected $hidden = ["created_at","updated_at"];
 
     public function skills(){
         return $this->hasMany(Skill::class,"category_id");
