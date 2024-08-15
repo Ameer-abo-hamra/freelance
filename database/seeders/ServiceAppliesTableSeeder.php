@@ -17,7 +17,7 @@ class ServiceAppliesTableSeeder extends Seeder
 
         foreach (range(1, 10) as $index) {
             DB::table('service_applies')->insert([
-                'applyable_type' => 'App\\Models\\JobSeeker',
+                'applyable_type' => 'App\\Models\\Job_seeker',
                 'applyable_id' => $jobSeekerIds->random(),
                 'service_id' => $serviceIds->random(),
                 'offer' => $faker->text(),

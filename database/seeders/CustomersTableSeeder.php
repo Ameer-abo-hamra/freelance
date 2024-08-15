@@ -21,7 +21,6 @@ class CustomersTableSeeder extends Seeder
                 'verificationCode' => $faker->optional()->uuid,
                 'email' => $faker->unique()->safeEmail,
                 'password' => Hash::make('password'),
-                'wallet' => $faker->numberBetween(1000, 10000),
                 'profile_photo' => null,
                 'birth_date' => $faker->date,
                 'type' => 'customer',
