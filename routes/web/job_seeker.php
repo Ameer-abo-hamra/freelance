@@ -39,6 +39,8 @@ Route::group(["middleware" => "check:web-job_seeker"], function () {
 
     Route::post("post", [JobSeekerController::class, "postWeb"]);
 
+    Route::post("updatePost/{post_id}",[JobSeekerController::class,"updatePost_web"]);
+
     Route::post("browse", [JobSeekerController::class, "browse"]);
 
     Route::post("follow", [JobSeekerController::class, "putFollow"]);
@@ -60,7 +62,7 @@ Route::group(["middleware" => "check:web-job_seeker"], function () {
     Route::post("unlikeComment", [JobSeekerController::class, "unlikeComment_web"]);
 
     Route::post("service-apply", [JobSeekerController::class, "applyServiceWeb"]);
-    
+
     Route::post("message", [JobSeekerController::class, "messageWeb"]);
 
 
