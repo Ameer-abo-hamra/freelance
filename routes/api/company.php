@@ -33,7 +33,6 @@ Route::group(["middleware" => "check:api-company"], function () {
 
     Route::get("get-offers/{company_id}", [CompanyController::class, "getOffers"]);
 
-    Route::post("change-offer-state", [CompanyController::class, "ChangeOfferState"]);
 
     Route::get("get-job-applicants/{offer_id}", [CompanyController::class, "getJobApplicants"]);
 
@@ -82,12 +81,12 @@ Route::group(["middleware" => "check:api-company"], function () {
     Route::post("get-message", [CompanyController::class, "getMessages"]);
 
 
-    Route::post("get-notifications" , [CompanyController::class , "getNotifications"]);
+    Route::post("get-notifications", [CompanyController::class, "getNotifications"]);
 
-    Route::get("countOfComments/{post_id}",[CompanyController::class,"commentsCount"]);
+    Route::get("countOfComments/{post_id}", [CompanyController::class, "commentsCount"]);
 
-    Route::get("countOfLikes/{post_id}",[CompanyController::class,"likesCount"]);
+    Route::get("countOfLikes/{post_id}", [CompanyController::class, "likesCount"]);
 
-    Route::get("commentslist/{post_id}",[CompanyController::class,"commentslist"]);
+    Route::get("commentslist/{post_id}", [CompanyController::class, "commentslist"]);
 
 });

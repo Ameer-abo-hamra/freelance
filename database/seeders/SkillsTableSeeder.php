@@ -11,17 +11,26 @@ class SkillsTableSeeder extends Seeder
     {
         $categoryIds = DB::table('categories')->pluck('id');
 
-        DB::table('skills')->insert([
-            ['skill_name' => 'PHP', 'category_id' => $categoryIds->random()],
-            ['skill_name' => 'Laravel', 'category_id' => $categoryIds->random()],
-            ['skill_name' => 'Python', 'category_id' => $categoryIds->random()],
-            ['skill_name' => 'Data Analysis', 'category_id' => $categoryIds->random()],
-            ['skill_name' => 'Graphic Design', 'category_id' => $categoryIds->random()],
-            ['skill_name' => 'SEO', 'category_id' => $categoryIds->random()],
-            ['skill_name' => 'Content Writing', 'category_id' => $categoryIds->random()],
-            ['skill_name' => 'Accounting', 'category_id' => $categoryIds->random()],
-            ['skill_name' => 'Project Management', 'category_id' => $categoryIds->random()],
-            ['skill_name' => 'Sales Strategy', 'category_id' => $categoryIds->random()],
-        ]);
+        $skills = [
+            'PHP',
+            'Laravel',
+            'JavaScript',
+            'Python',
+            'Ruby',
+            'Java',
+            'C++',
+            'C#',
+            'HTML',
+            'CSS',
+        ];
+
+        foreach ($skills as $skill) {
+            DB::table('skills')->insert([
+                'skill_name' => $skill,
+                'category_id' => $categoryIds->random(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 }
