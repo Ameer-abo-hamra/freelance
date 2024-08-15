@@ -93,7 +93,7 @@ function addOffer($request, $guard)
 
     $follwers_ids = getFollowRecivedJobSeekers(Auth::guard($guard)->user());
     foreach ($follwers_ids as $f) {
-        broadcast(new Notifications(Auth::guard($guard)->user()->name . " Company has posted a job opportunity that you may be interested in", "jobseeker", $f->id));
+        broadcast(new Notifications(Auth::guard($guard)->user()->name . " Company has posted a job opportunity that you may be interested in", "job_seeker", $f->id));
         fillNotification("company", Auth::guard($guard)->user()->id, "jobseeker", $f->id, Auth::guard($guard)->user()->name . " Company has posted a job opportunity that you may be interested in");
     }
 
@@ -295,7 +295,7 @@ function addLike($request, $guard, $likeableType)
     $like->user()->associate($user);
     $like->likeable()->associate($likeable);
     $like->save();
-    $channel_name = class_basename($likeable->postable);
+    $channel_name = strtolower(class_basename($likeable->postable));
     $name = $user->username;
     if (!$name) {
         $name = $user->name;
