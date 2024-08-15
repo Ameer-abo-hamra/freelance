@@ -234,11 +234,11 @@ function ChangeOfferState($request, $guard)
                         );
                         $content = '';
                         if ($request->state) {
-                            $content = "Your employment application has been accepted by " . getAuth("web-company")->name;
+                            $content = "Your employment application has been accepted by " . getAuth($guard)->name;
                             broadcast(new Notifications($content, "jobseeker", $jobseeker->id));
                             fillNotification("company", $company->id, "jobseeker", $request->job_seeker_id, $content);
                         } else {
-                            $content = "Your employment application has been rejected by " . getAuth("web-company")->name;
+                            $content = "Your employment application has been rejected by " . getAuth($guard)->name;
                             broadcast(new Notifications($content, "jobseeker", $jobseeker->id));
                             fillNotification("company", $company->id, "jobseeker", $request->job_seeker_id, $content);
 
