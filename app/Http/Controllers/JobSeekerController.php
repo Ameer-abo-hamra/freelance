@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Job_seeker;
+use App\Models\Offer;
 use App\Models\Post;
 use App\Traits\ResponseTrait;
 use Validator;
@@ -309,7 +310,9 @@ class JobSeekerController extends Controller
             'job_seekers' => collect(),
             'companies' => collect(),
             'customers' => collect(),
-            'posts' => collect()
+            'posts' => collect(),
+            'offers' => collect(),
+            'services' => collect()
         ];
 
 
@@ -327,6 +330,14 @@ class JobSeekerController extends Controller
 
         if ($filter == 'posts' || !$filter) {
             $results['posts'] = Post::search($query)->get();
+        }
+
+        if ($filter == 'services' || !$filter) {
+            $results['services'] = Service::search($query)->get();
+        }
+
+        if ($filter == 'offers' || !$filter) {
+            $results['offers'] = Offer::search($query)->get();
         }
 
         return response()->json($results[$filter]);

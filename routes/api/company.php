@@ -81,7 +81,6 @@ Route::group(["middleware" => "check:api-company"], function () {
 
     Route::post("get-message", [CompanyController::class, "getMessages"]);
 
-
     Route::post("get-notifications" , [CompanyController::class , "getNotifications"]);
 
     Route::get("countOfComments/{post_id}",[CompanyController::class,"commentsCount"]);
