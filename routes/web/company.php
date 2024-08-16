@@ -31,8 +31,6 @@ route::post("register", [CompanyController::class, "register"]);
 
 route::post("login", [CompanyController::class, "login"]);
 
-// Route::get("delete-account/{id}", [CompanyController::class, "deleteAccount"]);
-
 route::post("report", [ReportController::class, "report"]);
 
 Route::group(["middleware" => "check:web-company"], function () {
