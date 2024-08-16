@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Job_seeker;
+use App\Models\Offer;
 use App\Models\Post;
 use App\Traits\ResponseTrait;
 use Validator;
@@ -156,6 +157,11 @@ class JobSeekerController extends Controller
         return $this->post($request, "job_seeker", "post", "job_seeker");
     }
 
+    public function getAuthorOfPost($postId)
+    {
+        return $this->getPostAuthor($postId);
+    }
+
     public function getCategory()
     {
         return getCategoryApi("api-job_seeker");
@@ -251,7 +257,7 @@ class JobSeekerController extends Controller
     {
         return removeLike($request, "api-job_seeker", "comment");
     }
-       public function updatePost_web(Request $request, $post_id)
+    public function updatePost_web(Request $request, $post_id)
     {
         return $this->updatePost($request, $post_id, "web_job_seeker", "post", "job_seeker");
     }
@@ -288,12 +294,17 @@ class JobSeekerController extends Controller
         $customers = Customer::search($query)->get();
         $posts = Post::search($query)->get();
 
+        $formattedPosts = $posts->map(function ($post) {
+            $post->postable_type = strtolower(class_basename($post->postable_type));
+            return $post;
+        });
+
         if ($jobSeekers || $companies || $customers || $posts) {
             $results = [
                 'job_seekers' => $jobSeekers,
                 'companies' => $companies,
                 'customers' => $customers,
-                'posts' => $posts
+                'posts' => $formattedPosts
             ];
         }
 
@@ -309,7 +320,9 @@ class JobSeekerController extends Controller
             'job_seekers' => collect(),
             'companies' => collect(),
             'customers' => collect(),
-            'posts' => collect()
+            'posts' => collect(),
+            'offers' => collect(),
+            'services' => collect()
         ];
 
 
@@ -326,7 +339,22 @@ class JobSeekerController extends Controller
         }
 
         if ($filter == 'posts' || !$filter) {
-            $results['posts'] = Post::search($query)->get();
+            $posts = Post::search($query)->get();
+
+            $posts->transform(function ($post) {
+                $post->postable_type = class_basename($post->postable_type);
+                return $post;
+            });
+
+            $results['posts'] = $posts;
+        }
+
+        if ($filter == 'services' || !$filter) {
+            $results['services'] = Service::search($query)->get();
+        }
+
+        if ($filter == 'offers' || !$filter) {
+            $results['offers'] = Offer::search($query)->get();
         }
 
         return response()->json($results[$filter]);
@@ -476,15 +504,18 @@ class JobSeekerController extends Controller
         return message($request, "api-job_seeker");
     }
 
-    public function commentsCount($post_id){
+    public function commentsCount($post_id)
+    {
         return $this->CountOfComments($post_id);
     }
 
-    public function likesCount($post_id){
+    public function likesCount($post_id)
+    {
         return $this->CountOfLikes($post_id);
     }
 
-    public function commentslist($post_id){
+    public function commentslist($post_id)
+    {
         return $this->commentsOnPost($post_id);
     }
 

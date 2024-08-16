@@ -11,6 +11,11 @@ class Service extends Model
     protected $fillable = ["description", "customer_id", "serviceable_id", "serviceable_type", "requestable_id", "requestable_type","is_accepted",
         "state","price"];
 
+        public function scopeSearch($query, $term)
+    {
+        return $query->where('description', 'like', '%' . $term . '%')
+            ->orWhere('price', 'like', '%' . $term . '%');
+    }
 
 
     // public function appliers(){
