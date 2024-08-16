@@ -157,6 +157,10 @@ class JobSeekerController extends Controller
         return $this->post($request, "job_seeker", "post", "job_seeker");
     }
 
+    public function getAuthorOfPost($postId){
+        return $this->getPostAuthor($postId);
+    }
+
     public function getCategory()
     {
         return getCategoryApi("api-job_seeker");
@@ -252,7 +256,7 @@ class JobSeekerController extends Controller
     {
         return removeLike($request, "api-job_seeker", "comment");
     }
-       public function updatePost_web(Request $request, $post_id)
+    public function updatePost_web(Request $request, $post_id)
     {
         return $this->updatePost($request, $post_id, "web_job_seeker", "post", "job_seeker");
     }

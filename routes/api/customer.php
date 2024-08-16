@@ -37,6 +37,8 @@ Route::group(["middleware" => "check:api-customer"], function () {
 
     Route::post("add_post" , [CustomerController::class , "post_api"]);
 
+    Route::get("getAuthorOfPost/{postId}",[CustomerController::class,"getAuthorOfPost"]);
+
     Route::post("browse", [CustomerController::class, "browse"]);
 
     Route::post("follow", [CustomerController::class, "putFollow"]);

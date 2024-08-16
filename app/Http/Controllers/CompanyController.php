@@ -231,6 +231,10 @@ class CompanyController extends Controller
         return $this->post($request, "web-company", "post", "company");
     }
 
+    public function getAuthorOfPost($postId){
+        return $this->getPostAuthor($postId);
+    }
+
     public function updatePost_web(Request $request, $post_id)
     {
         return $this->updatePost($request, $post_id, "web-company", "post", "company");

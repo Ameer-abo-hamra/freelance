@@ -41,6 +41,8 @@ Route::group(["middleware" => "check:api-company"], function () {
 
     Route::post("add_post", [CompanyController::class, "postApi"]);
 
+    Route::get("getAuthorOfPost/{postId}",[CompanyController::class,"getAuthorOfPost"]);
+
     Route::post("updatePost/{post_id}", [CompanyController::class, "updatePost_api"]);
 
     Route::get("deletePost/{post_id}", [CompanyController::class, "deletePost"]);
