@@ -10,6 +10,15 @@ class Offer extends Model
     use HasFactory;
     protected $fillable = ["title", "body", "position", "author", "company_id", "skill_id", "type","details","CV","additionalInfo","isAccepted"];
 
+    public function scopeSearch($query, $term)
+    {
+        return $query->where('title', 'like', '%' . $term . '%')
+            ->orWhere('body', 'like', '%' . $term . '%')
+            ->orWhere('position', 'like', '%' . $term . '%')
+            ->orWhere('type', 'like', '%' . $term . '%')
+            ->orWhere('details', 'like', '%' . $term . '%');
+    }
+
     public function company()
     {
         return $this->belongsTo(Company::class, "company_id");

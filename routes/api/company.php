@@ -33,7 +33,6 @@ Route::group(["middleware" => "check:api-company"], function () {
 
     Route::get("get-offers/{company_id}", [CompanyController::class, "getOffers"]);
 
-
     Route::get("get-job-applicants/{offer_id}", [CompanyController::class, "getJobApplicants"]);
 
     Route::post("change-offer-state", [CompanyController::class, "ChangeOfferStateApi"]);
@@ -79,7 +78,6 @@ Route::group(["middleware" => "check:api-company"], function () {
     Route::post("message", [CompanyController::class, "messageApi"]);
 
     Route::post("get-message", [CompanyController::class, "getMessages"]);
-
 
     Route::post("get-notifications", [CompanyController::class, "getNotifications"]);
 

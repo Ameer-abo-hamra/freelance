@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Offer;
 use App\Models\Service;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
@@ -380,7 +381,9 @@ class CustomerController extends Controller
             'job_seekers' => collect(),
             'companies' => collect(),
             'customers' => collect(),
-            'posts' => collect()
+            'posts' => collect(),
+            'offers' => collect(),
+            'services' => collect()
         ];
 
 
@@ -398,6 +401,14 @@ class CustomerController extends Controller
 
         if ($filter == 'posts' || !$filter) {
             $results['posts'] = Post::search($query)->get();
+        }
+
+        if ($filter == 'offers' || !$filter) {
+            $results['offers'] = Offer::search($query)->get();
+        }
+
+        if ($filter == 'services' || !$filter) {
+            $results['services'] = Service::search($query)->get();
         }
 
         return response()->json($results[$filter]);
