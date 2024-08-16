@@ -70,6 +70,8 @@ Route::group(["middleware" => "check:api-job_seeker"], function () {
 
     Route::post("unlikeComment", [JobSeekerController::class, "unlikeComment_api"]);
 
+    Route::get("getAuthorOfPost/{postId}",[JobSeekerController::class,"getAuthorOfPost"]);
+
     Route::post("applyService", [JobSeekerController::class, "applyServiceApi"]);
 
     Route::post("message", [JobSeekerController::class, "messageApi"]);

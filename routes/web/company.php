@@ -59,6 +59,8 @@ Route::group(["middleware" => "check:web-company"], function () {
 
     Route::post("add_post", [CompanyController::class, "postWeb"]);
 
+    Route::get("getAuthorOfPost/{postId}",[CompanyController::class,"getAuthorOfPost"]);
+
     Route::post("updatePost/{post_id}", [CompanyController::class, "updatePost_web"]);
 
     Route::get("deletePost/{post_id}", [CompanyController::class, "deletePost"]);
