@@ -33,8 +33,6 @@ Route::group(["middleware" => "check:api-company"], function () {
 
     Route::get("get-offers/{company_id}", [CompanyController::class, "getOffers"]);
 
-    Route::post("change-offer-state", [CompanyController::class, "ChangeOfferState"]);
-
     Route::get("get-job-applicants/{offer_id}", [CompanyController::class, "getJobApplicants"]);
 
     Route::post("change-offer-state", [CompanyController::class, "ChangeOfferStateApi"]);
