@@ -41,7 +41,7 @@ Route::group(["middleware" => "check:api-company"], function () {
 
     Route::post("add_post", [CompanyController::class, "postApi"]);
 
-    Route::get("getAuthorOfPost/{postId}",[CompanyController::class,"getAuthorOfPost"]);
+    Route::get("getAuthorOfPost/{postId}", [CompanyController::class, "getAuthorOfPost"]);
 
     Route::post("updatePost/{post_id}", [CompanyController::class, "updatePost_api"]);
 
@@ -83,12 +83,12 @@ Route::group(["middleware" => "check:api-company"], function () {
 
     Route::post("get-message", [CompanyController::class, "getMessages"]);
 
-    Route::post("get-notifications" , [CompanyController::class , "getNotifications"]);
+    Route::post("get-notifications", [CompanyController::class, "getNotifications"]);
 
-    Route::get("countOfComments/{post_id}",[CompanyController::class,"commentsCount"]);
+    Route::get("countOfComments/{post_id}", [CompanyController::class, "commentsCount"]);
 
-    Route::get("countOfLikes/{post_id}",[CompanyController::class,"likesCount"]);
+    Route::get("countOfLikes/{post_id}", [CompanyController::class, "likesCount"]);
 
-    Route::get("commentslist/{post_id}",[CompanyController::class,"commentslist"]);
+    Route::get("commentslist/{post_id}", [CompanyController::class, "commentslist"]);
 
 });

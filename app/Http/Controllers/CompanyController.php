@@ -168,15 +168,15 @@ class CompanyController extends Controller
 
     public function getTypesSkills($categoryy_id)
     {
-        $category=Category::findOrFail($categoryy_id);
+        $category = Category::findOrFail($categoryy_id);
         $types = $category->types()->get();
-        return $this->returnData("types due category :","types",$types);
+        return $this->returnData("types due category :", "types", $types);
     }
 
 
     public function getSkillName($type_name)
     {
-        $type=Type::where("type_name",$type_name)->firstOrFail();
+        $type = Type::where("type_name", $type_name)->firstOrFail();
         $skills = $type->skills()->get();
         return $this->returnData("", "skills", $skills);
     }
@@ -195,19 +195,19 @@ class CompanyController extends Controller
 
         $offer = Offer::find($request->offer_id);
 
-        if($request->has("title")){
+        if ($request->has("title")) {
             $offer->title = $request->title;
         }
-        if($request->has("body")){
+        if ($request->has("body")) {
             $offer->body = $request->body;
         }
-        if($request->has("position")){
+        if ($request->has("position")) {
             $offer->position = $request->position;
         }
-        if($request->has("type")){
+        if ($request->has("type")) {
             $offer->type = $request->type;
         }
-        if($request->has("details")){
+        if ($request->has("details")) {
             $offer->details = $request->details;
         }
         $offer->save();
@@ -231,7 +231,8 @@ class CompanyController extends Controller
         return $this->post($request, "web-company", "post", "company");
     }
 
-    public function getAuthorOfPost($postId){
+    public function getAuthorOfPost($postId)
+    {
         return $this->getPostAuthor($postId);
     }
 
@@ -414,12 +415,17 @@ class CompanyController extends Controller
         $customers = Customer::search($query)->get();
         $posts = Post::search($query)->get();
 
+        $formattedPosts = $posts->map(function ($post) {
+            $post->postable_type = strtolower(class_basename($post->postable_type));
+            return $post;
+        });
+
         if ($jobSeekers || $companies || $customers || $posts) {
             $results = [
                 'job_seekers' => $jobSeekers,
                 'companies' => $companies,
                 'customers' => $customers,
-                'posts' => $posts
+                'posts' => $formattedPosts
             ];
         }
 
@@ -454,7 +460,13 @@ class CompanyController extends Controller
         }
 
         if ($filter == 'posts' || !$filter) {
-            $results['posts'] = Post::search($query)->get();
+            $posts = Post::search($query)->get();
+            $posts->transform(function ($post) {
+                $post->postable_type = class_basename($post->postable_type);
+                return $post;
+            });
+
+            $results['posts'] = $posts;
         }
 
         if ($filter == 'offers' || !$filter) {
@@ -486,15 +498,18 @@ class CompanyController extends Controller
 
     }
 
-    public function commentsCount($post_id){
+    public function commentsCount($post_id)
+    {
         return $this->CountOfComments($post_id);
     }
 
-    public function likesCount($post_id){
+    public function likesCount($post_id)
+    {
         return $this->CountOfLikes($post_id);
     }
 
-    public function commentslist($post_id){
+    public function commentslist($post_id)
+    {
         return $this->commentsOnPost($post_id);
     }
 
