@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
-    protected $fillable = ["title", "body", "job_seeker_id", "company_id", "postable_id", "postable_type","photo"];
+    protected $fillable = ["title", "body", "job_seeker_id", "company_id", "postable_id", "postable_type", "photo"];
 
     public function comments()
     {
@@ -32,7 +32,7 @@ class Post extends Model
     public function scopeSearch($query, $term)
     {
         return $query->where('title', 'like', '%' . $term . '%')
-                    ->orWhere('body', 'like', '%' . $term . '%');
+            ->orWhere('body', 'like', '%' . $term . '%');
     }
 
 }

@@ -105,6 +105,31 @@ trait ResponseTrait
         return $this->returnSuccess("your post is published successfully");
     }
 
+
+    public function getPostAuthor($postId)
+    {
+
+        $post = Post::find($postId);
+
+        if (!$post) {
+            return $this->returnError("Post not found.");
+        }
+
+        $author = $post->postable;
+
+        if (!$author) {
+            return $this->returnError("Author not found.");
+        }
+
+        $authorType = class_basename($author);
+
+        return $this->returnData("Post author", "author", [
+            'id' => $author->id,
+            'name' => $author->full_name ?? $author->username ?? $author->name,
+            'type' => $authorType,
+        ]);
+    }
+
     public function updatePost($request, $id, $guard, $folderName, $diskName)
     {
         $validator = Validator::make($request->all(), [
@@ -238,22 +263,25 @@ trait ResponseTrait
     }
 
 
-    public function CountOfComments($post_id){
+    public function CountOfComments($post_id)
+    {
         $post = Post::find($post_id);
-        $count= $post->comments()->count();
-        return $this->returnData("","number of comments:",$count);
+        $count = $post->comments()->count();
+        return $this->returnData("", "number of comments:", $count);
     }
 
-    public function CountOfLikes($post_id){
+    public function CountOfLikes($post_id)
+    {
         $post = Post::find($post_id);
-        $count= $post->likes()->count();
-        return $this->returnData("","number of likes:",$count);
+        $count = $post->likes()->count();
+        return $this->returnData("", "number of likes:", $count);
     }
 
-    public function commentsOnPost($post_id){
+    public function commentsOnPost($post_id)
+    {
         $post = Post::find($post_id);
         $comments = $post->comments();
-        return $this->returnData("","comments : ",$comments);
+        return $this->returnData("", "comments : ", $comments);
     }
 
     public static function getUserByTypeAndId($type, $id)
