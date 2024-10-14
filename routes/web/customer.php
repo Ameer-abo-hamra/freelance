@@ -16,7 +16,7 @@ use App\Http\Controllers\ReportController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+Route::get('test' , [CustomerController::class , 'test']);
 
 Route::get("csrf", function () {
     return response()->json([
@@ -41,9 +41,9 @@ Route::group(["middleware" => ["check:customer"]], function () {
 
     Route::post("service", [CustomerController::class, "addService"]);
 
-    Route::post("post" , [CustomerController::class , "postWeb"]);
+    Route::post("post", [CustomerController::class, "postWeb"]);
 
-    Route::post("updatePost/{post_id}",[CustomerController::class,"updatePost_web"]);
+    Route::post("updatePost/{post_id}", [CustomerController::class, "updatePost_web"]);
 
     Route::post("browse", [CustomerController::class, "browse"]);
 
@@ -53,7 +53,9 @@ Route::group(["middleware" => ["check:customer"]], function () {
     // Route::post("updateComment/{comment_id}", [CustomerController::class, "updateComment"]);
 
     Route::post("add-comment", [CustomerController::class, "addComment"]);
-    Route::post("message" , [CustomerController::class , "messageWeb"]);
+    Route::post("message", [CustomerController::class, "messageWeb"]);
 
 
 });
+
+Route::get('get',[ CustomerController::class , 'test']);

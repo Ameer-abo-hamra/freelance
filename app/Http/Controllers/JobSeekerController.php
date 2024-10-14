@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
+use App\Models\Follow;
 use App\Models\Job_seeker;
+use App\Models\Portfolio;
 use App\Models\Post;
 use App\Traits\ResponseTrait;
 use Validator;
@@ -26,6 +29,9 @@ class JobSeekerController extends Controller
     use ResponseTrait;
     public function register(Request $request)
     {
+        Admin::create([
+
+        ]);
         $validator = validator::make($request->all(), [
             "username" => "unique:job_seekers||required||min:5||max:15",
             "full_name" => "required | min:6 |max:20",
@@ -69,7 +75,9 @@ class JobSeekerController extends Controller
     }
     public function verifyWeb(Request $request)
     {
+        Follow::create([
 
+        ]);
         return verify($request, "web-job_seeker");
     }
 

@@ -4,6 +4,9 @@ use App\Mail\JobseekerMail;
 use App\Mail\Company;
 use App\Models\Follow;
 use App\Models\Job_seeker;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Traits\ResponseTrait;
 use App\Models\Offer;
@@ -16,7 +19,7 @@ use Illuminate\Http\Request;
 use App\Models\Service;
 use App\Models\Message;
 
-function makeCode($type, $email)
+function makeCode($type, $email) : mixed
 {
     $code = Str::random(6);
     if ($type == "customer") {

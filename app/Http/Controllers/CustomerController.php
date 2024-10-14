@@ -28,6 +28,7 @@ use App\Models\ServiceApply;
 class CustomerController extends Controller
 {
     use ResponseTrait;
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -146,6 +147,7 @@ class CustomerController extends Controller
         return verify($request, "api-customer");
 
     }
+
     public function addService(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -182,28 +184,26 @@ class CustomerController extends Controller
         }
 
         $applicants = $service->appliers
+            ->map(function ($apply) {
+                $applicant = $apply->applyable;
 
+                switch (class_basename($applicant)) {
+                    case 'Company':
+                        $name = $applicant->name;
+                        break;
+                    case 'Job_seeker':
+                        $name = $applicant->username;
+                        break;
+                    default:
+                        $name = 'Unknown';
+                        break;
+                }
 
-        ->map(function ($apply) {
-            $applicant = $apply->applyable;
-
-            switch (class_basename($applicant)) {
-                case 'Company':
-                    $name = $applicant->name;
-                    break;
-                case 'Job_seeker':
-                    $name = $applicant->username;
-                    break;
-                default:
-                    $name = 'Unknown';
-                    break;
-            }
-
-            return [
-                'name' => $name,
-                'offer' => $apply->offer
-            ];
-        });
+                return [
+                    'name' => $name,
+                    'offer' => $apply->offer
+                ];
+            });
 
         return $this->returnData("", "applicants", $applicants);
     }
@@ -402,6 +402,7 @@ class CustomerController extends Controller
 
         return response()->json($results[$filter]);
     }
+
     private function getUserByTypeAndId($type, $id)
     {
         switch ($type) {
@@ -428,6 +429,7 @@ class CustomerController extends Controller
         }
         return browse($request->type, $request->id);
     }
+
     public function putFollow(Request $request)
     {
 
@@ -555,6 +557,7 @@ class CustomerController extends Controller
 
         return $this->returnData('Profile updated successfully', "profile", $user);
     }
+
     public function deleteAccount($id)
     {
         $customer = Customer::findOrFail($id);
@@ -615,6 +618,7 @@ class CustomerController extends Controller
             return $this->returnSuccess("Applier accepted and service status updated successfully.");
         }
     }
+
     public function markServiceAsDone(Request $request, $serviceId)
     {
         $customer = Auth::guard('api-customer')->user();
@@ -666,6 +670,7 @@ class CustomerController extends Controller
         $applierWallet->save();
         return $this->returnSuccess("Service marked as done and payment transferred successfully.");
     }
+
     public function messageWeb(Request $request)
     {
         return message($request, "web-customer");
@@ -677,20 +682,29 @@ class CustomerController extends Controller
     }
 
 
-    public function commentsCount($post_id){
+    public function commentsCount($post_id)
+    {
         return $this->CountOfComments($post_id);
     }
 
-    public function likesCount($post_id){
+    public function likesCount($post_id)
+    {
         return $this->CountOfLikes($post_id);
     }
 
-    public function commentslist($post_id){
+    public function commentslist($post_id)
+    {
         return $this->commentsOnPost($post_id);
     }
+
     public function showProfile(Request $request)
     {
         return showProfile($request);
+    }
+
+    public function test()
+    {
+       return Customer::with('comments')->pluck('username','email');
     }
 }
 
