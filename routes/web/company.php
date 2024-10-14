@@ -31,8 +31,6 @@ route::post("register", [CompanyController::class, "register"]);
 
 route::post("login", [CompanyController::class, "login"]);
 
-// Route::get("delete-account/{id}", [CompanyController::class, "deleteAccount"]);
-
 route::post("report", [ReportController::class, "report"]);
 
 Route::group(["middleware" => "check:web-company"], function () {
@@ -60,6 +58,8 @@ Route::group(["middleware" => "check:web-company"], function () {
     Route::post("change-offer-state", [CompanyController::class, "ChangeOfferStateWeb"]);
 
     Route::post("add_post", [CompanyController::class, "postWeb"]);
+
+    Route::get("getAuthorOfPost/{postId}",[CompanyController::class,"getAuthorOfPost"]);
 
     Route::post("updatePost/{post_id}", [CompanyController::class, "updatePost_web"]);
 
