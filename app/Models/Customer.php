@@ -11,7 +11,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class Customer extends Authenticatable implements JWTSubject
 {
     use HasFactory, HasApiTokens;
-    protected $fillable = ["username", "full_name", "email", "password", "wallet", "verificationCode", "isActive", "birth_date","type","profile_photo"];
+    protected $fillable = ["username", "full_name", "email", "password", "wallet", "verificationCode", "isActive", "birth_date","type","profile_photo",'id'];
     protected $hidden = ["created_at", "updated_at"];
 
     public function getJWTIdentifier()

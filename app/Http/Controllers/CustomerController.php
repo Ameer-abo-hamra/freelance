@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Offer;
 use App\Models\Service;
+use Validator;
+use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
-use Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Customer;
 use App\Models\Contact_information;
 use App\Traits\ResponseTrait;
-use Auth;
-use Hash;
+use Illuminate\Support\Facades\Hash;
 use App\Mail\testmail;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\Post;
@@ -111,9 +111,9 @@ class CustomerController extends Controller
         // return $this->returnData("","",Auth::guard("api-customer")->user());
 
         if ($token = Auth::guard("api-customer")->attempt($credential)) {
-
-            // $token = JWTAuth::fromUser($credential);
-            return $this->returnData("U R logged-in successfully", "customer data", $token);
+            $user = getAuth('api-customer');
+            $user->token = $token;
+            return $this->returnData("U R logged-in successfully", "customer data", $user->makeHidden("password"));
         }
         return $this->returnError("your data is invalid .. enter it again");
     }
