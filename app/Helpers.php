@@ -531,7 +531,6 @@ function showProfile($type , $id )
 {
 
 
-
     if (!($type && $id )) {
         return ResponseTrait::returnError($validator->errors()->first());
     }
