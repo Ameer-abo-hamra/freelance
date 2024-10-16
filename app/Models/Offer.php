@@ -10,6 +10,7 @@ class Offer extends Model
     use HasFactory;
     protected $fillable = ["title", "body", "position", "author", "company_id", "skill_id", "type","details","CV","additionalInfo","isAccepted"];
 
+
     public function scopeSearch($query, $term)
     {
         return $query->where('title', 'like', '%' . $term . '%')
