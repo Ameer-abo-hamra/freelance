@@ -527,19 +527,16 @@ function getNotifications(Request $request, $guard)
     return ResponseTrait::returnData("", "notifications", $notifications);
 }
 
-function showProfile(Request $request)
+function showProfile($type , $id )
 {
 
-    $validator = Validator::make($request->all(), [
-        "type" => "required",
-        "id" => "required",
-    ]);
 
-    if ($validator->fails()) {
+
+    if (!($type && $id )) {
         return ResponseTrait::returnError($validator->errors()->first());
     }
 
-    $user = ResponseTrait::getUserByTypeAndId($request->type, $request->id);
+    $user = ResponseTrait::getUserByTypeAndId($type,$id);
     $posts = $user->posts;
     $user->posts = $posts;
 

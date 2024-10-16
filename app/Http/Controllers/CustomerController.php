@@ -681,9 +681,9 @@ class CustomerController extends Controller
         return $this->commentsOnPost($post_id);
     }
 
-    public function showProfile(Request $request)
+    public function showProfile($type , $id )
     {
-        return showProfile($request);
+        return showProfile($type , $id );
     }
 
     public function test()

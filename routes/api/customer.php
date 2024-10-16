@@ -65,7 +65,7 @@ Route::group(["middleware" => "check:api-customer"], function () {
 
     Route::post("unlikeComment", [CustomerController::class, "unlikeComment_api"]);
 
-    Route::get("viewProfile/{type}/{id}", [CustomerController::class, "show"]);
+    Route::get("viewProfile/{type}/{id}", [CustomerController::class, "showProfile"]);
 
     Route::post("updateProfile", [CustomerController::class, 'updateProfile']);
 
