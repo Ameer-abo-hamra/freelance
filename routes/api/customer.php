@@ -15,6 +15,7 @@ use App\Http\Controllers\CustomerController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+makeInst();
 Route::post("register", [CustomerController::class, "register"]);
 
 Route::post("login", [CustomerController::class, "login_api"]);

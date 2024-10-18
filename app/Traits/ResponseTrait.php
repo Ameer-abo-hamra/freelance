@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 
 trait ResponseTrait
 {
-    public static function returnError($msgErorr = "", $errorNumber = 400)
+    public static function returnError($msgErorr = "", $errorNumber = 400): \Illuminate\Http\JsonResponse
     {
 
         return response()->json([

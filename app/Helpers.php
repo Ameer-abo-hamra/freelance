@@ -1,14 +1,15 @@
 <?php
+
 use App\Mail\Customer;
 use App\Mail\JobseekerMail;
 use App\Mail\Company;
 use App\Models\Follow;
 use App\Models\Job_seeker;
+use App\Traits\ResponseTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use App\Traits\ResponseTrait;
 use App\Models\Offer;
 use App\Events\RespondApplicants;
 use App\Models\Like;
@@ -19,12 +20,33 @@ use Illuminate\Http\Request;
 use App\Models\Service;
 use App\Models\Message;
 
-class Inter {
+class Inter
+{
     use ResponseTrait;
 }
+function makeInst()
+{
+    return  new Inter();
+}
+function verify($request, $guard)
+{
 
-$inter = new Inter() ;
-function makeCode($type, $email) : mixed
+    $validator = Validator::make($request->all(), [
+        "verificationCode" => "required",
+    ]);
+    if ($validator->fails()) {
+        return makeInst()->returnError($validator->errors()->first());
+    }
+    if (Auth::guard($guard)->user()->verificationCode == $request->verificationCode) {
+
+        auth($guard)->user()->update([
+            "isActive" => true,
+        ]);
+        return makeInst() -> returnSuccess("you have verfied your account successfully");
+    }
+    return makeInst() -> returnError("your code is not equal to our code ");
+}
+function makeCode($type, $email): mixed
 {
     $code = Str::random(6);
     if ($type == "customer") {
@@ -40,31 +62,18 @@ function makeCode($type, $email) : mixed
         return $code;
     }
 }
-function verify($request, $guard): \Illuminate\Http\JsonResponse
-{
-    global $inter ;
-    $validator = Validator::make($request->all(), [
-        "verificationCode" => "required",
-    ]);
-    if ($validator->fails()) {
-        return $inter -> returnError($validator->errors()->first());
-    }
-    if (Auth::guard($guard)->user()->verificationCode == $request->verificationCode) {
-        auth($guard)->user()->update([
-            "isActive" => true,
-        ]);
-        return $inter -> returnSuccess("you have verfied your account successfully");
-    }
-    return $inter -> returnError("your code is not equal to our code ");
-}
+
+
+
 function getAuth($guard): ?\Illuminate\Contracts\Auth\Authenticatable
 {
     return Auth::guard($guard)->user();
 
 }
+
 function addOffer($request, $guard): \Illuminate\Http\JsonResponse
 {
-    global $inter  ;
+
     $validation = Validator::make($request->all(), [
         "title" => "required",
         "body" => "required",
@@ -72,7 +81,7 @@ function addOffer($request, $guard): \Illuminate\Http\JsonResponse
         "skill_ids" => "required",
     ]);
     if ($validation->fails()) {
-        return $inter-> returnError($validation->errors()->first());
+        return makeInst()->returnError($validation->errors()->first());
     }
 
     $offer = Offer::create([
@@ -84,7 +93,7 @@ function addOffer($request, $guard): \Illuminate\Http\JsonResponse
         "details" => $request->details,
         "company_id" => Auth::guard($guard)->user()->id,
     ]);
-    // return $inter -> returnData("","",getAllFollowRecived(Auth::guard($guard)->user()));
+    // return makeInst() -> returnData("","",getAllFollowRecived(Auth::guard($guard)->user()));
 
     $skill_ids = $request->skill_ids;
     if (!empty($skill_ids)) {
@@ -93,7 +102,7 @@ function addOffer($request, $guard): \Illuminate\Http\JsonResponse
             $offer->skills()->attach($s);
         }
     } else {
-        return $inter -> returnError("you have to enter skills");
+        return makeInst()->returnError("you have to enter skills");
     }
 
     $follwers_ids = getFollowRecivedJobSeekers(Auth::guard($guard)->user());
@@ -102,12 +111,13 @@ function addOffer($request, $guard): \Illuminate\Http\JsonResponse
         fillNotification("company", Auth::guard($guard)->user()->id, "jobseeker", $f->id, Auth::guard($guard)->user()->name . " Company has posted a job opportunity that you may be interested in");
     }
 
-    // return $inter -> returnData("", "", $follwers_ids);
-    return $inter-> returnSuccess("your offer is saved");
+    // return makeInst() -> returnData("", "", $follwers_ids);
+    return makeInst()->returnSuccess("your offer is saved");
 }
+
 function browse($type, $id): \Illuminate\Http\JsonResponse
 {
-    global $inter ;
+
 
     $user = '';
 
@@ -128,14 +138,15 @@ function browse($type, $id): \Illuminate\Http\JsonResponse
         if (class_exists($f->followReciver_type)) {
             array_push($posts, $f->followReciver_type::find($f->followReciver_id)->posts);
         } else {
-            return  $inter -> returnError("this class does not exist");
+            return makeInst()->returnError("this class does not exist");
         }
     }
-    return $inter -> returnData("", "posts", $posts);
+    return makeInst()->returnData("", "posts", $posts);
 }
+
 function putFollow($followMakerType, $followMakerid, $followReceiverType, $followReceiverid): \Illuminate\Http\JsonResponse
 {
-    global $inter ;
+
     $followMaker = '';
     $follwReciver = '';
     if ($followMakerType == "company") {
@@ -148,7 +159,7 @@ function putFollow($followMakerType, $followMakerid, $followReceiverType, $follo
     } elseif ($followMakerType == "customer") {
         $followMaker = \App\Models\Customer::find($followMakerid);
     } else {
-        return $inter -> returnError("check the followMakerType or followMakerid ");
+        return makeInst()->returnError("check the followMakerType or followMakerid ");
     }
     if ($followReceiverType == "company") {
 
@@ -160,7 +171,7 @@ function putFollow($followMakerType, $followMakerid, $followReceiverType, $follo
     } elseif ($followReceiverType == "customer") {
         $follwReciver = "App\Models\Customer";
     } else {
-        return $inter -> returnError("check the followReciverType");
+        return makeInst()->returnError("check the followReciverType");
     }
     $followMaker->followMade()->create([
 
@@ -168,11 +179,12 @@ function putFollow($followMakerType, $followMakerid, $followReceiverType, $follo
         "followReciver_id" => $followReceiverid,
     ]);
 
-    return $inter -> returnSuccess("done");
+    return makeInst()->returnSuccess("done");
 }
+
 function addComment($commentMaker_type, $commentMaker_id, $post_id, $title, $body): \Illuminate\Http\JsonResponse
 {
-    global $inter ;
+
 
     if ($commentMaker_type == "company") {
 
@@ -184,7 +196,7 @@ function addComment($commentMaker_type, $commentMaker_id, $post_id, $title, $bod
     } elseif ($commentMaker_type == "customer") {
         $commentMaker = \App\Models\Customer::find($commentMaker_id);
     } else {
-        return $inter -> returnError("check the followMakerType or followMakerid ");
+        return makeInst()->returnError("check the followMakerType or followMakerid ");
     }
 
     $commentMaker->comments()->create([
@@ -192,11 +204,12 @@ function addComment($commentMaker_type, $commentMaker_id, $post_id, $title, $bod
         "body" => $body,
         "title" => $title,
     ]);
-    return $inter -> returnSuccess("done");
+    return makeInst()->returnSuccess("done");
 }
+
 function ChangeOfferState($request, $guard): \Illuminate\Http\JsonResponse
 {
-global $inter ;
+
     $company = getAuth($guard);
 
     foreach ($company->offers as $of) {
@@ -226,25 +239,26 @@ global $inter ;
                             "notfiReciver_id" => $request->job_seeker_id,
                             "content" => $content
                         ]);
-                        return $inter -> returnSuccess("this order is changed ");
+                        return makeInst()->returnSuccess("this order is changed ");
                     }
                 }
-                return $inter -> returnError("this jobSeeker did not apply for this offer");
+                return makeInst()->returnError("this jobSeeker did not apply for this offer");
             }
         }
     }
-    return $inter -> returnError("you do not have a permission to change this employment aplicant");
+    return makeInst()->returnError("you do not have a permission to change this employment aplicant");
 
 }
+
 function addLike($request, $guard, $likeableType): \Illuminate\Http\JsonResponse
 {
-    global $inter ;
+
     $validator = Validator::make($request->all(), [
         $likeableType . '_id' => 'required|integer|exists:' . str::plural($likeableType) . ',id'
     ]);
 
     if ($validator->fails()) {
-        return $inter -> returnError($validator->errors()->first());
+        return makeInst()->returnError($validator->errors()->first());
     }
 
     $likeableId = $request->input($likeableType . '_id');
@@ -255,7 +269,7 @@ function addLike($request, $guard, $likeableType): \Illuminate\Http\JsonResponse
 
 
     if (!$user) {
-        return $inter -> returnError("invalid user");
+        return makeInst()->returnError("invalid user");
     }
 
     $existingLike = Like::where('likeable_id', $likeable->id)
@@ -265,9 +279,9 @@ function addLike($request, $guard, $likeableType): \Illuminate\Http\JsonResponse
         ->first();
 
     if ($existingLike) {
-        return $inter -> returnError("User has already liked this " . $likeableType);
+        return makeInst()->returnError("User has already liked this " . $likeableType);
     }
-    // return $inter -> returnData("","",$owner);
+    // return makeInst() -> returnData("","",$owner);
     $like = new Like();
     $like->user()->associate($user);
     $like->likeable()->associate($likeable);
@@ -281,17 +295,18 @@ function addLike($request, $guard, $likeableType): \Illuminate\Http\JsonResponse
     $owner = $likeableType . 'able';
     broadcast(new Notifications($name . " reacted to your " . $likeableType, $channel_name, $likeable->$owner->id))->toOthers();
     fillNotification(class_basename($user), $user->id, class_basename($likeable->postable), $likeable->$owner->id, $name . " reacted to your " . $likeableType);
-    return $inter -> returnSuccess(ucfirst($likeableType) . " liked successfully");
+    return makeInst()->returnSuccess(ucfirst($likeableType) . " liked successfully");
 }
+
 function removeLike($request, $guard, $likeableType): \Illuminate\Http\JsonResponse
 {
-    global $inter ;
+
     $validator = Validator::make($request->all(), [
         $likeableType . '_id' => 'required|integer|exists:' . Str::plural($likeableType) . ',id'
     ]);
 
     if ($validator->fails()) {
-        return $inter -> returnError($validator->errors()->first());
+        return makeInst()->returnError($validator->errors()->first());
     }
 
     $likeableId = $request->input($likeableType . '_id');
@@ -301,7 +316,7 @@ function removeLike($request, $guard, $likeableType): \Illuminate\Http\JsonRespo
     $user = auth()->guard($guard)->user();
 
     if (!$user) {
-        return $inter -> returnError("invalid user");
+        return makeInst()->returnError("invalid user");
     }
 
     $like = Like::where('likeable_id', $likeable->id)
@@ -311,16 +326,17 @@ function removeLike($request, $guard, $likeableType): \Illuminate\Http\JsonRespo
         ->first();
 
     if (!$like) {
-        return $inter -> returnError("like not found");
+        return makeInst()->returnError("like not found");
     }
 
     $like->delete();
 
-    return $inter -> returnSuccess(ucfirst($likeableType) . " unliked successfully");
+    return makeInst()->returnSuccess(ucfirst($likeableType) . " unliked successfully");
 }
+
 function fillNotification($senderType, $senderId, $reciverType, $reciverId, $content): void
 {
-global $inter ;
+
     $sender = '';
     $reciver = '';
 
@@ -350,8 +366,8 @@ global $inter ;
     ]);
 
 
-
 }
+
 function photo(Request $request, $diskName, $folderName, $id): bool|string
 {
     $name = $id . $request->file("file")->getClientOriginalName();
@@ -359,6 +375,7 @@ function photo(Request $request, $diskName, $folderName, $id): bool|string
     return $path;
 
 }
+
 function getFollowRecivedJobSeekers($user)
 {
     $followers = Follow::where("followMaker_type", "App\Models\Job_seeker")
@@ -366,20 +383,20 @@ function getFollowRecivedJobSeekers($user)
     // $f = $user->followRecived;
 
 
-
     return $followers;
 }
+
 function applyService(Request $request, $guard): \Illuminate\Http\JsonResponse
 {
-    global $inter;
+
     $service = Service::find($request->service_id);
 
     if (!$service) {
-        return $inter -> returnError("service not found");
+        return makeInst()->returnError("service not found");
     }
 
     if ($service->state == "processing") {
-        return $inter -> returnError("Service is not open for applications");
+        return makeInst()->returnError("Service is not open for applications");
     }
 
     $user = Auth::guard($guard)->user();
@@ -387,7 +404,7 @@ function applyService(Request $request, $guard): \Illuminate\Http\JsonResponse
     // تحقق مما إذا كان المستخدم قد تقدم بالفعل لهذه الخدمة
     $existingApplication = $user->makeApply()->where('service_id', $service->id)->first();
     if ($existingApplication) {
-        return $inter -> returnError("You have already applied for this service");
+        return makeInst()->returnError("You have already applied for this service");
     }
 
     // إنشاء سجل جديد للتقديم على الخدمة
@@ -400,41 +417,43 @@ function applyService(Request $request, $guard): \Illuminate\Http\JsonResponse
     broadcast(new Notifications("You have a new offer", "customer", $service->customer->id))->toOthers();
     fillNotification(class_basename($user), $user->id, "customer", $service->customer->id, "You have a new offer");
 
-    return $inter -> returnSuccess("You have successfully applied for the service");
+    return makeInst()->returnSuccess("You have successfully applied for the service");
 }
+
 function message(Request $request, $guard): \Illuminate\Http\JsonResponse
 {
-global $inter ;
+
     $validator = Validator::make($request->all(), [
         "reciver_type" => "required",
         "reciver_id" => "required",
         "content" => "required",
     ]);
     if ($validator->fails()) {
-        return $inter -> returnError($validator->errors()->first());
+        return makeInst()->returnError($validator->errors()->first());
     }
     $sender = Auth::guard($guard)->user();
     $reciverClass = 'App\\Models\\' . ucfirst($request->reciver_type);
     $reciver = $reciverClass::find($request->reciver_id);
-    // return $inter -> returnData("", "", get_class($reciver));
+    // return makeInst() -> returnData("", "", get_class($reciver));
     broadcast(new Notifications($request->content, strtolower(class_basename($reciver)), $reciver->id))->toOthers();
     $sender->sender()->create([
         "reciver_type" => get_class($reciver),
         "reciver_id" => $request->reciver_id,
         "content" => $request->content,
     ]);
-    return $inter -> returnSuccess("ok", 200);
+    return makeInst()->returnSuccess("ok", 200);
 }
+
 function getMessages(Request $request, $guard): \Illuminate\Http\JsonResponse
 {
-    global $inter ;
+
     $validator = Validator::make($request->all(), [
         "reciver_type" => "required",
         "reciver_id" => "required",
     ]);
 
     if ($validator->fails()) {
-        return $inter -> returnError($validator->errors()->first());
+        return makeInst()->returnError($validator->errors()->first());
     }
 
     $sender = Auth::guard($guard)->user();
@@ -442,7 +461,7 @@ function getMessages(Request $request, $guard): \Illuminate\Http\JsonResponse
     $reciver = $reciverClass::find($request->reciver_id);
 
     if (!$reciver) {
-        return $inter -> returnError("Receiver not found.");
+        return makeInst()->returnError("Receiver not found.");
     }
 
     $messages = Message::where(function ($query) use ($sender, $reciver) {
@@ -471,45 +490,48 @@ function getMessages(Request $request, $guard): \Illuminate\Http\JsonResponse
         ];
     });
 
-    return $inter -> returnData("", "messages", $formattedMessages);
+    return makeInst()->returnData("", "messages", $formattedMessages);
 }
+
 function getNotifications(Request $request, $guard): \Illuminate\Http\JsonResponse
 {
-    global $inter ;
+
     $validator = Validator::make($request->all(), [
         "reciver_type" => "required",
         "reciver_id" => "required",
     ]);
 
     if ($validator->fails()) {
-        return $inter -> returnError($validator->errors()->first());
+        return makeInst()->returnError($validator->errors()->first());
     }
 
     $reciverClass = 'App\\Models\\' . ucfirst($request->reciver_type);
     $reciver = $reciverClass::find($request->reciver_id);
 
     if (!$reciver) {
-        return $inter -> returnError("Receiver not found.");
+        return makeInst()->returnError("Receiver not found.");
     }
 
     // Fetch only the 'content' field of notifications
     $notifications = $reciver->notificationReciver()->orderBy('created_at', 'desc')->pluck('content');
 
-    return $inter -> returnData("", "notifications", $notifications);
+    return makeInst()->returnData("", "notifications", $notifications);
 }
-function showProfile($type , $id ): \Illuminate\Http\JsonResponse
-{
-    global $inter ;
 
-    if (!($type && $id )) {
-        return $inter -> returnError();
+function showProfile($type, $id): \Illuminate\Http\JsonResponse
+{
+
+
+    if (!($type && $id)) {
+        return makeInst()->returnError();
     }
 
-    $user = $inter -> getUserByTypeAndId($type,$id);
+    $user = makeInst()->getUserByTypeAndId($type, $id);
     $posts = $user->posts;
     $user->posts = $posts;
 
-    return $inter -> returnData("", "profile", $user->makeHidden(["password", "verificationCode"]));
+    return makeInst()->returnData("", "profile", $user->makeHidden(["password", "verificationCode"]));
 
 }
+
 ;
